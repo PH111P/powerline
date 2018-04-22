@@ -8,6 +8,7 @@ from multiprocessing import cpu_count as _cpu_count
 from powerline.lib.threaded import ThreadedSegment
 from powerline.lib import add_divider_highlight_group
 from powerline.segments import with_docstring
+from powerline.theme import requires_segment_info
 
 
 cpu_count = None
@@ -93,7 +94,7 @@ try:
                     self.exception('Exception while calculating cpu_percent: {0}', str(e))
 
         def render(self, cpu_percent, format='{0:.0f}%', threshold=None, **kwargs):
-            if not cpu_percent or (threshold and cpu_percent < threshold):
+            if cpu_percent is None or (threshold and cpu_percent < threshold):
                 return None
             return [{
             'contents': format.format(cpu_percent),
@@ -138,6 +139,60 @@ Highlight groups used: ``cpu_load_percent_gradient`` (gradient) or ``cpu_load_pe
 Click values supplied: ``cpu_load`` (string), ``cpu_load_raw`` (int)
 ''')
 
+@requires_segment_info
+def memory_usage(pl, segment_info, format='{percent:.1f}% {absolute:.1f}G/{total:.1f}G', threshold_good=20, threshold_bad=80, short_format='{percent:.1f}%', auto_shrink=False):
+    '''Return memory usage
+
+    Requires the ``psutil`` module
+
+    :param str format:
+        format string, receives ``percent``, ``absolute``, and ``total`` as arguments
+    : param str short_format:
+    :param string short_format:
+	optional shorter format when the powerline needs to shrink segments
+    :param bool auto_shrink:
+        if set to true, this segment will use ``short_format`` per default,
+        only using ``format`` when any message is present on the ``memory_usage``
+        message channel.
+    :param float threshold_good:
+	threshold for gradient level 0: any memory usage percentage below this
+        value will have this gradient level.
+    :param float threshold_bad:
+        threshold for gradient level 100: any memory usage percentage above this
+        value will have this gradient level. Load averages between
+        ``threshold_good`` and ``threshold_bad`` receive gradient level that
+        indicates relative position in this interval:
+        (``100 * (cur-good) / (bad-good)``).
+
+    Highlight groups used: ``memory_usage_gradient`` (gradient) or ``memory_usage``.
+
+    Click values supplied: ``memory_usage`` (string), ``percent`` (float), ``absolute`` (float), ``total`` (float)
+    '''
+    payload_name = 'memory_usage'
+    try:
+        import psutil
+    except ImportError:
+        pl.warn('Missing psutil')
+        return None
+
+    info = psutil.virtual_memory()
+    percentage = info.percent
+    total_gb   = info.total / (1024 * 1024 * 1024)
+    used_gb    = info.used / (1024 * 1024 * 1024)
+
+    gradient_level = (max(min(percentage, threshold_bad), threshold_good) - threshold_good) * 100.0 / (threshold_bad - threshold_good)
+
+    selected_format = short_format
+    if not auto_shrink or ('payloads' in segment_info and payload_name in segment_info['payloads'] and segment_info['payloads'][payload_name]):
+        selected_format = format
+    text = selected_format.format(percent=percentage, absolute=used_gb, total=total_gb)
+
+    return [{
+	'contents': str(text),
+	'highlight_groups': ['memory_usage_gradient', 'memory_usage'],
+	'gradient_level': gradient_level,
+	'click_values': {'memory_usage': text, 'percent': percentage, 'absolute': used_gb, 'total': total_gb}
+    }]
 
 if os.path.exists('/proc/uptime'):
     def _get_uptime():

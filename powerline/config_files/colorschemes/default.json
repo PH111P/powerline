@@ -44,6 +44,8 @@
         "information:priority":      { "fg": "brightyellow", 		"bg": "level:3_bg" },
         "information:regular":       "level:3",
         "internal_ip":               "level:3",
+        "memory_usage":              "level:3",
+        "memory_usage_gradient":     { "fg": "green_yellow_orange_red", "bg": "level:3_bg" },
         "network_load":              "level:3",
         "network_load:divider":      "level:3",
         "network_load_gradient":     { "fg": "green_yellow_orange_red", "bg": "level:3_bg" },
