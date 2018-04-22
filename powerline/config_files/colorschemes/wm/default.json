@@ -161,7 +161,7 @@
                 "left":         "#bar;restart"
             }
         },
-        "wireless:gradient": {
+        "wireless:quality": {
             "fg":               "level:3_fg",
             "bg":               "level:3_bg",
             "click": {
