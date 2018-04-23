@@ -28,6 +28,7 @@ def format_name(name, strip=False):
 WS_ICONS = {
         "Xfce4-terminal":   "",
         "Chromium":         "",
+        "Google-chrome":    "",
         "Steam":            "",
         "jetbrains":        "",
         "Gimp":             "",
@@ -71,6 +72,7 @@ def get_icon(w, separator, icons, show_multiple_icons):
             return separator + icons['multiple']
         else:
             return ""
+
     return result
 
 def get_next_ws(ws, outputs):
@@ -86,17 +88,29 @@ def get_next_ws(ws, outputs):
                 'output': o} for o in outputs]
     return []
 
+def is_empty_workspace(w):
+    if 'dummy' in w:
+        return False
+
+    if w['focused'] or w['visible']:
+        return False
+
+    ws_containers = {w_con.name : w_con for w_con in get_i3_connection().get_tree().workspaces()}
+    wins = [win for win in ws_containers[w['name']].leaves()]
+
+    return False if len(wins) > 0 else True
+
 @requires_segment_info
 def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator=" ",
         icons=WS_ICONS, show_icons=True, show_multiple_icons=True, show_dummy_workspace=False,
-        show_output=False, priority_workspaces=[]):
+        show_output=False, priority_workspaces=[], hide_empty_workspaces=False):
     '''Return list of used workspaces
 
         :param list only_show:
                 Specifies which workspaces to show. Valid entries are ``"visible"``,
                 ``"urgent"`` and ``"focused"``. If omitted or ``null`` all workspaces
                 are shown.
-        :param str output:
+        :param string output:
                 May be set to the name of an X output. If specified, only workspaces
                 on that output are shown. Overrides automatic output detection by
                 the lemonbar renderer and bindings.
@@ -120,10 +134,10 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
         :param boolean show_icons:
                 Determines whether to show icons. Defaults to True.
         :param boolean show_multiple_icons:
-                If this is set to False, instead of displying multiple icons per workspace,
+                If this is set to False, instead of displaying multiple icons per workspace,
                 the icon "multiple" will be used.
         :param boolean show_dummy_workspace:
-                If this is set to True, this segment will alway display an additional, non-existing
+                If this is set to True, this segment will always display an additional, non-existing
                 workspace. This workspace will be handled as if it was a non-urgent and non-focused
                 regular workspace, i.e., click events will work as with normal workspaces.
         :param boolean show_output:
@@ -132,6 +146,9 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
         :param string list priority_workspaces:
                 A list of workspace names to be sorted before any other workspaces in the given
                 order.
+        :param boolean hide_empty_workspaces:
+                Hides all workspaces without any open window. (Does not remove the dummy workspace.)
+                Also hides non-focussed workspaces containing only an open scratchpad.
 
         Highlight groups used: ``workspace`` or ``workspace:visible``, ``workspace`` or ``workspace:focused``, ``workspace`` or ``workspace:urgent`` or ``output``.
 
@@ -172,7 +189,8 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
             'click_values': {'workspace_name': w['name']}
             } for w in sort_ws(get_i3_connection().get_workspaces())
             if (not only_show or any(w[typ] for typ in only_show))
-            and w['output'] == output[0]
+            if w['output'] == output[0]
+            if not (hide_empty_workspaces and is_empty_workspace(w))
             ]
         return res
     else:
@@ -183,7 +201,8 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
                 'highlight_groups': workspace_groups(w),
                 'click_values': {'workspace_name': w['name']}} for w in sort_ws(get_i3_connection().get_workspaces())
                 if (not only_show or any(w[typ] for typ in only_show))
-                and w['output'] == n
+                if w['output'] == n
+                if not (hide_empty_workspaces and is_empty_workspace(w))
                 ]
         return res
 
