@@ -434,7 +434,7 @@ class OutputSegment(ThreadedSegment):
     window = None
     outputs = {}
 
-    segment_state = 0 # 0: minimal, 1: list outputs, 2: show modes for chosen output
+    segment_state = 0 # 0: minimal, 1: list outputs
 
     MIRROR_STATES = ['extend', 'mirror']
     mirror_state = 0 # 0: extend, 1: mirror
@@ -651,7 +651,8 @@ class OutputSegment(ThreadedSegment):
 
     def render(self, data, segment_info, mirror_format='{mirror_icon}',
             mirror_icons={'mirror': 'M', 'extend': 'E'}, output_format='{output} {status_icon}',
-            status_icons={'on': 'on', 'off': 'off'}, hide_if_single_output=True, **kwargs):
+            short_format='{mirror_icon} {output_count}', status_icons={'on': 'on', 'off': 'off'},
+            hide_if_single_output=True, auto_shrink=True, **kwargs):
         channel_name = 'randr.output'
 
         channel_value = None
@@ -687,6 +688,10 @@ class OutputSegment(ThreadedSegment):
                     else:
                         self.enable_output(output)
 
+        if channel_value and not isinstance(channel_value, str) and len(channel_value) == 2 and channel_value[0] == 'ch_toggle' and channel_value[1] > self.last_oneshot:
+            self.last_oneshot = channel_value[1]
+            self.segment_state = 1 - self.segment_state
+
         if self.bar_needs_resize:
             scrn = self.bar_needs_resize
             self.bar_needs_resize = None
@@ -695,6 +700,18 @@ class OutputSegment(ThreadedSegment):
 
         if hide_if_single_output and len(self.outputs) < 2:
             return None
+
+        if auto_shrink and self.segment_state == 0:
+            return [{
+                'contents': short_format.format(mirror_state=self.MIRROR_STATES[self.mirror_state],
+                    mirror_icon=mirror_icons[self.MIRROR_STATES[self.mirror_state]],
+                    output_count=len(self.outputs)),
+                'highlight_groups': ['output:short',
+                    'output:' + self.MIRROR_STATES[self.mirror_state], 'output'],
+                'draw_inner_divider': True,
+                'payload_name': channel_name,
+                'click_values': {'mirror_state': self.MIRROR_STATES[self.mirror_state]}
+            }]
 
         result = []
 

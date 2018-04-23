@@ -115,9 +115,9 @@ def process_extra_args(arg):
     if not '-b' in arg:
         res += ['-b']
 
-    res += ['-f', 'DejaVu Sans Mono-' + str(int(int(args.height) * .75 - 1))]
-    res += ['-f', 'PowerlineSymbols-' + str(int(int(args.height) * .75))]
-    res += ['-f', 'FontAwesome-' + str(int(int(args.height) * .75 - 1))]
+    res += ['-f', 'DejaVu Sans Mono-' + str(int(int(args.height) * .6))]
+    res += ['-f', 'PowerlineSymbols-' + str(int(int(args.height) * .7))]
+    res += ['-f', 'FontAwesome-' + str(int(int(args.height) * .6 + 1))]
     return res + arg
 
 

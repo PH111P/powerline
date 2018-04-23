@@ -34,8 +34,8 @@ def get_argparser(ArgumentParser=argparse.ArgumentParser):
 		help='Use alternative output detection'
 	)
 	parser.add_argument(
-		'--height', '-H', default='16',
-		metavar='PIXELS', help='Bar height. Defaults to 16.'
+		'--height', '-H', default='18',
+		metavar='PIXELS', help='Bar height. Defaults to 18.'
 	)
 	parser.add_argument(
 		'--interval', '-i',
@@ -50,7 +50,7 @@ def get_argparser(ArgumentParser=argparse.ArgumentParser):
 	parser.add_argument(
 		'args', nargs=argparse.REMAINDER,
 		help='Extra arguments for lemonbar. Should be preceded with ``--`` '
-		     'argument in order not to be confused with script own arguments.'
-		     'Defaults to -a 40 -b -f \'DejaVu Sans Mono-11\' -f \'PowerlineSymbols-12\' -f \'FontAwesome-11\'.'
+		     'argument in order not to be confused with script own arguments.\n'
+		     'Defaults to -a 40 -b -f \'DejaVu Sans Mono-{height*.6}\' -f \'PowerlineSymbols-{height*.7}\' -f \'FontAwesome-{height*.6+1}\'.'
 	)
 	return parser

@@ -95,16 +95,19 @@
             "bg":               "level:2_bg",
             "fg":               "level:2_fg",
             "click": {
-                "left":         "#bar;pass_oneshot:output:{output_name}:toggle"
+                "left":         "#bar;pass_oneshot:output:{output_name}:toggle",
+                "middle":       "#bar;pass_oneshot:ch_toggle"
             }
         },
         "output:mirror_state": {
             "bg":               "level:2_bg",
             "fg":               "level:2_fg",
             "click": {
-                "left":         "#bar;pass_oneshot:mode:toggle"
+                "left":         "#bar;pass_oneshot:mode:toggle",
+                "middle":       "#bar;pass_oneshot:ch_toggle"
             }
         },
+        "output:short":         "output:mirror_state",
         "srot":                 "level:2",
         "srot:mode": {
             "bg":               "level:2_bg",
