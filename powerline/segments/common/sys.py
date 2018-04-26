@@ -1,4 +1,4 @@
-# vim:fileencoding=utf-8:noet
+
 from __future__ import (unicode_literals, division, absolute_import, print_function)
 
 import os
@@ -66,7 +66,7 @@ def system_load(pl, format='{avg:.1f}', threshold_good=1, threshold_bad=2,
             'highlight_groups': ['system_load_gradient', 'system_load'],
             'divider_highlight_group': 'background:divider',
             'gradient_level': gradient_level,
-	    'click_values': {'avg':format.format(avg=avg), 'avg_raw':avg}
+        'click_values': {'avg':format.format(avg=avg), 'avg_raw':avg}
             })
 
         if short:
@@ -100,7 +100,7 @@ try:
             'contents': format.format(cpu_percent),
             'gradient_level': cpu_percent,
             'highlight_groups': ['cpu_load_percent_gradient', 'cpu_load_percent'],
-	    'click_values': {'cpu_load': format.format(cpu_percent), 'cpu_load_raw': cpu_percent}
+        'click_values': {'cpu_load': format.format(cpu_percent), 'cpu_load_raw': cpu_percent}
             }]
 except ImportError:
     class CPULoadPercentSegment(ThreadedSegment):
@@ -149,13 +149,13 @@ def memory_usage(pl, segment_info, format='{percent:.1f}% {absolute:.1f}G/{total
         format string, receives ``percent``, ``absolute``, and ``total`` as arguments
     : param str short_format:
     :param string short_format:
-	optional shorter format when the powerline needs to shrink segments
+    optional shorter format when the powerline needs to shrink segments
     :param bool auto_shrink:
         if set to true, this segment will use ``short_format`` per default,
         only using ``format`` when any message is present on the ``memory_usage``
         message channel.
     :param float threshold_good:
-	threshold for gradient level 0: any memory usage percentage below this
+    threshold for gradient level 0: any memory usage percentage below this
         value will have this gradient level.
     :param float threshold_bad:
         threshold for gradient level 100: any memory usage percentage above this
@@ -188,10 +188,10 @@ def memory_usage(pl, segment_info, format='{percent:.1f}% {absolute:.1f}G/{total
     text = selected_format.format(percent=percentage, absolute=used_gb, total=total_gb)
 
     return [{
-	'contents': str(text),
-	'highlight_groups': ['memory_usage_gradient', 'memory_usage'],
-	'gradient_level': gradient_level,
-	'click_values': {'memory_usage': text, 'percent': percentage, 'absolute': used_gb, 'total': total_gb}
+    'contents': str(text),
+    'highlight_groups': ['memory_usage_gradient', 'memory_usage'],
+    'gradient_level': gradient_level,
+    'click_values': {'memory_usage': text, 'percent': percentage, 'absolute': used_gb, 'total': total_gb}
     }]
 
 if os.path.exists('/proc/uptime'):
@@ -250,11 +250,11 @@ def temp(pl, format='{:.1f}°C', path="/sys/class/thermal/thermal_zone0/temp", a
     Returns the temperature
 
     :param string format:
-	Output format
+    Output format
     :param string path:
-	Path of the file containing the temperature
+    Path of the file containing the temperature
     :param int accuracy:
-	Accuracy to read
+    Accuracy to read
 
     Click values supplied: ``temp`` (string), ``temp_raw`` (int)
     '''
@@ -264,5 +264,5 @@ def temp(pl, format='{:.1f}°C', path="/sys/class/thermal/thermal_zone0/temp", a
                 'contents': format.format(temp),
                 'highlight_groups': ['temp'],
                 'gradient_level': 100 * min(1, max(0, (temp-lowtemp) / (hightemp-lowtemp))),
-		'click_values': {'temp': format.format(temp), 'temp_raw': temp}
+        'click_values': {'temp': format.format(temp), 'temp_raw': temp}
             }]

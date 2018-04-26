@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# vim:fileencoding=utf-8:noet
+
 from __future__ import (unicode_literals, division, absolute_import, print_function)
 
 import os
@@ -20,51 +20,51 @@ TEST_ROOT = os.path.abspath(os.environ['TEST_ROOT'])
 
 
 def main(attempts=3):
-	vterm_path = os.path.join(TEST_ROOT, 'path')
+    vterm_path = os.path.join(TEST_ROOT, 'path')
 
-	vim_exe = os.path.join(vterm_path, 'vim')
+    vim_exe = os.path.join(vterm_path, 'vim')
 
-	env = get_env(vterm_path, TEST_ROOT)
-	env['ROOT'] = os.path.abspath('.')
+    env = get_env(vterm_path, TEST_ROOT)
+    env['ROOT'] = os.path.abspath('.')
 
-	dim = MutableDimensions(rows=50, cols=200)
+    dim = MutableDimensions(rows=50, cols=200)
 
-	vimrc = os.path.join(TEST_ROOT, 'init.vim')
-	vimrc_contents = '''
-		set laststatus=2
-		set runtimepath=$ROOT/powerline/bindings/vim
-	'''
-	with open(vimrc, 'w') as vd:
-		vd.write(vimrc_contents)
+    vimrc = os.path.join(TEST_ROOT, 'init.vim')
+    vimrc_contents = '''
+        set laststatus=2
+        set runtimepath=$ROOT/powerline/bindings/vim
+    '''
+    with open(vimrc, 'w') as vd:
+        vd.write(vimrc_contents)
 
-	base_attrs = {
-		(( 64,  64, 255), (0, 0, 0), 0, 0, 0): 'NT',  # NonText
-		((240, 240, 240), (0, 0, 0), 0, 0, 0): 'N',   # Normal
-	}
+    base_attrs = {
+        (( 64,  64, 255), (0, 0, 0), 0, 0, 0): 'NT',  # NonText
+        ((240, 240, 240), (0, 0, 0), 0, 0, 0): 'N',   # Normal
+    }
 
-	args = [
-		'-u', vimrc,
-		'-i', 'NONE',
-	]
+    args = [
+        '-u', vimrc,
+        '-i', 'NONE',
+    ]
 
-	def feed(p):
-		p.send(':echo strtrans(eval(&statusline[2:]))\n')
+    def feed(p):
+        p.send(':echo strtrans(eval(&statusline[2:]))\n')
 
-	tests = (
-	)
+    tests = (
+    )
 
-	return do_terminal_tests(
-		tests=tests,
-		cmd=vim_exe,
-		dim=dim,
-		args=args,
-		env=env,
-		cwd=TEST_ROOT,
-	)
+    return do_terminal_tests(
+        tests=tests,
+        cmd=vim_exe,
+        dim=dim,
+        args=args,
+        env=env,
+        cwd=TEST_ROOT,
+    )
 
 
 if __name__ == '__main__':
-	if main():
-		raise SystemExit(0)
-	else:
-		raise SystemExit(1)
+    if main():
+        raise SystemExit(0)
+    else:
+        raise SystemExit(1)

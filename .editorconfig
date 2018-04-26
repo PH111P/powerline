@@ -1,5 +1,5 @@
 # editorconfig ini file
-# Check out http://editorconfig.org for a list of plugins for different 
+# Check out http://editorconfig.org for a list of plugins for different
 # IDEs/text editors that support this file. Vim plugin to support this:
 #
 #     http://www.vim.org/scripts/script.php?script_id=3934
@@ -9,9 +9,7 @@ root = true
 [*]
 end_of_line = lf
 insert_final_newline = true
-indent_style = tab
-# Despite promise somewhere alignment is done only using tabs. Thus setting 
-# indent_size and tab_width is a requirement.
+indent_style = space
 indent_size = 4
 tab_width = 4
 charset = utf-8
