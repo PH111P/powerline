@@ -1,9 +1,9 @@
 {
-	"segment_data": {
-		"powerline.segments.shell.cwd": {
-			"args": {
-				"dir_limit_depth": 3
-			}
-		}
-	}
+    "segment_data": {
+        "powerline.segments.shell.cwd": {
+            "args": {
+                "dir_limit_depth": 3
+            }
+        }
+    }
 }

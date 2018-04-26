@@ -1,16 +1,16 @@
 {
-	"groups": {
+    "groups": {
         "background":           "level:3",
         "background:divider":   "level:3",
-		"active_window_status": "level:3",
-		"window_status":        "level:3",
-		"activity_status":      "level:3",
-		"bell_status":          "level:3",
-		"window":               "level:3",
-		"window:divider":       "level:3",
-		"window:current":       "level:2",
-		"window_name":          "level:2_bold",
-		"session":              "level:1_bold",
-		"session:prefix":       "level:1_bold"
-	}
+        "active_window_status": "level:3",
+        "window_status":        "level:3",
+        "activity_status":      "level:3",
+        "bell_status":          "level:3",
+        "window":               "level:3",
+        "window:divider":       "level:3",
+        "window:current":       "level:2",
+        "window_name":          "level:2_bold",
+        "session":              "level:1_bold",
+        "session:prefix":       "level:1_bold"
+    }
 }

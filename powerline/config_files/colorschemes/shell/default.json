@@ -1,16 +1,16 @@
 {
-	"name": "Default color scheme for shell prompts",
-	"groups": {
-		"hostname":         { "fg": "brightyellow",     "bg": "mediumorange" },
-		"environment":      { "fg": "white",            "bg": "darkestgreen" },
-		"mode":             { "fg": "darkestgreen",     "bg": "brightgreen",    "attrs": ["bold"] },
-		"attached_clients": { "fg": "white",            "bg": "darkestgreen" }
-	},
-	"mode_translations": {
-		"vicmd": {
-			"groups": {
-				"mode":     { "fg": "darkestcyan",      "bg": "white",          "attrs": ["bold"]}
-			}
-		}
-	}
+    "name": "Default color scheme for shell prompts",
+    "groups": {
+        "hostname":         { "fg": "brightyellow",     "bg": "mediumorange" },
+        "environment":      { "fg": "white",            "bg": "darkestgreen" },
+        "mode":             { "fg": "darkestgreen",     "bg": "brightgreen",    "attrs": ["bold"] },
+        "attached_clients": { "fg": "white",            "bg": "darkestgreen" }
+    },
+    "mode_translations": {
+        "vicmd": {
+            "groups": {
+                "mode":     { "fg": "darkestcyan",      "bg": "white",          "attrs": ["bold"]}
+            }
+        }
+    }
 }

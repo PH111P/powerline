@@ -31,19 +31,19 @@
             "args": {
                 "state_symbols": {
                     "fallback":         "♫",
-                    "play":         	"▶ ",
-                    "pause":        	"▮▮ ",
-                    "stop":         	" ",
-                    "repeat":       	"↺ ",
-                    "loop":         	"↺1 ",
-                    "shuffle":      	" ",
-                    "next":         	"",
-                    "previous":     	""
+                    "play":             "▶ ",
+                    "pause":            "▮▮ ",
+                    "stop":             " ",
+                    "repeat":           "↺ ",
+                    "loop":             "↺1 ",
+                    "shuffle":          " ",
+                    "next":             "",
+                    "previous":         ""
                 },
                 "progress_args": {
-                    "full":         	"⋯",
-                    "empty":        	"·",
-                    "steps":        	5
+                    "full":             "⋯",
+                    "empty":            "·",
+                    "steps":            5
                 }
             }
         },

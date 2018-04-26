@@ -1,48 +1,48 @@
 {
-	"name": "Default color scheme",
-	"groups": {
+    "name": "Default color scheme",
+    "groups": {
         "level:4":                  { "fg": "level:4_fg", "bg": "level:4_bg" },
         "background":               "level:4",
         "tabnr":                    "level:3",
         "tab:divider":              "level:3",
         "single_tab":               "level:3",
         "many_tabs":                "level:3",
-		"attached_clients":         "level:3",
-		"col_current":              "level:1",
-		"current_tag":              "level:4",
-		"file_type":                "level:4",
-		"error":                    { "fg": "brightestred",     "bg": "darkred",        "attrs": ["bold"] },
-		"file_name":                "level:3_bold",
-		"file_name_no_file":        "level:3_bold",
-		"file_vcs_status":          { "fg": "brightestred",     "bg": "level:2_bg" },
-		"file_vcs_status_A":        { "fg": "brightgreen",      "bg": "level:2_bg" },
-		"file_vcs_status_M":        { "fg": "brightyellow",     "bg": "level:2_bg" },
-		"information:additional":   "level:3",
-		"information:unimportant":  "level:3",
-		"line_current":             "level:1_bold",
-		"line_current_symbol":      "level:1",
-		"line_percent":             "level:2",
-		"line_percent_gradient":    "level:2",
-		"mode":                     { "fg": "level:1_fg",       "bg": "level:1_bg",     "attrs": ["bold"] },
-		"modified_buffers":         "level:3",
-		"modified_indicator":       "level:3_bold",
-		"paste_indicator":          "level:1_bold",
-		"position":                 "level:1",
-		"position_gradient":        { "fg": "green_yellow_red", "bg": "level:1_bg" },
-		"readonly_indicator":       { "fg": "brightestred",     "bg": "level:3_bg" },
-		"vcsinfo:dirty":            { "fg": "brightyellow",     "bg": "level:2_bg" },
-		"vcsinfo:divider":          "level:2",
-		"vcsinfo:branch":           "level:2_bold",
-		"virtcol_current_gradient": { "fg": "dark_GREEN_Orange_red", "bg": "level:1_bg" },
-		"visual_range":             "level:1",
-		"warning":                  { "fg": "brightyellow",     "bg": "darkorange",     "attrs": ["bold"] },
-		"window_title":             "level:2",
+        "attached_clients":         "level:3",
+        "col_current":              "level:1",
+        "current_tag":              "level:4",
+        "file_type":                "level:4",
+        "error":                    { "fg": "brightestred",     "bg": "darkred",        "attrs": ["bold"] },
+        "file_name":                "level:3_bold",
+        "file_name_no_file":        "level:3_bold",
+        "file_vcs_status":          { "fg": "brightestred",     "bg": "level:2_bg" },
+        "file_vcs_status_A":        { "fg": "brightgreen",      "bg": "level:2_bg" },
+        "file_vcs_status_M":        { "fg": "brightyellow",     "bg": "level:2_bg" },
+        "information:additional":   "level:3",
+        "information:unimportant":  "level:3",
+        "line_current":             "level:1_bold",
+        "line_current_symbol":      "level:1",
+        "line_percent":             "level:2",
+        "line_percent_gradient":    "level:2",
+        "mode":                     { "fg": "level:1_fg",       "bg": "level:1_bg",     "attrs": ["bold"] },
+        "modified_buffers":         "level:3",
+        "modified_indicator":       "level:3_bold",
+        "paste_indicator":          "level:1_bold",
+        "position":                 "level:1",
+        "position_gradient":        { "fg": "green_yellow_red", "bg": "level:1_bg" },
+        "readonly_indicator":       { "fg": "brightestred",     "bg": "level:3_bg" },
+        "vcsinfo:dirty":            { "fg": "brightyellow",     "bg": "level:2_bg" },
+        "vcsinfo:divider":          "level:2",
+        "vcsinfo:branch":           "level:2_bold",
+        "virtcol_current_gradient": { "fg": "dark_GREEN_Orange_red", "bg": "level:1_bg" },
+        "visual_range":             "level:1",
+        "warning":                  { "fg": "brightyellow",     "bg": "darkorange",     "attrs": ["bold"] },
+        "window_title":             "level:2",
 
-		"tab_nc:modified_indicator": { "fg": "brightyellow",    "bg": "level:2_bg",          "attrs": ["bold"] }
-	},
-	"mode_translations": {
-		"i": {
-			"colors": {
+        "tab_nc:modified_indicator": { "fg": "brightyellow",    "bg": "level:2_bg",          "attrs": ["bold"] }
+    },
+    "mode_translations": {
+        "i": {
+            "colors": {
                 "level:1_bg":  "level:1_bg_alt",
                 "level:1_fg":  "level:1_fg_alt",
                 "level:2_bg":  "level:2_bg_alt",
@@ -51,13 +51,13 @@
                 "level:3_fg":  "level:3_fg_alt",
                 "level:4_bg":  "level:4_bg_alt",
                 "level:4_fg":  "level:4_fg_alt"
-			},
-			"groups": {
-				"mode":                 { "fg": "level:1_fg_alt", "bg": "level:1_bg_alt",           "attrs": ["bold"] }
-			}
-		},
-		"ic": {
-			"colors": {
+            },
+            "groups": {
+                "mode":                 { "fg": "level:1_fg_alt", "bg": "level:1_bg_alt",           "attrs": ["bold"] }
+            }
+        },
+        "ic": {
+            "colors": {
                 "level:1_bg":  "level:1_bg_alt",
                 "level:1_fg":  "level:1_fg_alt",
                 "level:2_bg":  "level:2_bg_alt",
@@ -66,13 +66,13 @@
                 "level:3_fg":  "level:3_fg_alt",
                 "level:4_bg":  "level:4_bg_alt",
                 "level:4_fg":  "level:4_fg_alt"
-			},
-			"groups": {
-				"mode":                 { "fg": "level:1_fg_alt", "bg": "level:1_bg_alt",           "attrs": ["bold"] }
-			}
-		},
-		"ix": {
-			"colors": {
+            },
+            "groups": {
+                "mode":                 { "fg": "level:1_fg_alt", "bg": "level:1_bg_alt",           "attrs": ["bold"] }
+            }
+        },
+        "ix": {
+            "colors": {
                 "level:1_bg":  "level:1_bg_alt",
                 "level:1_fg":  "level:1_fg_alt",
                 "level:2_bg":  "level:2_bg_alt",
@@ -81,64 +81,64 @@
                 "level:3_fg":  "level:3_fg_alt",
                 "level:4_bg":  "level:4_bg_alt",
                 "level:4_fg":  "level:4_fg_alt"
-			},
-			"groups": {
-				"mode":                 { "fg": "level:1_fg_alt", "bg": "level:1_bg_alt",           "attrs": ["bold"] }
-			}
-		},
-		"v": {
-			"colors": {
+            },
+            "groups": {
+                "mode":                 { "fg": "level:1_fg_alt", "bg": "level:1_bg_alt",           "attrs": ["bold"] }
+            }
+        },
+        "v": {
+            "colors": {
                 "level:1_bg":  "level:1_bg_vis",
                 "level:1_fg":  "level:1_fg_vis"
             },
-			"groups": {
-				"mode":                 { "fg": "level:1_fg_vis", "bg": "level:1_bg_vis",           "attrs": ["bold"] }
-			}
-		},
-		"V": {
-			"colors": {
+            "groups": {
+                "mode":                 { "fg": "level:1_fg_vis", "bg": "level:1_bg_vis",           "attrs": ["bold"] }
+            }
+        },
+        "V": {
+            "colors": {
                 "level:1_bg":  "level:1_bg_vis",
                 "level:1_fg":  "level:1_fg_vis"
             },
-			"groups": {
-				"mode":                 { "fg": "level:1_fg_vis", "bg": "level:1_bg_vis",           "attrs": ["bold"] }
-			}
-		},
-		"^V": {
-			"colors": {
+            "groups": {
+                "mode":                 { "fg": "level:1_fg_vis", "bg": "level:1_bg_vis",           "attrs": ["bold"] }
+            }
+        },
+        "^V": {
+            "colors": {
                 "level:1_bg":  "level:1_bg_vis",
                 "level:1_fg":  "level:1_fg_vis"
             },
-			"groups": {
-				"mode":                 { "fg": "level:1_fg_vis", "bg": "level:1_bg_vis",           "attrs": ["bold"] }
-			}
-		},
-		"R": {
-			"colors": {
+            "groups": {
+                "mode":                 { "fg": "level:1_fg_vis", "bg": "level:1_bg_vis",           "attrs": ["bold"] }
+            }
+        },
+        "R": {
+            "colors": {
                 "level:1_bg":  "level:1_bg_rep",
                 "level:1_fg":  "level:1_fg_rep"
             },
-			"groups": {
-				"mode":                 { "fg": "level:1_fg_rep", "bg": "level:1_bg_rep",           "attrs": ["bold"] }
-			}
-		},
-		"Rc": {
-			"colors": {
+            "groups": {
+                "mode":                 { "fg": "level:1_fg_rep", "bg": "level:1_bg_rep",           "attrs": ["bold"] }
+            }
+        },
+        "Rc": {
+            "colors": {
                 "level:1_bg":  "level:1_bg_rep",
                 "level:1_fg":  "level:1_fg_rep"
             },
-			"groups": {
-				"mode":                 { "fg": "level:1_fg_rep", "bg": "level:1_bg_rep",           "attrs": ["bold"] }
-			}
-		},
-		"Rx": {
-			"colors": {
+            "groups": {
+                "mode":                 { "fg": "level:1_fg_rep", "bg": "level:1_bg_rep",           "attrs": ["bold"] }
+            }
+        },
+        "Rx": {
+            "colors": {
                 "level:1_bg":  "level:1_bg_rep",
                 "level:1_fg":  "level:1_fg_rep"
             },
-			"groups": {
-				"mode":                 { "fg": "level:1_fg_rep", "bg": "level:1_bg_rep",           "attrs": ["bold"] }
-			}
-		}
-	}
+            "groups": {
+                "mode":                 { "fg": "level:1_fg_rep", "bg": "level:1_bg_rep",           "attrs": ["bold"] }
+            }
+        }
+    }
 }

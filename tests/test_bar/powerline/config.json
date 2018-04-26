@@ -1,9 +1,9 @@
 {
-	"ext": {
-		"wm": {
-			"local_themes": {
-				"DVI-I-1": "dvi"
-			}
-		}
-	}
+    "ext": {
+        "wm": {
+            "local_themes": {
+                "DVI-I-1": "dvi"
+            }
+        }
+    }
 }
