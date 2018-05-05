@@ -396,10 +396,9 @@ srot = with_docstring(ScreenRotationSegment(),
     :param bool hide_controls:
         Hide the extra control segments. They may be shown via segment interaction.
 
-    Highlight groups used: ``srot:normal``, ``srot:inverted``, ``srot:right``, ``srot:left``,
-    ``srot:rotation``, ``srot`` if the name parameter is ``rotation``, ``srot:auto``,
-    ``srot:locked``, ``srot:mode``, ``srot`` if the name parameter is ``mode``.
-    None if the name is set to something else.
+    Highlight groups used: ``srot:normal`` or ``srot:inverted`` or ``srot:right`` or ``srot:left`` or ``srot:rotation`` or ``srot`` (if the name parameter is ``rotation``) or
+    ``srot:auto`` or ``srot:locked`` or ``srot:mode`` or ``srot`` (if the name parameter
+    is ``mode``) or None (if the name is set to something else).
 
     Click values supplied: ``mode`` (string), ``rotation`` (string), ``output`` (string,
     the output this segment is rendered to), ``managed_output`` (string, the screen
@@ -769,9 +768,7 @@ output = with_docstring(OutputSegment(),
         Also restarts bars appropriately.
 
 
-    Highlight groups used: ``output:mirror``, ``output:extend``, ``output:mirror_state``,
-    ``output``, for the mirror mode part, and
-    ``output:off``, ``output:on``, ``output:status``, ``output``, for the outputs.
+    Highlight groups used: ``output:mirror`` or ``output:extend`` or ``output:mirror_state`` or ``output`` (for the mirror mode part) and ``output:off`` or ``output:on`` or ``output:status`` or ``output`` (for the outputs).
 
     Click values supplied: ``mirror_state`` (string) for the mirror mode part and
     ``output_name`` (string), ``output_status`` (string) in the remaining part.

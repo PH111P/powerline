@@ -576,15 +576,6 @@ def hl_group_in_colorscheme(hl_group, cconfig, allow_gradients, data, context, e
                     problem_mark=color.mark
                 )
                 return False
-        if allow_gradients == 'force' and not hadgradient:
-            echoerr(
-                context='Error while checking highlight group in theme (key {key})'.format(
-                    key=context.key),
-                context_mark=hl_group.mark,
-                problem='group {0} should have at least one gradient color, but it has no'.format(hl_group),
-                problem_mark=group_config.mark
-            )
-            return False
     return True
 
 

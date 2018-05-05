@@ -22,7 +22,6 @@
         "line_current":             "level:1_bold",
         "line_current_symbol":      "level:1",
         "line_percent":             "level:2",
-        "line_percent_gradient":    "level:2",
         "mode":                     { "fg": "level:1_fg",       "bg": "level:1_bg",     "attrs": ["bold"] },
         "modified_buffers":         "level:3",
         "modified_indicator":       "level:3_bold",
