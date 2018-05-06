@@ -18,11 +18,11 @@
         "level:4_fg_alt":   231,
         "level:4_bg_alt":    23,
 
-        "level:1_fg_vis":   222,
-        "level:1_bg_vis":   208,
+        "level:1_fg_vis": "0xffffff",
+        "level:1_bg_vis": "0xaf8000",
 
-        "level:1_fg_rep":   231,
-        "level:1_bg_rep":    52,
+        "level:1_fg_rep": "0xffffff",
+        "level:1_bg_rep": "0xaf2900",
 
         "black":             16,
         "white":            231,
@@ -68,6 +68,8 @@
         "yellow_orange_red":        ["0xffd700", "0xff9933", "0xff0000"],
         "blue_red":                 ["0x0099ff", "0xff0000"],
         "white_red":                ["0xffffff", "0xff0000"],
+        "lv3_red":                  ["0xffffff", "0xff0000"],
+        "lv4_red":                  ["0xffffff", "0xff0000"],
         "dark_green_gray":          ["0x51b000", "0x9d9e9d"],
         "light_green_gray":         ["0xa3d900", "0xbcbcbb"]
     }
