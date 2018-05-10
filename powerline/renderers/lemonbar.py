@@ -59,10 +59,15 @@ class LemonbarRenderer(Renderer):
             kw2['segment_info'].update({'output': kwargs.get('matcher_info')})
         else:
             kw2.update({'segment_info': {'output': kwargs.get('matcher_info')}})
+
+        if 'side' in kwargs:
+            return super(LemonbarRenderer, self).render(width=width//2 if width else None,
+                    *args, **kw2)
+
         return '%{{r}}{1}%{{l}}{0}'.format(
-            super(LemonbarRenderer, self).render(width=width//2,side='left',
+            super(LemonbarRenderer, self).render(width=width//2 if width else None, side='left',
                 *args, **kw2),
-            super(LemonbarRenderer, self).render(width=width//2,side='right',
+            super(LemonbarRenderer, self).render(width=width//2 if width else None, side='right',
                 *args, **kw2)
         )
 
