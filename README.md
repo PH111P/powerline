@@ -41,7 +41,7 @@ This fork extends the files used by the powerline to configure the color scheme 
  to a string to be executed by a shell. (Currently only the lemonbar binding supports this. You can disable clicks via the `no_clicks` flag.)
  Further, the string to be executed may contain a placeholder for the segment's content. This placeholder uses python's
  `string.format` syntax. You may also pass some special commands to the bar/to specific segments directly via special bar commands starting with `#bar;`.
-* You may pass an `alt_output` flag to `powerline-lemonbar`, then it uses the `-O` flag for setting the output for the bar. (Use this together with the `bar_command` flag to use custom bar forks.)
+* You may pass an `alt_output` flag to `powerline-lemonbar`, then it uses the `-O` flag for setting the output for the bar. 
 * The colors in `fg` and `bg` can be specified directly through hex values using `0x` as a prefix (`0xRRGGBB` or `0xAARRGGBB`). These hex values will be translated back into xterm color indices whenever possible.
 
 Examples
@@ -72,7 +72,7 @@ namely:
 * [powerline-fonts](https://www.archlinux.org/packages/community/x86_64/powerline-fonts/)
 * [ttf-font-awesome-4](https://aur.archlinux.org/packages/ttf-font-awesome-4/) (Version 5 relocated some symbols)
 * i3 or i3-gaps
-* [lemonbar-xft-git](https://aur.archlinux.org/packages/lemonbar-xft-git/) ([Lemonbar](https://github.com/krypt-n/bar) supporting fontconfig fonts)
+* [lemonbar-clicks-git](https://aur.archlinux.org/packages/lemonbar-clicks-git/) ([Lemonbar](https://github.com/ph111p/bar) supporting fontconfig fonts)
 * [python-xlib](https://github.com/python-xlib/python-xlib)
 * [i3ipc-python-git](https://github.com/acrisci/i3ipc-python) (workspace segment, available from AUR)
 
@@ -94,7 +94,7 @@ To actually _use_ the powerline in your i3 setup, replace the following lines in
 
 with this line (you may want to adjust the height and the font size):
 
-      exec "powerline-lemonbar --height 16 -- -a 40 -b -f 'DejaVu Sans Mono-11' -f 'PowerlineSymbols-12' -f 'FontAwesome-11'"
+      exec "powerline-lemonbar --height 16 -- -b -f 'DejaVu Sans Mono-11' -f 'PowerlineSymbols-12' -f 'FontAwesome-11'"
 
 Note that ``Font Awesome`` is used to display some icons, thus changing it to some other font will likely break these icons.
 
