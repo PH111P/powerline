@@ -58,7 +58,7 @@ def wireless(pl, segment_info, device=None, format='{quality:3.0%} at {essid}',
 
     if not device:
         for interface in os.listdir('/sys/class/net'):
-            if interface.startswith('w'):
+            if interface.startswith('wl'):
                 device = interface
                 break
 
