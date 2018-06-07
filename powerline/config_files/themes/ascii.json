@@ -127,7 +127,8 @@
                     "r":  "PROMPT",
                     "rm": "-MORE-",
                     "r?": "CNFIRM",
-                    "!":  "!SHELL"
+                    "!":  "!SHELL",
+					"t":  "TERM  "
                 }
             }
         },
