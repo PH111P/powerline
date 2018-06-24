@@ -234,6 +234,20 @@
                 "left":         "reboot",
                 "middle":       "#bar;ch_toggle"
             }
+        },
+        "clicks_off": {
+            "bg":               "level:1_fg",
+            "fg":               "level:1_bg",
+            "click": {
+                "right":        "#bar;toggle_clicks"
+            }
+        },
+        "clicks_on": {
+            "bg":               "level:1_bg",
+            "fg":               "level:1_fg",
+            "click": {
+                "right":        "#bar;toggle_clicks"
+            }
         }
     }
 }

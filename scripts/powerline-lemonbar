@@ -18,6 +18,8 @@ lock = Lock()
 args = []
 global_args = []
 
+pause_clicks = False
+
 segment_info={'payloads': {}}
 
 needs_restart = []
@@ -26,7 +28,7 @@ def execute(process, shell, callback):
     for stdout_line in iter(process.stdout.readline, b''):
         line = stdout_line[0:stdout_line.rfind(SEGMENT_NAME)]
         segment_name = stdout_line[stdout_line.rfind(SEGMENT_NAME) + len(SEGMENT_NAME):-1]
-        if shell:
+        if shell and not pause_clicks:
             shell.stdin.write(line + b'\n')
             shell.stdin.flush()
         if callback:
@@ -63,6 +65,16 @@ def render(reschedule=False):
 def handle_bar_command(output_name, cmd, segment_name):
     if cmd.find('#') > 0:
         cmd = cmd[0:cmd.find('#')]
+
+    global pause_clicks
+
+    if cmd == 'toggle_clicks':
+        pause_clicks = not pause_clicks
+        segment_info['payloads'].update({'#pause_clicks': pause_clicks})
+        render()
+        return
+    elif pause_clicks:
+        return
 
     # bar restarts
     if cmd == 'restart':
