@@ -74,6 +74,7 @@
         "weather:condition_snowy":   { "fg": "skyblue1",            "bg": "level:3_bg" },
         "weather_temp_gradient":     { "fg": "blue_red",            "bg": "level:3_bg" },
         "wireless:quality":          { "fg": "white_red",           "bg": "level:3_bg" },
-        "wireless:down":             "level:3"
+        "wireless:down":             "level:3",
+        "click_status":              "level:1"
     }
 }
