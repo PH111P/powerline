@@ -159,47 +159,7 @@
                         [ "", ["launcher"] ],
                         [ "", ["launcher:terminal", "launcher"] ],
                         [ "", ["launcher:files", "launcher"] ],
-                        [ "", ["launcher:browser", "launcher"] ],
-                        [ "", ["launcher:evince", "launcher"] ]
-                    ]
-                }
-            },
-            {
-                "function":             "powerline.segments.randr.output",
-                "args": {
-                    "status_icons": {
-                        "on":           "",
-                        "off":          ""
-                    },
-                    "mirror_icons": {
-                        "extend":       "",
-                        "mirror":       ""
-                    }
-                }
-            },
-            {
-                "function":             "powerline.segments.randr.srot",
-                "args": {
-                    "name":             "mode",
-                    "output":           "eDP1",
-                    "mapped_inputs": [
-                        "Insert your touch screen/ digitizer name from xinput --list here",
-                        "Wacom HID 481C Finger",
-                        "Wacom HID 481C Pen Pen",
-                        "Wacom HID 481C Pen Eraser"
-                    ],
-                    "touchpads": [
-                        "Insert your touchpad names here",
-                        "ALP0016:00 044E:1215",
-                        "AlpsPS/2 ALPS GlidePoint"
-                    ],
-                    "icons": {
-                        "auto":         "",
-                        "locked":       ""
-                    },
-                    "additional_controls": [
-                        [ " {touch_output}", ["srot:tc"] ],
-                        [ " {managed_output}", ["srot:rc"] ]
+                        [ "", ["launcher:browser", "launcher"] ]
                     ]
                 }
             },
