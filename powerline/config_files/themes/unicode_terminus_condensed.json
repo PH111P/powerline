@@ -5,8 +5,8 @@
             "soft":                     "│"
         },
         "center": {
-            "hard":                     "",
-            "soft":                     "|"
+            "hard":                     " ",
+            "soft":                     " |"
         },
         "right": {
             "hard":                     "▐",
