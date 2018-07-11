@@ -24,6 +24,8 @@
         "level:1_fg_rep": "0xffffff",
         "level:1_bg_rep": "0xaf2900",
 
+        "transparent":    "0x01000000",
+
         "black":             16,
         "white":            231,
 

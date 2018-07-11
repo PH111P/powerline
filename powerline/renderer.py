@@ -267,7 +267,7 @@ class Renderer(object):
             Maximum width text can occupy. May be exceeded if there are too much
             non-removable segments.
         :param str side:
-            One of ``left``, ``right``. Determines which side will be rendered.
+            One of ``left``, ``right``, ``center``. Determines which side will be rendered.
             If not present all sides are rendered.
         :param int line:
             Line number for which segments should be obtained. Is counted from
@@ -308,6 +308,10 @@ class Renderer(object):
             'right': {
                 'hard': self.strwidth(theme.get_divider('right', 'hard')),
                 'soft': self.strwidth(theme.get_divider('right', 'soft')),
+            },
+            'center': {
+                'hard': self.strwidth(theme.get_divider('center', 'hard')),
+                'soft': self.strwidth(theme.get_divider('center', 'soft')),
             },
         }
 
@@ -471,6 +475,8 @@ class Renderer(object):
                     segment is first_segment
                     if side == 'left' else
                     segment is last_segment
+                    if side == 'right' else
+                    False
                 )) * theme.outer_padding
 
                 draw_divider = segment['draw_' + divider_type + '_divider']

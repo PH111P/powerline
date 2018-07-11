@@ -64,10 +64,12 @@ class LemonbarRenderer(Renderer):
             return super(LemonbarRenderer, self).render(width=width//2 if width else None,
                     *args, **kw2)
 
-        return '%{{r}}{1}%{{l}}{0}'.format(
+        return '%{{r}}{1}%{{l}}{0}%{{c}}{2}'.format(
             super(LemonbarRenderer, self).render(width=width//2 if width else None, side='left',
                 *args, **kw2),
             super(LemonbarRenderer, self).render(width=width//2 if width else None, side='right',
+                *args, **kw2),
+            super(LemonbarRenderer, self).render(width=width//2 if width else None, side='center',
                 *args, **kw2)
         )
 
