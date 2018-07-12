@@ -15,6 +15,9 @@ class LemonbarRenderer(Renderer):
     character_translations = Renderer.character_translations.copy()
     character_translations[ord('%')] = '%%{}'
 
+    clear_left = ('%{F-}', '%{B-}')
+    clear_right = ('%{F-}', '%{B-}')
+
     @staticmethod
     def hlstyle(*args, **kwargs):
         # We don’t need to explicitly reset attributes, so skip those calls
@@ -37,21 +40,40 @@ class LemonbarRenderer(Renderer):
                         else kwargs['name']))
                 click_count += 1
 
+        (fg_col, bg_col) = self.clear_right
+        if 'side' in kwargs:
+            if kwargs['side'] == 'left':
+                (fg_col, bg_col) = self.clear_left
+            if kwargs['side'] == 'right':
+                (fg_col, bg_col) = self.clear_right
+
         if fg is not None:
             if fg is not False and fg[1] is not False:
                 if fg[1] <= 0xFFFFFF:
-                    text += '%{{F#ff{0:06x}}}'.format(fg[1])
+                    fg_col = '%{{F#ff{0:06x}}}'.format(fg[1])
                 else:
-                    text += '%{{F#{0:08x}}}'.format(fg[1])
+                    fg_col = '%{{F#{0:08x}}}'.format(fg[1])
 
         if bg is not None:
             if bg is not False and bg[1] is not False:
                 if bg[1] <= 0xFFFFFF:
-                    text += '%{{B#ff{0:06x}}}'.format(bg[1])
+                    bg_col = '%{{B#ff{0:06x}}}'.format(bg[1])
                 else:
-                    text += '%{{B#{0:08x}}}'.format(bg[1])
+                    bg_col = '%{{B#{0:08x}}}'.format(bg[1])
 
-        return text + escaped_contents + '%{F-B-}' + ('%{A}' * click_count)
+        reset = '%{F-B-}'
+        if 'side' in kwargs:
+            if kwargs['side'] == 'center':
+                if self.clear_left == ('%{F-}', '%{B-}'):
+                    self.clear_left = (fg_col, bg_col)
+                self.clear_right = (fg_col, bg_col)
+            if kwargs['side'] == 'left':
+                reset = self.clear_left[0] + self.clear_left[1]
+            if kwargs['side'] == 'right':
+                reset = self.clear_right[0] + self.clear_right[1]
+
+        text += fg_col + bg_col
+        return text + escaped_contents + reset + ('%{A}' * click_count)
 
     def render(self, width, *args, **kwargs):
         kw2 = kwargs
@@ -64,12 +86,14 @@ class LemonbarRenderer(Renderer):
             return super(LemonbarRenderer, self).render(width=width//2 if width else None,
                     *args, **kw2)
 
-        return '%{{r}}{1}%{{l}}{0}%{{c}}{2}'.format(
+        self.clear_left = ('%{F-}', '%{B-}')
+        self.clear_right = ('%{F-}', '%{B-}')
+        return '%{{c}}{0}%{{r}}{2}%{{l}}{1}'.format(
+            super(LemonbarRenderer, self).render(width=width if width else None, side='center',
+                *args, **kw2),
             super(LemonbarRenderer, self).render(width=width//2 if width else None, side='left',
                 *args, **kw2),
             super(LemonbarRenderer, self).render(width=width//2 if width else None, side='right',
-                *args, **kw2),
-            super(LemonbarRenderer, self).render(width=width//2 if width else None, side='center',
                 *args, **kw2)
         )
 

@@ -256,6 +256,11 @@ def scratchpad(pl, icons=SCRATCHPAD_ICONS):
         } for w in get_i3_connection().get_tree().descendents()
         if w.scratchpad_state != 'none']
 
+def get_top_layout(con):
+    while con.parent.type != 'workspace':
+        con = con.parent
+    return con.layout
+
 def active_window(pl, cutoff=100):
         '''
         Returns the title of the currently active window
@@ -263,13 +268,22 @@ def active_window(pl, cutoff=100):
             :param int cutoff:
                 Maximum title length. If the title is longer, the window_class is used instead.
 
-        Highlight groups used: ``active_window_title``.
+        Highlight groups used: ``active_window_title:stacked`` or ``active_window_title``.
         '''
 
+        # TODO implement shortening function
+
         focused = get_i3_connection().get_tree().find_focused()
+
+        if focused.name == focused.workspace().name:
+            return []
 
         cont = focused.name
         if len(cont) > cutoff:
             cont = focused.window_class
 
-        return [{'contents': cont, 'highlight_groups': ['active_window_title']}] if focused.name != focused.workspace().name else []
+        if get_top_layout(focused) in ['tabbed', 'stacked']:
+            return [{'contents': cont, 'highlight_groups': ['active_window_title:stacked', 'active_window_title']}]
+        else:
+            return [{'contents': cont, 'highlight_groups': ['active_window_title']}]
+
