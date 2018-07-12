@@ -256,11 +256,6 @@ def scratchpad(pl, icons=SCRATCHPAD_ICONS):
         } for w in get_i3_connection().get_tree().descendents()
         if w.scratchpad_state != 'none']
 
-def get_top_layout(con):
-    while con.parent.type != 'workspace':
-        con = con.parent
-    return con.layout
-
 def active_window(pl, cutoff=100):
         '''
         Returns the title of the currently active window
@@ -282,8 +277,13 @@ def active_window(pl, cutoff=100):
         if len(cont) > cutoff:
             cont = focused.window_class
 
-        if get_top_layout(focused) in ['tabbed', 'stacked']:
+        lay = focused.workspace().descendents()[0].layout
+
+        ws = focused.workspace()
+        if len(ws.leaves()) == 1:
+            return [{'contents': cont, 'highlight_groups': ['active_window_title:single', 'active_window_title']}]
+        if all([d.layout in ['tabbed', 'stacked'] for d in ws.descendents() if d.parent.type == 'workspace']):
             return [{'contents': cont, 'highlight_groups': ['active_window_title:stacked', 'active_window_title']}]
-        else:
-            return [{'contents': cont, 'highlight_groups': ['active_window_title']}]
+
+        return [{'contents': cont, 'highlight_groups': ['active_window_title']}]
 
