@@ -17,6 +17,7 @@ class LemonbarRenderer(Renderer):
 
     clear_left = ('%{F-}', '%{B-}')
     clear_right = ('%{F-}', '%{B-}')
+    center_is_wide = False
 
     @staticmethod
     def hlstyle(*args, **kwargs):
@@ -41,6 +42,9 @@ class LemonbarRenderer(Renderer):
                 click_count += 1
 
         (fg_col, bg_col) = self.clear_right
+        if not self.center_is_wide:
+            (fg_col, bg_col) = ('','')
+
         if 'side' in kwargs:
             if kwargs['side'] == 'left':
                 (fg_col, bg_col) = self.clear_left
@@ -64,6 +68,8 @@ class LemonbarRenderer(Renderer):
         reset = '%{F-B-}'
         if 'side' in kwargs:
             if kwargs['side'] == 'center':
+                if kwargs['width'] == 'auto':
+                    self.center_is_wide = True
                 if self.clear_left == ('%{F-}', '%{B-}'):
                     self.clear_left = (fg_col, bg_col)
                 self.clear_right = (fg_col, bg_col)
@@ -72,6 +78,8 @@ class LemonbarRenderer(Renderer):
             if kwargs['side'] == 'right':
                 reset = self.clear_right[0] + self.clear_right[1]
 
+        if not self.center_is_wide:
+            reset = '%{F-B-}'
         text += fg_col + bg_col
         return text + escaped_contents + reset + ('%{A}' * click_count)
 
@@ -88,6 +96,7 @@ class LemonbarRenderer(Renderer):
 
         self.clear_left = ('%{F-}', '%{B-}')
         self.clear_right = ('%{F-}', '%{B-}')
+        self.center_is_wide = False
         return '%{{c}}{0}%{{r}}{2}%{{l}}{1}'.format(
             super(LemonbarRenderer, self).render(width=width if width else None, side='center',
                 *args, **kw2),
