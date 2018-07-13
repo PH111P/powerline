@@ -256,7 +256,8 @@ def scratchpad(pl, icons=SCRATCHPAD_ICONS):
         } for w in get_i3_connection().get_tree().descendents()
         if w.scratchpad_state != 'none']
 
-def active_window(pl, cutoff=100):
+@requires_segment_info
+def active_window(pl, segment_info, cutoff=100):
         '''
         Returns the title of the currently active window
 
@@ -269,15 +270,21 @@ def active_window(pl, cutoff=100):
         # TODO implement shortening function
 
         focused = get_i3_connection().get_tree().find_focused()
+        ws = focused.workspace()
+
+        o_name = [w['output'] for w in get_i3_connection().get_workspaces() if w['name'] == ws.name][0]
+        output = segment_info.get('output')
 
         if focused.name == focused.workspace().name:
-            return []
+            return None
+
+        if o_name != output:
+            return None
 
         cont = focused.name
         if len(cont) > cutoff:
             cont = focused.window_class
 
-        ws = focused.workspace()
 
         if len([w for w in ws.leaves() if w.floating in ['user_off', 'auto_off']]) == 1:
             return [{
