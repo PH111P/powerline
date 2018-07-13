@@ -197,7 +197,7 @@ if __name__ == '__main__':
         import i3ipc
         conn = i3ipc.Connection()
         while True:
-            # conn.on('workspace::focus', lambda conn, evt: render())
+            conn.on('workspace', lambda conn, evt: render())
             conn.on('window', lambda conn, evt: render())
             conn.on('mode', lambda conn, evt: update(evt))
             render()

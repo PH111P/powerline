@@ -278,9 +278,10 @@ segments_spec = Spec().optional().list(segment_spec).copy
 segdict_spec = Spec(
     left=segments_spec().context_message('Error while loading segments from left side (key {key})'),
     right=segments_spec().context_message('Error while loading segments from right side (key {key})'),
+    center=segments_spec().context_message('Error while loading segments from center side (key {key})'),
 ).func(
-    (lambda value, *args: (True, True, not (('left' in value) or ('right' in value)))),
-    (lambda value: 'segments dictionary must contain either left, right or both keys')
+    (lambda value, *args: (True, True, not (('left' in value) or ('right' in value) or ('center' in value)))),
+    (lambda value: 'segments dictionary must contain either left, right, center or all keys')
 ).context_message('Error while loading segments (key {key})').copy
 divside_spec = Spec(
     hard=divider_spec(),
@@ -296,6 +297,7 @@ segment_data_value_spec = Spec(
 dividers_spec = Spec(
     left=divside_spec(),
     right=divside_spec(),
+    center=divside_spec(),
 ).copy
 spaces_spec = Spec().unsigned().cmp(
     'le', 2, (lambda value: 'Are you sure you need such a big ({0}) number of spaces?'.format(value))

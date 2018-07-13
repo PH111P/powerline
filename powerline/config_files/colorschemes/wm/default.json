@@ -158,6 +158,8 @@
         "mode":                 "level:2",
         "active_window_title":  "level:2",
         "active_window_title:stacked": "level:2",
+        "active_window_title:single": "level:2",
+        "active_window_title:stacked_unfocused": "level:3",
         "hostname": {
             "fg":               "level:1_fg",
             "bg":               "level:1_bg",

@@ -263,7 +263,7 @@ def active_window(pl, cutoff=100):
             :param int cutoff:
                 Maximum title length. If the title is longer, the window_class is used instead.
 
-        Highlight groups used: ``active_window_title:stacked`` or ``active_window_title``.
+        Highlight groups used: ``active_window_title:single`` or ``active_window_title:stacked_unfocused`` or ``active_window_title:stacked`` or ``active_window_title``.
         '''
 
         # TODO implement shortening function
@@ -277,13 +277,32 @@ def active_window(pl, cutoff=100):
         if len(cont) > cutoff:
             cont = focused.window_class
 
-        lay = focused.workspace().descendents()[0].layout
-
         ws = focused.workspace()
-        if len(ws.leaves()) == 1:
-            return [{'contents': cont, 'highlight_groups': ['active_window_title:single', 'active_window_title']}]
-        if all([d.layout in ['tabbed', 'stacked'] for d in ws.descendents() if d.parent.type == 'workspace']):
-            return [{'contents': cont, 'highlight_groups': ['active_window_title:stacked', 'active_window_title']}]
 
-        return [{'contents': cont, 'highlight_groups': ['active_window_title']}]
+        if len([w for w in ws.leaves() if w.floating in ['user_off', 'auto_off']]) == 1:
+            return [{
+                'contents': cont,
+                'highlight_groups': ['active_window_title:single', 'active_window_title']
+                }]
+
+        desc = [d.layout in ['tabbed', 'stacked'] for d in ws.descendents() if d.parent.type == 'workspace' and d.floating in ['user_off', 'auto_off'] and d.type != 'floating_con']
+
+        if len(desc) > 0 and all(desc) and focused.floating in ['user_on', 'auto_on']:
+            return [{
+                'contents': cont,
+                'highlight_groups': [
+                    'active_window_title:stacked_unfocused',
+                    'active_window_title'
+                    ]
+                }]
+        if len(desc) > 0 and all(desc):
+            return [{
+                'contents': cont,
+                'highlight_groups': ['active_window_title:stacked', 'active_window_title']
+                }]
+
+        return [{
+            'contents': cont,
+            'highlight_groups': ['active_window_title']
+            }]
 
