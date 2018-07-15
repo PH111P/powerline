@@ -71,22 +71,36 @@ To run the bar simply start the binding script:
 
 You can specify options to be passed to ``lemonbar`` after ``--``, like so:
 
-    powerline-lemonbar -- -a 40 -f 'DejaVu Sans Mono-11' -f 'PowerlineSymbols-12' -f 'FontAwesome-11'"
+    powerline-lemonbar --height 16 -- -a 40 -f 'DejaVu Sans Mono-11' -f 'PowerlineSymbols-12' -f 'FontAwesome-11'"
+
+Note that, if you don't specify any options, ``powerline-lemonbar`` will default to the above.
 
 
-To run with i3, simply ``exec`` this in the i3 config file and set the ``--i3`` switch:
+To run with i3, simply ``exec`` this in the i3 config file:
 
-    exec powerline-lemonbar --i3
-
-Further, increase the number of clickable areas to some apporpriate number (default is 10):
-
-    exec powerline-lemonbar --i3 -- -a 40
+    exec powerline-lemonbar
 
 Running the binding in i3-mode will require `i3ipc <https://github.com/acrisci/i3ipc-python>`_
 (or the outdated `i3-py <https://github.com/ziberna/i3-py>`_).
 
 See the `lemonbar documentation <https://github.com/LemonBoy/bar>`_ for more
 information and options.
+
+To enhance the global menu, add the following to your ``.bashrc``:
+
+    if [ -n "$GTK_MODULES" ]; then
+        GTK_MODULES="${GTK_MODULES}:appmenu-gtk-module"
+    else
+        GTK_MODULES="appmenu-gtk-module"
+    fi
+
+    if [ -z "$UBUNTU_MENUPROXY" ]; then
+        UBUNTU_MENUPROXY=1
+    fi
+
+    export GTK_MODULES
+    export UBUNTU_MENUPROXY
+
 =======
 
 All ``powerline-lemonbar`` arguments:

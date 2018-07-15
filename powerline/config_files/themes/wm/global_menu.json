@@ -1,0 +1,244 @@
+{
+    "segments": {
+        "center": [
+            {
+                "function":             "powerline.segments.i3wm.active_window",
+                "args": {
+                    "global_menu":      true
+                }
+            }
+        ],
+        "right": [
+            {
+                "function":             "powerline.segments.common.players.gpmdp",
+                "name":                 "gpmdp",
+                "args": {
+                    "format":           "{state_symbol}{artist} — {title} ({album})",
+                    "short_format":     "{state_symbol}{short_title}",
+                    "state_symbols": {
+                        "fallback":         "♫",
+                        "play":             "▶ ",
+                        "pause":            "▮▮ ",
+                        "stop":             " ",
+                        "repeat":           "↺ ",
+                        "loop":             "↺1 ",
+                        "shuffle":          " ",
+                        "next":             "",
+                        "previous":         ""
+                    },
+                    "progress_args": {
+                        "full":             "⋯",
+                        "empty":            "·",
+                        "steps":            5
+                    },
+                    "auto_disable":     true,
+                    "show_controls":    true,
+                    "auto_shrink":      true
+                }
+            },
+            {
+                "function":             "powerline.segments.common.players.dbus_player",
+                "name":                 "vlc",
+                "args": {
+                    "format":           "{state_symbol}{artist} — {title} ({album})",
+                    "short_format":     "{state_symbol}{short_title}",
+                    "auto_disable":     true,
+                    "show_controls":    true,
+                    "auto_shrink":      true,
+                    "channel_name":     "players.vlc",
+                    "state_symbols": {
+                        "fallback":         "♫",
+                        "play":             "▶ ",
+                        "pause":            "▮▮ ",
+                        "stop":             " ",
+                        "repeat":           "↺ ",
+                        "loop":             "↺1 ",
+                        "shuffle":          " ",
+                        "next":             "",
+                        "previous":         ""
+                    },
+                    "player_name":          "vlc",
+                    "bus_name":             "org.mpris.MediaPlayer2.vlc",
+                    "player_path":          "/org/mpris/MediaPlayer2",
+                    "iface_prop":           "org.freedesktop.DBus.Properties",
+                    "iface_player":         "org.mpris.MediaPlayer2.Player"
+                }
+            },
+            {
+                "function":             "powerline.segments.common.volume.vol",
+                "args": {
+                    "format":           " {volume:3.0%}",
+                    "format_muted":     null
+                },
+                "priority":             40
+            },
+            {
+                "function":             "powerline.segments.common.net.wireless",
+                "args": {
+                    "format":           " {quality:3.0%} at {essid}",
+                    "short_format":     " {quality:3.0%}",
+                    "auto_shrink":      true
+                },
+                "priority":             40
+            },
+            {
+                "function":             "powerline.segments.common.bat.battery",
+                "args": {
+                    "format":           "",
+                    "original_health":  true
+                }
+            },
+            {
+                "draw_soft_divider":    false,
+                "function":             "powerline.segments.common.bat.battery",
+                "args": {
+                    "name":             "icon",
+                    "original_health":  true,
+                    "icons": {
+                        "0":            " ",
+                        "25":           " ",
+                        "50":           " ",
+                        "75":           " ",
+                        "100":          " ",
+                        "full":         " ",
+                        "online":       " "
+                    }
+                }
+            },
+            {
+                "draw_soft_divider":    false,
+                "function":             "powerline.segments.common.bat.battery",
+                "args": {
+                    "format":           "{capacity:3.0%}",
+                    "original_health":  true
+                }
+            },
+            {
+                "draw_soft_divider":    true,
+                "function":             "powerline.segments.common.bat.battery",
+                "args": {
+                    "name":             "rem_time",
+                    "original_health":  true
+                }
+            },
+            {
+                "function":             "powerline.segments.common.time.date",
+                "args": {
+                    "format":           "%m-%d"
+                },
+                "priority":             10
+            },
+            {
+                "function":             "powerline.segments.common.time.date",
+                "name":                 "date",
+                "args": {
+                    "format":           "%H:%M",
+                    "istime":           true
+                },
+                "priority":             1
+            },
+            {
+                "function":             "powerline.segments.common.generic.click_status",
+                "args": {
+                    "format_off":       ""
+                }
+
+            }
+        ],
+        "left": [
+            {
+                "function":             "powerline.segments.common.generic.generic_growable",
+                "name":                 "power",
+                "args": {
+                    "channel_name":     "power",
+                    "segments_short": [
+                        [ "", ["power"] ]
+                    ],
+                    "segments_long": [
+                        [ "", ["power"] ],
+                        [ "", ["power:logout", "power"] ],
+                        [ "", ["power:poweroff", "power"] ],
+                        [ "", ["power:reboot", "power"] ]
+                    ]
+                }
+            },
+            {
+                "function":             "powerline.segments.common.generic.generic_growable",
+                "name":                 "launcher",
+                "args": {
+                    "channel_name":     "launcher",
+                    "segments_short": [
+                        [ "", ["launcher"] ]
+                    ],
+                    "segments_long": [
+                        [ "", ["launcher"] ],
+                        [ "", ["launcher:terminal", "launcher"] ],
+                        [ "", ["launcher:files", "launcher"] ],
+                        [ "", ["launcher:browser", "launcher"] ]
+                    ]
+                }
+            },
+            {
+                "function":             "powerline.segments.randr.output",
+                "args": {
+                    "status_icons": {
+                        "on":           "",
+                        "off":          ""
+                    },
+                    "mirror_icons": {
+                        "extend":       "",
+                        "mirror":       ""
+                    },
+                    "auto_update":      true
+                }
+            },
+            {
+                "function":             "powerline.segments.common.env.clip",
+                "priority":             80
+            },
+            {
+                "function":             "powerline.segments.i3wm.mode",
+                "args": {
+                    "names": {
+                        "default":      null,
+                        "resize":       "Resize: n|d width, t|r height (10px), Arrow keys (5px)",
+                        "gaps":         "Gaps: (o) outer, (i) inner",
+                        "gaps-o":       "Outer Gaps: p|m|0 (local), Shift + p|m|0 (global)",
+                        "gaps-i":       "Inner Gaps: p|m|0 (local), Shift + p|m|0 (global)"
+                    }
+                },
+                "priority":             60
+            },
+            {
+                "function":             "powerline.segments.i3wm.workspaces",
+                "exclude_modes":        [ "default" ],
+                "draw_inner_divider":   true,
+                "draw_soft_divider":    true,
+                "args": {
+                    "only_show":        [ "focused", "visible" ],
+                    "separator":        " ",
+                    "show_multiple_icons": false,
+                    "show_dummy_workspace": true,
+                    "show_output":      true
+                },
+                "priority":             30
+            },
+            {
+                "function":             "powerline.segments.i3wm.workspaces",
+                "include_modes":        [ "default" ],
+                "draw_inner_divider":   true,
+                "draw_soft_divider":    true,
+                "args": {
+                    "separator":        " ",
+                    "show_dummy_workspace": true,
+                    "show_output":      true
+                },
+                "priority":             30
+            },
+            {
+                "function":             "powerline.segments.i3wm.scratchpad",
+                "priority":             30
+            }
+        ]
+    }
+}

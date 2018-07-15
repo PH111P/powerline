@@ -478,16 +478,29 @@ thr = None
 @requires_segment_info
 def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=20, items_per_page=5):
         '''
-        Returns the title of the currently active window
+        Returns the title of the currently active window.
+        To enhance the global menu support, add the following to your ``.bashrc``:
+            if [ -n "$GTK_MODULES" ]; then
+                GTK_MODULES="${GTK_MODULES}:appmenu-gtk-module"
+            else
+                GTK_MODULES="appmenu-gtk-module"
+            fi
 
-            :param int cutoff:
-                Maximum title length. If the title is longer, the window_class is used instead.
-            :param boolean global_menu:
-                Activate global menu support (experimental)
-            :param int item_length:
-                Maximum length of a menu item.
-            :param int items_per_page:
-                Miximum number of menu items per page.
+            if [ -z "$UBUNTU_MENUPROXY" ]; then
+                UBUNTU_MENUPROXY=1
+            fi
+
+            export GTK_MODULES
+            export UBUNTU_MENUPROXY
+
+        :param int cutoff:
+            Maximum title length. If the title is longer, the window_class is used instead.
+        :param boolean global_menu:
+            Activate global menu support (experimental)
+        :param int item_length:
+            Maximum length of a menu item.
+        :param int items_per_page:
+            Maximum number of menu items per page.
 
         Highlight groups used: ``active_window_title:single`` or ``active_window_title:stacked_unfocused`` or ``active_window_title:stacked`` or ``active_window_title``.
         '''
