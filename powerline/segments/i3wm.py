@@ -305,6 +305,7 @@ def compute_appmenu_menu(window_id):
     except dbus.exceptions.DBusException:
         return None
 
+gtk_click = None
 def compute_gtk_menu(window_id):
     try:
         from Xlib import display, protocol, X
@@ -344,6 +345,8 @@ def compute_gtk_menu(window_id):
             usedLayers.append(i)
             return gtk_menu_i.Start([i])
 
+        no_data = dict()
+        no_data["not used"] = "not used"
         def explore(parent):
             res = {}
             for node in parent:
@@ -364,22 +367,7 @@ def compute_gtk_menu(window_id):
                                 target = element['target']
                             if not isinstance(target, list):
                                 target = [target]
-
-                            def click():
-                                for action_path in gtk_actions:
-                                    if action_path == None:
-                                        continue
-                                    try:
-                                        ao = session_bus.get_object(gtk_bus_name, action_path)
-                                        ai = dbus.Interface(ao, dbus_interface='org.gtk.Actions')
-                                        no_data = dict()
-                                        no_data["not used"] = "not used"
-                                        ai.Activate(menu_action, target, no_data)
-                                    except Exception as e:
-                                        print('_'*20)
-                                        print(action_path)
-                                        print(str(e))
-                            res.update({ element['label'].replace('_', ''): click })
+                            res.update({ element['label'].replace('_', ''): (menu_action, target) })
                     else:
                         if ':submenu' in element or ':section' in element:
                             if ':section' in element:
@@ -392,6 +380,20 @@ def compute_gtk_menu(window_id):
         menuKeys = explore(Start(0))
         gtk_menu_i.End(usedLayers)
 
+        def click(menu_action, target):
+            for action_path in gtk_actions:
+                if action_path == None:
+                    continue
+                try:
+                    ao = session_bus.get_object(gtk_bus_name, action_path)
+                    ai = dbus.Interface(ao, dbus_interface='org.gtk.Actions')
+                    ai.Activate(menu_action, target, no_data)
+                except Exception as e:
+                    print('_'*20)
+                    print(action_path)
+                    print(str(e))
+        global gtk_click
+        gtk_click = click
         return menuKeys
     except:
         return None
@@ -521,7 +523,10 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                     current_layer = current_layer[click_area]
                     start = 0
                 else:
-                    current_layer[click_area]()
+                    if isinstance(current_layer[click_area], tuple):
+                        gtk_click(current_layer[click_area][0], current_layer[click_area][1])
+                    else:
+                        current_layer[click_area]()
                     current_layer = menu_items
                     start = 0
 
