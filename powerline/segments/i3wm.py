@@ -422,15 +422,61 @@ def compute_highlight(ws, window):
 
     return highlight_groups
 
+
+try:
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk
+    from dbus.mainloop.glib import DBusGMainLoop
+    import dbus
+    import dbus.service
+    class HudMenuService(dbus.service.Object):
+        def __init__(self):
+            bus_name = dbus.service.BusName('com.canonical.AppMenu.Registrar', bus = dbus.SessionBus())
+            dbus.service.Object.__init__(self, bus_name, '/com/canonical/AppMenu/Registrar')
+            self.window_dict = dict()
+
+        @dbus.service.method('com.canonical.AppMenu.Registrar', in_signature='uo', sender_keyword='sender')
+        def RegisterWindow(self, windowId, menuObjectPath, sender):
+            self.window_dict[windowId] = (sender, menuObjectPath)
+
+        @dbus.service.method('com.canonical.AppMenu.Registrar', in_signature='u', out_signature='so')
+        def GetMenuForWindow(self, windowId):
+            if windowId in self.window_dict:
+                sender, menuObjectPath = self.window_dict[windowId]
+            return [dbus.String(sender), dbus.ObjectPath(menuObjectPath)]
+
+        @dbus.service.method('com.canonical.AppMenu.Registrar')
+        def Q(self):
+            Gtk.main_quit()
+except ImportError:
+    class HudMenuService():
+        pass
+
+service_running = False
+def start_service():
+    global service_running
+    try:
+        DBusGMainLoop(set_as_default=True)
+        myservice = HudMenuService()
+        service_running = True
+        Gtk.main()
+        service_running = False
+    except:
+        print('Starting the service failed')
+
+
 active_window_state = 0
 last_active_window = None
 last_oneshot = 0
 menu_items = None
 current_layer = None
 traverse_path = []
+start = 0
+thr = None
 
 @requires_segment_info
-def active_window(pl, segment_info, cutoff=100, global_menu=False):
+def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=20, items_per_page=5):
         '''
         Returns the title of the currently active window
 
@@ -438,13 +484,15 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False):
                 Maximum title length. If the title is longer, the window_class is used instead.
             :param boolean global_menu:
                 Activate global menu support (experimental)
+            :param int item_length:
+                Maximum length of a menu item.
+            :param int items_per_page:
+                Miximum number of menu items per page.
 
         Highlight groups used: ``active_window_title:single`` or ``active_window_title:stacked_unfocused`` or ``active_window_title:stacked`` or ``active_window_title``.
         '''
 
         # TODO implement shortening function
-        # TODO implement Scrolling Function for menu items
-        # TODO integrate service
 
         global active_window_state
         global last_active_window
@@ -452,6 +500,9 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False):
         global menu_items
         global current_layer
         global traverse_path
+        global start
+        global service_running
+        global thr
 
         channel_name = 'i3wm.active_window'
 
@@ -468,8 +519,16 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False):
         if last_active_window != focused.window:
             last_active_window = None
             active_window_state = 0
+            start = 0
             menu_items = None
             current_layer = None
+
+        if not service_running and global_menu:
+            from threading import Thread
+            thr = Thread(target=start_service)
+            thr.daemon = True
+            thr.start()
+
 
         if focused.name == focused.workspace().name:
             return None
@@ -493,17 +552,24 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False):
                 current_layer = menu_items
                 active_window_state = 1
                 traverse_path = []
+            elif click_area == '$<':
+                start = max(0, start - items_per_page)
+            elif click_area == '$>':
+                start = min(len(current_layer) - items_per_page + 1, start + items_per_page)
             elif click_area != '':
                 traverse_path += [click_area]
                 if isinstance(current_layer[click_area], dict):
                     current_layer = current_layer[click_area]
+                    start = 0
                 else:
                     current_layer[click_area]()
                     current_layer = menu_items
+                    start = 0
 
         if channel_value and not isinstance(channel_value, str) and len(channel_value) == 2 and channel_value[0] == 'menu_off' and channel_value[1] > last_oneshot:
             last_oneshot = channel_value[1]
             active_window_state = 0
+            start = 0
             traverse_path = []
 
         if current_layer and active_window_state:
@@ -512,21 +578,27 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False):
 
         highlight = compute_highlight(ws, focused)
         res = []
+
+        show_prev = start > 0 and active_window_state > 0
+        show_next = current_layer and active_window_state > 0 and start < len(current_layer) - items_per_page + 1
+
         if global_menu:
             res += [{
-                'contents': '',
+                'contents': '< |' if show_prev else '',
                 'highlight_groups': highlight,
                 'payload_name': channel_name,
                 'draw_soft_divider': False,
                 'draw_inner_divider': False,
                 'width': 'auto',
                 'align': 'r',
-                'click_values': { 'segment': '' }
+                'click_values': { 'segment': '$<' }
             }]
 
-        for i in range(0, len(cont)):
+        for i in range(start, min(len(cont), start + items_per_page)):
             res += [{
-                'contents': (' ' if i > 0 else '') + cont[i] + (' |' if i + 1 < len(cont) else ''),
+                'contents': (' ' if i > 0 or show_prev else '') + (cont[i][:item_length] \
+                        if cont[i] != main_cont else cont[i]) \
+                        + (' |' if i + 1 < len(cont) or show_next else ''),
                 'highlight_groups': highlight,
                 'payload_name': channel_name,
                 'draw_inner_divider': False,
@@ -536,12 +608,12 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False):
 
         if global_menu:
             res += [{
-                'contents': '',
+                'contents': ' >' if show_next else '',
                 'highlight_groups': highlight,
                 'payload_name': channel_name,
                 'draw_soft_divider': False,
                 'width': 'auto',
-                'click_values': { 'segment': '' }
+                'click_values': { 'segment': '$>' }
             }]
         return res
 
