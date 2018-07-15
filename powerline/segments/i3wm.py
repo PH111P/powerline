@@ -5,7 +5,6 @@ import re
 from powerline.theme import requires_segment_info
 from powerline.bindings.wm import get_i3_connection
 
-
 WORKSPACE_REGEX = re.compile(r'^[0-9]+: ?')
 
 
@@ -256,18 +255,209 @@ def scratchpad(pl, icons=SCRATCHPAD_ICONS):
         } for w in get_i3_connection().get_tree().descendents()
         if w.scratchpad_state != 'none']
 
+
+
+# Global menu support heavily influenced by https://github.com/jamcnaughton/hud-menu
+def compute_appmenu_menu(window_id):
+    import dbus, time
+    try:
+        sbus = dbus.SessionBus()
+        areg = sbus.get_object('com.canonical.AppMenu.Registrar', '/com/canonical/AppMenu/Registrar')
+        aregi = dbus.Interface(areg, 'com.canonical.AppMenu.Registrar')
+
+        dbmenu, dbmenu_path = aregi.GetMenuForWindow(window_id)
+
+        dbo = sbus.get_object(dbmenu, dbmenu_path)
+        dboi = dbus.Interface(dbo, 'com.canonical.dbusmenu')
+        db_items = dboi.GetLayout(0, -1, ["label"])
+
+        def explore(item):
+            item_id = item[0]
+            item_props = item[1]
+
+            if 'children-display' in item_props:
+                dboi.AboutToShow(item_id)
+                dboi.Event(item_id, "opened", "not used", dbus.UInt32(time.time())) #fix firefox
+            try:
+                item = dboi.GetLayout(item_id, 1, ["label", "children-display"])[1]
+            except:
+                return { }
+
+            item_children = item[2]
+
+            name = 'Root'
+            if 'label' in item_props:
+                name = item_props['label'].replace('_', '')
+
+            if len(item_children) == 0:
+                return { name: lambda: dboi.Event(item_id, 'clicked', 0, 0) }
+            else:
+                res = {}
+                for child in item_children:
+                    res.update(explore(child))
+                return { name : { r:res[r] for r in res if r != 'Root' } }
+
+        itm = explore(db_items[1])
+        if 'Root' in itm:
+            return itm['Root']
+        else:
+            return itm
+    except dbus.exceptions.DBusException:
+        return None
+
+def compute_gtk_menu(window_id):
+    try:
+        from Xlib import display, protocol, X
+        import dbus
+
+        dis = display.Display()
+        win = dis.create_resource_object('window', window_id)
+
+        def get_prop(prop):
+            atom = win.get_full_property(dis.get_atom(prop), X.AnyPropertyType)
+            if atom:
+                return atom.value
+
+        gtk_bus_name = get_prop('_GTK_UNIQUE_BUS_NAME')
+        gtk_menu = get_prop('_GTK_MENUBAR_OBJECT_PATH')
+        gtk_app = get_prop('_GTK_APPLICATION_OBJECT_PATH')
+        gtk_win = get_prop('_GTK_WINDOW_OBJECT_PATH')
+        gtk_unity = get_prop('_UNITY_OBJECT_PATH')
+        gtk_bus_name, gtk_menu, gtk_app, gtk_win, gtk_unity = \
+                [i.decode("utf8") if isinstance(i, bytes) \
+                else i for i in [gtk_bus_name, gtk_menu, gtk_app, gtk_win, gtk_unity]]
+
+        gtk_actions = list(set([gtk_win, gtk_menu, gtk_app, gtk_unity]))
+
+        if not gtk_bus_name or not gtk_menu:
+            return None
+
+        session_bus = dbus.SessionBus()
+        gtk_menu_o = session_bus.get_object(gtk_bus_name, gtk_menu)
+        gtk_menu_i = dbus.Interface(gtk_menu_o, dbus_interface='org.gtk.Menus')
+
+        gtk_menubar_action_dict = dict()
+        gtk_menubar_action_target_dict = dict()
+
+        usedLayers = []
+        def Start(i):
+            usedLayers.append(i)
+            return gtk_menu_i.Start([i])
+
+        def explore(parent):
+            res = {}
+            for node in parent:
+                content = node[2]
+                for element in content:
+                    if 'label' in element:
+                        if ':section' in element or ':submenu' in element:
+                            if ':submenu' in element:
+                                res.update({ element['label'].replace('_', ''):
+                                    explore(Start(element[':submenu'][0])) })
+                            if ':section' in element:
+                                if element[':section'][0] != node[0]:
+                                    res.update(explore(Start(element[':submenu'][0])))
+                        elif 'action' in element:
+                            menu_action = str(element['action']).split(".",1)[1]
+                            target = []
+                            if 'target' in element:
+                                target = element['target']
+                            if not isinstance(target, list):
+                                target = [target]
+
+                            def click():
+                                for action_path in gtk_actions:
+                                    if action_path == None:
+                                        continue
+                                    try:
+                                        ao = session_bus.get_object(gtk_bus_name, action_path)
+                                        ai = dbus.Interface(ao, dbus_interface='org.gtk.Actions')
+                                        no_data = dict()
+                                        no_data["not used"] = "not used"
+                                        ai.Activate(menu_action, target, no_data)
+                                    except Exception as e:
+                                        print('_'*20)
+                                        print(action_path)
+                                        print(str(e))
+                            res.update({ element['label'].replace('_', ''): click })
+                    else:
+                        if ':submenu' in element or ':section' in element:
+                            if ':section' in element:
+                                if element[':section'][0] != node[0]:
+                                    res.update(explore(Start(element[':section'][0])))
+                            if ':submenu' in element:
+                                res.update(explore(Start(element[':submenu'][0])))
+            return res
+
+        menuKeys = explore(Start(0))
+        gtk_menu_i.End(usedLayers)
+
+        return menuKeys
+    except:
+        return None
+
+
+def compute_menu(window_id):
+    amen = compute_gtk_menu(window_id)
+    if amen == None:
+        amen = compute_appmenu_menu(window_id)
+    return amen
+
+def compute_highlight(ws, window):
+    highlight_groups = []
+    desc = [d.layout in ['tabbed', 'stacked'] for d in ws.descendents() if d.parent.type == 'workspace' and d.floating in ['user_off', 'auto_off'] and d.type != 'floating_con']
+
+    if len([w for w in ws.leaves() if w.floating in ['user_off', 'auto_off']]) == 1:
+        highlight_groups = ['active_window_title:single', 'active_window_title']
+    elif len(desc) > 0 and all(desc) and window.floating in ['user_on', 'auto_on']:
+        highlight_groups = ['active_window_title:stacked_unfocused',
+                'active_window_title']
+    elif len(desc) > 0 and all(desc) and not window.focused:
+        highlight_groups = ['active_window_title:stacked_unfocused',
+                'active_window_title']
+    elif len(desc) > 0 and all(desc):
+        highlight_groups = ['active_window_title:stacked', 'active_window_title']
+    else:
+        highlight_groups = ['active_window_title']
+
+    return highlight_groups
+
+active_window_state = 0
+last_active_window = None
+last_oneshot = 0
+menu_items = None
+current_layer = None
+traverse_path = []
+
 @requires_segment_info
-def active_window(pl, segment_info, cutoff=100):
+def active_window(pl, segment_info, cutoff=100, global_menu=False):
         '''
         Returns the title of the currently active window
 
             :param int cutoff:
                 Maximum title length. If the title is longer, the window_class is used instead.
+            :param boolean global_menu:
+                Activate global menu support (experimental)
 
         Highlight groups used: ``active_window_title:single`` or ``active_window_title:stacked_unfocused`` or ``active_window_title:stacked`` or ``active_window_title``.
         '''
 
         # TODO implement shortening function
+        # TODO implement Scrolling Function for menu items
+        # TODO integrate service
+
+        global active_window_state
+        global last_active_window
+        global last_oneshot
+        global menu_items
+        global current_layer
+        global traverse_path
+
+        channel_name = 'i3wm.active_window'
+
+        channel_value = None
+        if global_menu and 'payloads' in segment_info and channel_name in segment_info['payloads']:
+            channel_value = segment_info['payloads'][channel_name]
 
         focused = get_i3_connection().get_tree().find_focused()
         ws = focused.workspace()
@@ -275,41 +465,83 @@ def active_window(pl, segment_info, cutoff=100):
         o_name = [w['output'] for w in get_i3_connection().get_workspaces() if w['name'] == ws.name][0]
         output = segment_info.get('output')
 
+        if last_active_window != focused.window:
+            last_active_window = None
+            active_window_state = 0
+            menu_items = None
+            current_layer = None
+
         if focused.name == focused.workspace().name:
             return None
 
         if o_name != output:
+            # TODO Think about multi-monitor stuff
             return None
 
-        cont = focused.name
-        if len(cont) > cutoff:
-            cont = focused.window_class
+        cont = [focused.name]
+        if cutoff and len(cont) > cutoff:
+            cont = [focused.window_class]
 
+        main_cont = cont[0]
 
-        if len([w for w in ws.leaves() if w.floating in ['user_off', 'auto_off']]) == 1:
-            return [{
-                'contents': cont,
-                'highlight_groups': ['active_window_title:single', 'active_window_title']
-                }]
+        if channel_value and not isinstance(channel_value, str) and len(channel_value) == 2 and channel_value[0].startswith('menu_click') and channel_value[1] > last_oneshot:
+            last_oneshot = channel_value[1]
+            click_area = channel_value[0].split(':')[1]
+            if active_window_state == 0:
+                last_active_window = focused.window
+                menu_items = compute_menu(focused.window)
+                current_layer = menu_items
+                active_window_state = 1
+                traverse_path = []
+            elif click_area != '':
+                traverse_path += [click_area]
+                if isinstance(current_layer[click_area], dict):
+                    current_layer = current_layer[click_area]
+                else:
+                    current_layer[click_area]()
+                    current_layer = menu_items
 
-        desc = [d.layout in ['tabbed', 'stacked'] for d in ws.descendents() if d.parent.type == 'workspace' and d.floating in ['user_off', 'auto_off'] and d.type != 'floating_con']
+        if channel_value and not isinstance(channel_value, str) and len(channel_value) == 2 and channel_value[0] == 'menu_off' and channel_value[1] > last_oneshot:
+            last_oneshot = channel_value[1]
+            active_window_state = 0
+            traverse_path = []
 
-        if len(desc) > 0 and all(desc) and focused.floating in ['user_on', 'auto_on']:
-            return [{
-                'contents': cont,
-                'highlight_groups': [
-                    'active_window_title:stacked_unfocused',
-                    'active_window_title'
-                    ]
-                }]
-        if len(desc) > 0 and all(desc):
-            return [{
-                'contents': cont,
-                'highlight_groups': ['active_window_title:stacked', 'active_window_title']
-                }]
+        if current_layer and active_window_state:
+            cont = list(current_layer.keys())
+        #print(f'{menu_items} {cont} {active_window_state}')
 
-        return [{
-            'contents': cont,
-            'highlight_groups': ['active_window_title']
+        highlight = compute_highlight(ws, focused)
+        res = []
+        if global_menu:
+            res += [{
+                'contents': '',
+                'highlight_groups': highlight,
+                'payload_name': channel_name,
+                'draw_soft_divider': False,
+                'draw_inner_divider': False,
+                'width': 'auto',
+                'align': 'r',
+                'click_values': { 'segment': '' }
             }]
+
+        for i in range(0, len(cont)):
+            res += [{
+                'contents': (' ' if i > 0 else '') + cont[i] + (' |' if i + 1 < len(cont) else ''),
+                'highlight_groups': highlight,
+                'payload_name': channel_name,
+                'draw_inner_divider': False,
+                'draw_soft_divider': False,
+                'click_values': { 'segment': cont[i] if cont[i] != main_cont else '' }
+                }]
+
+        if global_menu:
+            res += [{
+                'contents': '',
+                'highlight_groups': highlight,
+                'payload_name': channel_name,
+                'draw_soft_divider': False,
+                'width': 'auto',
+                'click_values': { 'segment': '' }
+            }]
+        return res
 
