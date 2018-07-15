@@ -101,6 +101,12 @@ To enhance the global menu, add the following to your ``.bashrc``:
     export GTK_MODULES
     export UBUNTU_MENUPROXY
 
+Further, add the following line to your i3 config
+
+    exec --no-startup-id powerline-globmenu
+
+
+
 =======
 
 All ``powerline-lemonbar`` arguments:

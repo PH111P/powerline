@@ -422,50 +422,6 @@ def compute_highlight(ws, window):
 
     return highlight_groups
 
-
-try:
-    import gi
-    gi.require_version('Gtk', '3.0')
-    from gi.repository import Gtk
-    from dbus.mainloop.glib import DBusGMainLoop
-    import dbus
-    import dbus.service
-    class HudMenuService(dbus.service.Object):
-        def __init__(self):
-            bus_name = dbus.service.BusName('com.canonical.AppMenu.Registrar', bus = dbus.SessionBus())
-            dbus.service.Object.__init__(self, bus_name, '/com/canonical/AppMenu/Registrar')
-            self.window_dict = dict()
-
-        @dbus.service.method('com.canonical.AppMenu.Registrar', in_signature='uo', sender_keyword='sender')
-        def RegisterWindow(self, windowId, menuObjectPath, sender):
-            self.window_dict[windowId] = (sender, menuObjectPath)
-
-        @dbus.service.method('com.canonical.AppMenu.Registrar', in_signature='u', out_signature='so')
-        def GetMenuForWindow(self, windowId):
-            if windowId in self.window_dict:
-                sender, menuObjectPath = self.window_dict[windowId]
-            return [dbus.String(sender), dbus.ObjectPath(menuObjectPath)]
-
-        @dbus.service.method('com.canonical.AppMenu.Registrar')
-        def Q(self):
-            Gtk.main_quit()
-except ImportError:
-    class HudMenuService():
-        pass
-
-service_running = False
-def start_service():
-    global service_running
-    try:
-        DBusGMainLoop(set_as_default=True)
-        myservice = HudMenuService()
-        service_running = True
-        Gtk.main()
-        service_running = False
-    except:
-        print('Starting the service failed')
-
-
 active_window_state = 0
 last_active_window = None
 last_oneshot = 0
@@ -473,7 +429,6 @@ menu_items = None
 current_layer = None
 traverse_path = []
 start = 0
-thr = None
 
 @requires_segment_info
 def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=20, items_per_page=5):
@@ -514,8 +469,6 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
         global current_layer
         global traverse_path
         global start
-        global service_running
-        global thr
 
         channel_name = 'i3wm.active_window'
 
@@ -535,13 +488,6 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
             start = 0
             menu_items = None
             current_layer = None
-
-        if not service_running and global_menu:
-            from threading import Thread
-            thr = Thread(target=start_service)
-            thr.daemon = True
-            thr.start()
-
 
         if focused.name == focused.workspace().name:
             return None
