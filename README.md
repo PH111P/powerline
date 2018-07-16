@@ -29,20 +29,23 @@ the features that were added in this fork.
 * Merged and improved [ZyX-I's revinfo branch](https://github.com/ZyX-I/powerline/tree/revinfo), replacing the VCS segment.
 * Added an auto-rotate segment.
 * Click support (see documentation below)
-* Simplified gradients: specify start and end colors (and optionally intermediate colors) as hex values, values inbetween colors (and corresponding cterm colors) will be generated automatically.
+* Simplified gradients: specify start and end colors (and optionally intermediate colors) as hex values, values in-between colors (and corresponding cterm colors) will be generated automatically.
+* Support for global menus
 
 Changes requiring documentation
 -------------------------------
 
-This fork extends the files used by the powerline to configure the color scheme in varios ways:
+This fork extends the files used by the powerline to configure the color scheme in various ways:
 * `attrs` is now optional, i.e., it can be omitted
 * `click` is a new optional field to configure the behavior of a highlight group on a click.
- Where `click` is a drictionary mapping the values `left`, `right`, `middle`, `scroll up` or `scroll down`
+ Where `click` is a dictionary mapping the values `left`, `right`, `middle`, `scroll up` or `scroll down`
  to a string to be executed by a shell. (Currently only the lemonbar binding supports this. You can disable clicks via the `no_clicks` flag.)
  Further, the string to be executed may contain a placeholder for the segment's content. This placeholder uses python's
  `string.format` syntax. You may also pass some special commands to the bar/to specific segments directly via special bar commands starting with `#bar;`.
-* You may pass an `alt_output` flag to `powerline-lemonbar`, then it uses the `-O` flag for setting the output for the bar. 
+* You may pass an `alt_output` flag to `powerline-lemonbar`, then it uses the `-O` flag for setting the output for the bar.
 * The colors in `fg` and `bg` can be specified directly through hex values using `0x` as a prefix (`0xRRGGBB` or `0xAARRGGBB`). These hex values will be translated back into xterm color indices whenever possible.
+* The bar has an additional `center` region where segments may be placed. The center region uses pipes (`|`) as separators per default.
+* The `active_window_title` segment includes optional functionality for global menus. Consult the section below for details on the required configuration.
 
 Examples
 --------
@@ -84,6 +87,14 @@ Optionally, the following packages should be installed if you want to use the co
 * python-google-api-python-client (Google Calendar segment; this segment also requires a valid dev key to work)
 * python-psutil (cpu load segment)
 * python-pygit2 (better performance of the vcs segment)
+* appmenu-qt4 (global menu support in qt4 apps)
+* appmenu-qt5 (global menu support in qt5 apps)
+* appmenu-gtk-module-git (global menu support in gtk apps)
+* libdbusmenu-glib (global menu support for chrome/chromium)
+* libdbusmenu-gtk3 (global menu support for chrome/chromium)
+* libdbusmenu-gtk2 (global menu support for chrome/chromium)
+* pygtk (global menu support)
+* python-gobject (global menu support)
 
 
 To actually _use_ the powerline in your i3 setup, replace the following lines in your `.config/i3/config`
@@ -99,6 +110,24 @@ with this line (you may want to adjust the height and the font size):
 Note that ``Font Awesome`` is used to display some icons, thus changing it to some other font will likely break these icons.
 
 **Attention: `-f 'PowerlineSymbols-12'` is required if you have the non-git version of the powerline-fonts package installed. If you have the git version of that package installed (from the AUR), use `-f 'DejaVu Sans Mono for Powerline-11'` instead.**
+
+To use global menus in the bar, also start the `powerline-globmenu` script at startup.
+Further, add the following to your `.profile`:
+
+    if [ -n "$GTK_MODULES" ]; then
+        GTK_MODULES="${GTK_MODULES}:appmenu-gtk-module"
+    else
+        GTK_MODULES="appmenu-gtk-module"
+    fi
+
+    if [ -z "$UBUNTU_MENUPROXY" ]; then
+        UBUNTU_MENUPROXY=1
+    fi
+
+    export GTK_MODULES
+    export UBUNTU_MENUPROXY
+
+Consult the `global_menu` default theme on how to configure the `active_window_title` segment.
 
 Configuration
 -------------

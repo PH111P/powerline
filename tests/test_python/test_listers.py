@@ -27,7 +27,7 @@ class TestI3WM(TestCase):
 
     def test_output_lister(self):
         pl = Pl()
-        with replace_attr(i3wm, 'get_connected_xrandr_outputs', self.get_outputs):
+        with replace_attr(i3wm, 'get_connected_randr_outputs', self.get_outputs):
             self.assertEqual(
                 list(i3wm.output_lister(pl=pl, segment_info={'a': 1})),
                 [

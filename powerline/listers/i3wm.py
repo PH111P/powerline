@@ -3,7 +3,7 @@ from __future__ import (unicode_literals, division, absolute_import, print_funct
 
 from powerline.theme import requires_segment_info
 from powerline.lib.dict import updated
-from powerline.bindings.wm import get_i3_connection, get_connected_xrandr_outputs
+from powerline.bindings.wm import get_i3_connection, get_connected_randr_outputs
 
 
 @requires_segment_info
@@ -18,7 +18,7 @@ def output_lister(pl, segment_info):
                 'draw_inner_divider': None
             }
         )
-        for output in get_connected_xrandr_outputs(pl)
+        for output in get_connected_randr_outputs(pl)
     )
 
 
