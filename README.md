@@ -112,7 +112,7 @@ Note that ``Font Awesome`` is used to display some icons, thus changing it to so
 **Attention: `-f 'PowerlineSymbols-12'` is required if you have the non-git version of the powerline-fonts package installed. If you have the git version of that package installed (from the AUR), use `-f 'DejaVu Sans Mono for Powerline-11'` instead.**
 
 To use global menus in the bar, also start the `powerline-globmenu` script at startup.
-Further, add the following to your `.profile`:
+Further, add the following to your `.bashrc`:
 
     if [ -n "$GTK_MODULES" ]; then
         GTK_MODULES="${GTK_MODULES}:appmenu-gtk-module"
