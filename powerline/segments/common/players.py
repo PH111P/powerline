@@ -717,7 +717,7 @@ class MocPlayerSegment(PlayerSegment):
 
         ``mocp -i`` returns current information i.e.
 
-        .. code-block::
+        .. code-block:: shell
 
            File: filename.format
            Title: full title

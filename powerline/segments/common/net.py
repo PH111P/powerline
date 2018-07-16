@@ -19,7 +19,7 @@ def hostname(pl, segment_info, only_if_ssh=False, exclude_domain=False):
 
     :param bool only_if_ssh:
         only return the hostname if currently in an SSH session
-    :param bool exclude_domain
+    :param bool exclude_domain:
         return the hostname without domain if there is one
 
     No special highlight groups used.

@@ -147,15 +147,14 @@ def memory_usage(pl, segment_info, format='{percent:.1f}% {absolute:.1f}G/{total
 
     :param str format:
         format string, receives ``percent``, ``absolute``, and ``total`` as arguments
-    : param str short_format:
     :param string short_format:
-    optional shorter format when the powerline needs to shrink segments
+        optional shorter format when the powerline needs to shrink segments
     :param bool auto_shrink:
         if set to true, this segment will use ``short_format`` per default,
         only using ``format`` when any message is present on the ``memory_usage``
         message channel.
     :param float threshold_good:
-    threshold for gradient level 0: any memory usage percentage below this
+        threshold for gradient level 0: any memory usage percentage below this
         value will have this gradient level.
     :param float threshold_bad:
         threshold for gradient level 100: any memory usage percentage above this
@@ -250,11 +249,11 @@ def temp(pl, format='{:.1f}°C', path="/sys/class/thermal/thermal_zone0/temp", a
     Returns the temperature
 
     :param string format:
-    Output format
+        Output format
     :param string path:
-    Path of the file containing the temperature
+        Path of the file containing the temperature
     :param int accuracy:
-    Accuracy to read
+        Accuracy to read
 
     Click values supplied: ``temp`` (string), ``temp_raw`` (int)
     '''
