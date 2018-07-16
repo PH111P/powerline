@@ -67,15 +67,13 @@ lemonbar (formerly bar-aint-recursive)
 
 To run the bar simply start the binding script:
 
-.. highlight:: shell
-
-::
+.. code-block:: shell
     powerline-lemonbar
 
 
 You can specify options to be passed to ``lemonbar`` after ``--``, like so:
 
-::
+.. code-block:: shell
     powerline-lemonbar --height 16 -- -a 40 -f 'DejaVu Sans Mono-11' -f 'PowerlineSymbols-12' -f 'FontAwesome-11'"
 
 
@@ -84,7 +82,8 @@ Note that, if you don't specify any options, ``powerline-lemonbar`` will default
 
 To run with i3, simply ``exec`` this in the i3 config file:
 
-::
+.. code-block:: shell
+
     exec powerline-lemonbar
 
 
@@ -114,7 +113,8 @@ To enhance the global menu, add the following to your ``.bashrc``:
 
 Further, add the following line to your i3 config
 
-::
+.. code-block:: shell
+
     exec --no-startup-id powerline-globmenu
 
 
