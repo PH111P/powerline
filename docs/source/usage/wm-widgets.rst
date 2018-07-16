@@ -68,12 +68,14 @@ lemonbar (formerly bar-aint-recursive)
 To run the bar simply start the binding script:
 
 .. code-block:: shell
+
     powerline-lemonbar
 
 
 You can specify options to be passed to ``lemonbar`` after ``--``, like so:
 
 .. code-block:: shell
+
     powerline-lemonbar --height 16 -- -a 40 -f 'DejaVu Sans Mono-11' -f 'PowerlineSymbols-12' -f 'FontAwesome-11'"
 
 
