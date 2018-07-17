@@ -6,11 +6,11 @@ Powerline is licensed under the `MIT license
 <https://raw.github.com/powerline/powerline/develop/LICENSE>`_.
 
 ..
-    This document is parsed by powerline_automan.py module. Do not forget to 
-    check that file before altering this one. Specifically it expects 
-    ``Authors`` and ``Contributors`` sections underlined by ``---``, a list of 
-    authors in format ``* `{name} <`` in the “Authors” section and fonts 
-    contributor name in format ``The glyphs in the font patcher are created by 
+    This document is parsed by powerline_automan.py module. Do not forget to
+    check that file before altering this one. Specifically it expects
+    ``Authors`` and ``Contributors`` sections underlined by ``---``, a list of
+    authors in format ``* `{name} <`` in the “Authors” section and fonts
+    contributor name in format ``The glyphs in the font patcher are created by
     {name},`` in the “Contributors” section.
 
 Authors
@@ -19,6 +19,7 @@ Authors
 * `Kim Silkebækken <https://github.com/Lokaltog>`_
 * `Nikolay Pavlov <https://github.com/ZyX-I>`_
 * `Kovid Goyal <https://github.com/kovidgoyal>`_
+* `Philip Wellnitz <https://github.com/ph111p>`_
 
 Contributors
 ------------
