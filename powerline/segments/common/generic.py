@@ -57,14 +57,13 @@ def generic_growable(pl, segment_info, channel_name, segments_short, segments_lo
             if segment_info['payloads']['#pause_clicks']:
                 return None
 
-
-    if 'payloads' in segment_info and channel_name in segment_info['payloads']:
-        if segment_info['payloads'][channel_name]:
-            return [{
-                'contents': s[0],
-                'highlight_groups': s[1],
-                'payload_name': channel_name,
-                'draw_inner_divider': True
+    if 'payloads' in segment_info \
+            and channel_name in segment_info['payloads'] and segment_info['payloads'][channel_name]:
+        return [{
+            'contents': s[0],
+            'highlight_groups': s[1],
+            'payload_name': channel_name,
+            'draw_inner_divider': True
             } for s in segments_long]
     else:
         return [{
