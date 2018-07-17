@@ -578,7 +578,7 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
             res += [{
                 'contents': '< |' if show_prev else '',
                 'highlight_groups': highlight,
-                'payload_name': channel_name,
+                'payload_name': channel_name if show_prev else 'DROP',
                 'draw_soft_divider': False,
                 'draw_inner_divider': False,
                 'width': 'auto',
@@ -604,7 +604,7 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
             res += [{
                 'contents': ' >' if show_next else '',
                 'highlight_groups': highlight,
-                'payload_name': channel_name,
+                'payload_name': channel_name if show_next else 'DROP',
                 'draw_soft_divider': False,
                 'width': 'auto',
                 'click_values': { 'segment': '$>' }
