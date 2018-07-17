@@ -54,7 +54,8 @@ def get_icon(w, separator, icons, show_multiple_icons):
     icons = icons_tmp
 
     ws_containers = {w_con.name : w_con for w_con in get_i3_connection().get_tree().workspaces()}
-    wins = [win for win in ws_containers[w['name']].leaves() if win.parent.scratchpad_state == 'none']
+    wins = [win for win in ws_containers[w['name']].leaves() \
+            if win.parent.scratchpad_state == 'none']
     if len(wins) == 0:
         return ""
 
@@ -181,9 +182,14 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
     if len(output) <= 1:
         res = []
         if output_count > 1:
-            res += [{'contents': output[0], 'highlight_groups': ['output'], 'click_values': {'output_name': output[0]}}]
+            res += [{
+                'contents': output[0],
+                'highlight_groups': ['output'],
+                'click_values': {'output_name': output[0]}
+                }]
         res += [{
-            'contents': w['name'][min(len(w['name']), strip):] + (get_icon(w, separator, icons, show_multiple_icons) if show_icons else ""),
+            'contents': w['name'][min(len(w['name']), strip):] \
+                    + (get_icon(w, separator, icons, show_multiple_icons) if show_icons else ""),
             'highlight_groups': workspace_groups(w),
             'click_values': {'workspace_name': w['name']}
             } for w in sort_ws(get_i3_connection().get_workspaces())
@@ -195,10 +201,16 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
     else:
         res = []
         for n in output:
-            res += [{'contents': n, 'highlight_groups': ['output'], 'click_values': {'output_name': n}}]
-            res += [{'contents': w['name'][min(len(w['name']), strip):] + (get_icon(w, separator, icons, show_multiple_icons) if show_icons else ""),
+            res += [{
+                'contents': n,
+                'highlight_groups': ['output'],
+                'click_values': {'output_name': n}
+                }]
+            res += [{'contents': w['name'][min(len(w['name']), strip):] \
+                + (get_icon(w, separator, icons, show_multiple_icons) if show_icons else ""),
                 'highlight_groups': workspace_groups(w),
-                'click_values': {'workspace_name': w['name']}} for w in sort_ws(get_i3_connection().get_workspaces())
+                'click_values': {'workspace_name': w['name']}} \
+                        for w in sort_ws(get_i3_connection().get_workspaces())
                 if (not only_show or any(w[typ] for typ in only_show))
                 if w['output'] == n
                 if not (hide_empty_workspaces and is_empty_workspace(w))
@@ -262,7 +274,8 @@ def compute_appmenu_menu(window_id):
     import dbus, time
     try:
         sbus = dbus.SessionBus()
-        areg = sbus.get_object('com.canonical.AppMenu.Registrar', '/com/canonical/AppMenu/Registrar')
+        areg = sbus.get_object('com.canonical.AppMenu.Registrar',
+                '/com/canonical/AppMenu/Registrar')
         aregi = dbus.Interface(areg, 'com.canonical.AppMenu.Registrar')
 
         dbmenu, dbmenu_path = aregi.GetMenuForWindow(window_id)
@@ -407,7 +420,9 @@ def compute_menu(window_id):
 
 def compute_highlight(ws, window):
     highlight_groups = []
-    desc = [d.layout in ['tabbed', 'stacked'] for d in ws.descendents() if d.parent.type == 'workspace' and d.floating in ['user_off', 'auto_off'] and d.type != 'floating_con']
+    desc = [d.layout in ['tabbed', 'stacked'] for d in ws.descendents() \
+            if d.parent.type == 'workspace' and d.floating in ['user_off', 'auto_off'] \
+            and d.type != 'floating_con']
 
     if len([w for w in ws.leaves() if w.floating in ['user_off', 'auto_off']]) == 1:
         highlight_groups = ['active_window_title:single', 'active_window_title']
@@ -467,6 +482,7 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
         '''
 
         # TODO implement shortening function
+        # TODO Hover
 
         global active_window_state
         global last_active_window
@@ -485,7 +501,8 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
         focused = get_i3_connection().get_tree().find_focused()
         ws = focused.workspace()
 
-        o_name = [w['output'] for w in get_i3_connection().get_workspaces() if w['name'] == ws.name][0]
+        o_name = [w['output'] for w in get_i3_connection().get_workspaces() \
+                if w['name'] == ws.name][0]
         output = segment_info.get('output')
 
         if last_active_window != focused.window:
@@ -508,7 +525,8 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
 
         main_cont = cont[0]
 
-        if channel_value and not isinstance(channel_value, str) and len(channel_value) == 2 and channel_value[0].startswith('menu_click') and channel_value[1] > last_oneshot:
+        if channel_value and not isinstance(channel_value, str) and len(channel_value) == 2 \
+                and channel_value[0].startswith('menu_click') and channel_value[1] > last_oneshot:
             last_oneshot = channel_value[1]
             click_area = channel_value[0].split(':')[1]
             if active_window_state == 0:
@@ -520,7 +538,7 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
             elif click_area == '$<':
                 start = max(0, start - items_per_page)
             elif click_area == '$>':
-                start = min(len(current_layer) - items_per_page + 1, start + items_per_page)
+                start = min(len(current_layer) - items_per_page, start + items_per_page)
             elif click_area != '':
                 traverse_path += [click_area]
                 if isinstance(current_layer[click_area], dict):
@@ -534,7 +552,8 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                     current_layer = menu_items
                     start = 0
 
-        if channel_value and not isinstance(channel_value, str) and len(channel_value) == 2 and channel_value[0] == 'menu_off' and channel_value[1] > last_oneshot:
+        if channel_value and not isinstance(channel_value, str) and len(channel_value) == 2 \
+                and channel_value[0] == 'menu_off' and channel_value[1] > last_oneshot:
             last_oneshot = channel_value[1]
             active_window_state = 0
             start = 0
@@ -548,7 +567,8 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
         res = []
 
         show_prev = start > 0 and active_window_state > 0
-        show_next = current_layer and active_window_state > 0 and start < len(current_layer) - items_per_page + 1
+        show_next = current_layer and active_window_state > 0 \
+                and start < len(current_layer) - items_per_page
 
         if global_menu:
             res += [{
