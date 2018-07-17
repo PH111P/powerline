@@ -444,7 +444,6 @@ last_active_window = None
 last_oneshot = 0
 menu_items = None
 current_layer = None
-traverse_path = []
 start = 0
 
 @requires_segment_info
@@ -482,14 +481,12 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
         '''
 
         # TODO implement shortening function
-        # TODO Hover
 
         global active_window_state
         global last_active_window
         global last_oneshot
         global menu_items
         global current_layer
-        global traverse_path
         global start
 
         channel_name = 'i3wm.active_window'
@@ -534,13 +531,11 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                 menu_items = compute_menu(focused.window)
                 current_layer = menu_items
                 active_window_state = 1
-                traverse_path = []
             elif click_area == '$<':
                 start = max(0, start - items_per_page)
             elif click_area == '$>':
                 start = min(len(current_layer) - items_per_page, start + items_per_page)
             elif click_area != '':
-                traverse_path += [click_area]
                 if isinstance(current_layer[click_area], dict):
                     current_layer = current_layer[click_area]
                     start = 0
@@ -556,8 +551,14 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                 and channel_value[0] == 'menu_off' and channel_value[1] > last_oneshot:
             last_oneshot = channel_value[1]
             active_window_state = 0
-            start = 0
-            traverse_path = []
+        if channel_value and not isinstance(channel_value, str) and len(channel_value) == 2 \
+                and channel_value[0] == 'menu_on' and channel_value[1] > last_oneshot:
+            last_oneshot = channel_value[1]
+            active_window_state = 1
+            if last_active_window != focused.window:
+                menu_items = compute_menu(focused.window)
+                current_layer = menu_items
+                start = 0
 
         if current_layer and active_window_state:
             cont = list(current_layer.keys())

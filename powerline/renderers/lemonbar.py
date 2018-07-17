@@ -25,7 +25,7 @@ class LemonbarRenderer(Renderer):
         return ''
 
     def hl(self, escaped_contents, fg=None, bg=None, attrs=None, click=None, click_values={}, *args, **kwargs):
-        button_map = { 'left': 1, 'middle': 2, 'right': 3, 'scroll up': 4, 'scroll down': 5 }
+        button_map = { 'left': 1, 'middle': 2, 'right': 3, 'scroll up': 4, 'scroll down': 5, 'hover enter': 6, 'hover leave': 7 }
 
         text = ''
         click_count = 0
