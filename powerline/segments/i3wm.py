@@ -531,6 +531,9 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                 menu_items = compute_menu(focused.window)
                 current_layer = menu_items
                 active_window_state = 1
+            elif click_area == 'Main Menu':
+                start = 0
+                current_layer = menu_items
             elif click_area == '$<':
                 start = max(0, start - items_per_page)
             elif click_area == '$>':
@@ -538,6 +541,7 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
             elif click_area != '':
                 if isinstance(current_layer[click_area], dict):
                     current_layer = current_layer[click_area]
+                    current_layer.update({'Main Menu': ''})
                     start = 0
                 else:
                     if isinstance(current_layer[click_area], tuple):
@@ -562,7 +566,6 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
 
         if current_layer and active_window_state:
             cont = list(current_layer.keys())
-        #print(f'{menu_items} {cont} {active_window_state}')
 
         highlight = compute_highlight(ws, focused)
         res = []
@@ -583,7 +586,9 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                 'click_values': { 'segment': '$<' }
             }]
 
-        for i in range(start, min(len(cont), start + items_per_page)):
+        d_start = start if active_window_state else 0
+
+        for i in range(d_start, min(len(cont), d_start + items_per_page)):
             res += [{
                 'contents': (' ' if i > 0 or show_prev else '') + (cont[i][:item_length] \
                         if cont[i] != main_cont else cont[i]) \
