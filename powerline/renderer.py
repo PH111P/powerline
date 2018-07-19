@@ -457,7 +457,7 @@ class Renderer(object):
             side = segment['side']
             segment_len = segment['_contents_len']
             if not segment['literal_contents'][1]:
-                if side == 'left':
+                if side != 'right':
                     if segment is not last_segment:
                         compare_segment = next(iter((
                             segment
@@ -503,6 +503,7 @@ class Renderer(object):
         segments_len = len(segments)
         divider_spaces = theme.get_spaces()
         prev_segment = theme.EMPTY_SEGMENT
+        next_segment = theme.EMPTY_SEGMENT
         try:
             first_segment = next(iter((
                 segment
@@ -523,21 +524,24 @@ class Renderer(object):
         for index, segment in enumerate(segments):
             side = segment['side']
             if not segment['literal_contents'][1]:
-                if side == 'left':
-                    if segment is not last_segment:
-                        compare_segment = next(iter((
-                            segment
-                            for segment in segments[index + 1:]
-                            if not segment['literal_contents'][1]
-                        )))
-                    else:
-                        compare_segment = theme.EMPTY_SEGMENT
+                if segment is not last_segment:
+                    next_segment = next(iter((
+                        segment
+                        for segment in segments[index + 1:]
+                        if not segment['literal_contents'][1]
+                    )))
+                else:
+                    next_segment = theme.EMPTY_SEGMENT
+                if side != 'right':
+                    compare_segment = next_segment
                 else:
                     compare_segment = prev_segment
                 outer_padding = int(bool(
                     segment is first_segment
                     if side == 'left' else
                     segment is last_segment
+                    if side == 'right' else
+                    False
                 )) * theme.outer_padding * ' '
                 divider_type = 'soft' if self._compare_bg(compare_segment['highlight']['bg'], segment['highlight']['bg']) else 'hard'
 
@@ -550,7 +554,7 @@ class Renderer(object):
                 # segments are displayed. This is needed for Vim renderer to work.
                 if draw_divider:
                     divider_raw = self.escape(theme.get_divider(side, divider_type))
-                    if side == 'left':
+                    if side != 'right':
                         contents_raw = outer_padding + contents_raw + (divider_spaces * ' ')
                     else:
                         contents_raw = (divider_spaces * ' ') + contents_raw + outer_padding
@@ -563,13 +567,14 @@ class Renderer(object):
                         divider_fg = segment['highlight']['bg']
                         divider_bg = compare_segment['highlight']['bg']
 
-                    if side == 'left':
+                    if side != 'right':
                         if render_highlighted:
                             contents_highlighted = self.hl(self.escape(contents_raw),
                                 fg=segment['highlight']['fg'],
                                 bg=segment['highlight']['bg'],
                                 attrs=segment['highlight']['attrs'],
                                 click=segment['highlight']['click'],
+                                next_segment=next_segment,
                                 **segment)
                             divider_highlighted = self.hl(divider_raw, divider_fg, divider_bg, False)
                         segment['_rendered_raw'] = contents_raw + divider_raw
@@ -582,11 +587,12 @@ class Renderer(object):
                                 bg=segment['highlight']['bg'],
                                 attrs=segment['highlight']['attrs'],
                                 click=segment['highlight']['click'],
+                                next_segment=next_segment,
                                 **segment)
                         segment['_rendered_raw'] = divider_raw + contents_raw
                         segment['_rendered_hl'] = divider_highlighted + contents_highlighted
                 else:
-                    if side == 'left':
+                    if side != 'right':
                         contents_raw = outer_padding + contents_raw
                     else:
                         contents_raw = contents_raw + outer_padding
@@ -596,6 +602,7 @@ class Renderer(object):
                         bg=segment['highlight']['bg'],
                         attrs=segment['highlight']['attrs'],
                         click=segment['highlight']['click'],
+                        next_segment=next_segment,
                         **segment)
                     segment['_rendered_raw'] = contents_raw
                     segment['_rendered_hl'] = contents_highlighted

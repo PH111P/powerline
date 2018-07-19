@@ -19,27 +19,71 @@ class LemonbarRenderer(Renderer):
     clear_right = ('%{F-}', '%{B-}')
     center_is_wide = False
 
+    hov_cmd = [None, None]
+
     @staticmethod
     def hlstyle(*args, **kwargs):
         # We don’t need to explicitly reset attributes, so skip those calls
         return ''
 
-    def hl(self, escaped_contents, fg=None, bg=None, attrs=None, click=None, click_values={}, *args, **kwargs):
-        button_map = { 'left': 1, 'middle': 2, 'right': 3, 'scroll up': 4, 'scroll down': 5, 'hover enter': 6, 'hover leave': 7 }
+    def hl(self, escaped_contents, fg=None, bg=None, attrs=None, click=None, \
+            click_values={}, next_segment=None, *args, **kwargs):
+        button_map = {
+                'left': 1,
+                'middle': 2,
+                'right': 3,
+                'scroll up': 4,
+                'scroll down': 5,
+                'hover enter': 6,
+                'hover leave': 7
+                }
 
         text = ''
         click_count = 0
+        cl_hov = ''
+
+        next_hov = [None, None]
+        if next_segment and 'highlight' in next_segment and 'click' in next_segment['highlight'] \
+                and next_segment['highlight']['click'] != None:
+            if 'hover enter' in next_segment['highlight']['click']:
+                next_hov[0] = next_segment['highlight']['click']['hover enter']
+                next_hov[0] = next_hov[0].replace(':', '\\:') + SEGMENT_NAME.decode() \
+                        + ((next_segment['payload_name']) if 'payload_name' in next_segment \
+                        else next_segment['name'])
+
+            if 'hover leave' in next_segment['highlight']['click']:
+                next_hov[1] = next_segment['highlight']['click']['hover leave']
+                next_hov[1] = next_hov[1].replace(':', '\\:') + SEGMENT_NAME.decode() \
+                        + ((next_segment['payload_name']) if 'payload_name' in next_segment \
+                        else next_segment['name'])
 
         if click is not None:
-            for key in click:
+            for key in [c for c in click if 'hover' in c] + [c for c in click if not 'hover' in c]:
                 if not key in button_map:
                     continue
                 st = click[key].format(escaped_contents.strip(), **click_values).strip()
-                text += '%{{A{1}:{0}{2}{3}:}}'.format(st.replace(':', '\\:'),
-                    button_map[key], SEGMENT_NAME.decode(),
-                    ((kwargs['payload_name']) if 'payload_name' in kwargs
-                        else kwargs['name']))
-                click_count += 1
+                st = st.replace(':', '\\:') + SEGMENT_NAME.decode() \
+                        + ((kwargs['payload_name']) if 'payload_name' in kwargs else kwargs['name'])
+
+                if key == 'hover enter':
+                    if self.hov_cmd[0] == None:
+                        self.hov_cmd[0] = st
+                    else:
+                        continue
+                if key == 'hover leave':
+                    if self.hov_cmd[1] == None:
+                        self.hov_cmd[1] = st
+                    else:
+                        continue
+
+                text += '%{{A{1}:{0}:}}'.format(st, button_map[key])
+                if not 'hover' in key:
+                    click_count += 1
+
+        for i in [0, 1]:
+            if self.hov_cmd[i] != next_hov[i] and self.hov_cmd[i] != None:
+                cl_hov += '%{A}'
+                self.hov_cmd[i] = None
 
         (fg_col, bg_col) = self.clear_right
         if not self.center_is_wide:
@@ -81,7 +125,7 @@ class LemonbarRenderer(Renderer):
         if not self.center_is_wide:
             reset = '%{F-B-}'
         text += fg_col + bg_col
-        return text + escaped_contents + reset + ('%{A}' * click_count)
+        return text + escaped_contents + reset + ('%{A}' * click_count) + cl_hov
 
     def render(self, width, *args, **kwargs):
         kw2 = kwargs
@@ -97,7 +141,7 @@ class LemonbarRenderer(Renderer):
         self.clear_left = ('%{F-}', '%{B-}')
         self.clear_right = ('%{F-}', '%{B-}')
         self.center_is_wide = False
-        return '%{{c}}{0}%{{r}}{2}%{{l}}{1}'.format(
+        res = '%{{c}}{0}%{{l}}{1}%{{r}}{2}'.format(
             super(LemonbarRenderer, self).render(width=width if width else None, side='center',
                 *args, **kw2),
             super(LemonbarRenderer, self).render(width=width//2 if width else None, side='left',
@@ -105,6 +149,7 @@ class LemonbarRenderer(Renderer):
             super(LemonbarRenderer, self).render(width=width//2 if width else None, side='right',
                 *args, **kw2)
         )
+        return res
 
     def get_theme(self, matcher_info):
         if not matcher_info or matcher_info not in self.local_themes:
