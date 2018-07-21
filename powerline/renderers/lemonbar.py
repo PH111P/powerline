@@ -64,15 +64,17 @@ class LemonbarRenderer(Renderer):
                 st = click[key].format(escaped_contents.strip(), **click_values).strip()
                 st = st.replace(':', '\\:') + SEGMENT_NAME.decode() \
                         + ((kwargs['payload_name']) if 'payload_name' in kwargs else kwargs['name'])
+                st2 = click[key].replace(':', '\\:') + SEGMENT_NAME.decode() \
+                        + ((kwargs['payload_name']) if 'payload_name' in kwargs else kwargs['name'])
 
                 if key == 'hover enter':
                     if self.hov_cmd[0] == None:
-                        self.hov_cmd[0] = st
+                        self.hov_cmd[0] = st2
                     else:
                         continue
                 if key == 'hover leave':
                     if self.hov_cmd[1] == None:
-                        self.hov_cmd[1] = st
+                        self.hov_cmd[1] = st2
                     else:
                         continue
 
@@ -143,16 +145,13 @@ class LemonbarRenderer(Renderer):
         self.clear_right = ('%{F-}', '%{B-}')
         self.center_is_wide = False
         res = '%{{c}}{0}%{{l}}{1}%{{r}}{2}'.format(
-            #super(LemonbarRenderer, self).render(width=width if width else None, side='center',
-            #    *args, **kw2),
-            'nai',
+            super(LemonbarRenderer, self).render(width=width if width else None, side='center',
+                *args, **kw2),
             super(LemonbarRenderer, self).render(width=width//2 if width else None, side='left',
                 *args, **kw2),
-            'nai'
-            #super(LemonbarRenderer, self).render(width=width//2 if width else None, side='right',
-            #    *args, **kw2)
+            super(LemonbarRenderer, self).render(width=width//2 if width else None, side='right',
+                *args, **kw2)
         )
-        # print(res)
         return res
 
     def get_theme(self, matcher_info):
