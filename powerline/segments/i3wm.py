@@ -426,10 +426,10 @@ def compute_highlight(ws, window):
 
     if len([w for w in ws.leaves() if w.floating in ['user_off', 'auto_off']]) == 1:
         highlight_groups = ['active_window_title:single', 'active_window_title']
-    elif len(desc) > 0 and all(desc) and window.floating in ['user_on', 'auto_on']:
+    elif len(desc) > 0 and all(desc) and (not window or window.floating) in ['user_on', 'auto_on']:
         highlight_groups = ['active_window_title:stacked_unfocused',
                 'active_window_title']
-    elif len(desc) > 0 and all(desc) and not window.focused:
+    elif len(desc) > 0 and all(desc) and (not window or not window.focused):
         highlight_groups = ['active_window_title:stacked_unfocused',
                 'active_window_title']
     elif len(desc) > 0 and all(desc):
@@ -516,8 +516,24 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
             return None
 
         if o_name != output:
-            # TODO Think about multi-monitor stuff
-            return None
+            # Get visible workspace
+            ws = [w for w in get_i3_connection().get_workspaces() if w['output'] == output \
+                    and w['visible']]
+            if not len(ws):
+                return None
+            ws = [w for w in focused.workspaces() if w.name == ws[0]['name']]
+            if not len(ws):
+                return None
+
+            highlight = compute_highlight(ws[0], None)
+
+            return [{
+                'contents': '',
+                'width': 'auto',
+                'highlight_groups': highlight,
+                'click_values': { 'segment': '' },
+                'payload_name': 'DROP'
+                }]
 
         cont = [focused.name]
         if cutoff and len(cont) > cutoff:
