@@ -118,19 +118,32 @@ def bar_callback(output_name, line, segment_name):
         for cmd in line.split(';'):
             handle_bar_command(output_name, cmd, segment_name)
 
-def process_extra_args(arg):
-    arg = [a for a in arg if a != '--']
-    res = []
+def compute_bar_command(arg, screen, height):
+    if len(arg) > 1 and not args.use_defaults:
+        arg = args.args[1:]
+    else:
+        arg = [a for a in arg if a != '--']
+        res = []
 
-    if not '-a' in arg:
-        res += ['-a', '40']
-    if not '-b' in arg:
-        res += ['-b']
+        if not '-a' in arg:
+            res += ['-a', '40']
+        if not '-b' in arg:
+            res += ['-b']
 
-    res += ['-f', 'DejaVu Sans Mono-' + str(int(int(args.height) * .6))]
-    res += ['-f', 'PowerlineSymbols-' + str(int(int(args.height) * .7))]
-    res += ['-f', 'FontAwesome-' + str(int(int(args.height) * .6 + 1))]
-    return res + arg
+        font_height = int(height * .6)
+        sep_height = min(font_height + 4, int(height * .8))
+        mid = (font_height + sep_height) // 2
+
+        res += ['-f', 'DejaVu Sans Mono-' + str(font_height)]
+        res += ['-f', 'PowerlineSymbols-' + str(sep_height)]
+        res += ['-f', 'FontAwesome-' + str(mid)]
+
+        arg = res + [a.format(font_height, sep_height, mid) for a in arg]
+
+    if not args.alt_output:
+        return [args.bar_command, '-g', '{0}x{1}+{2}+{3}'.format(screen['width'], height, screen['x'], screen['y'])] + arg
+    else:
+        return [args.bar_command, '-O', screen['name'], '-g', 'x{0}'.format(height)] + arg
 
 
 def restart_bar(output_name):
@@ -144,10 +157,12 @@ def restart_bar(output_name):
     for screen in get_connected_randr_outputs(powerline.pl):
         if screen['name'] != output_name:
             continue
-        if not args.alt_output:
-            command = [args.bar_command, '-g', '{0}x{1}+{2}+{3}'.format(screen['width'], args.height, screen['x'], screen['y'])] + global_args
-        else:
-            command = [args.bar_command, '-O', screen['name'], '-g', 'x{0}'.format(args.height)] + global_args
+
+        height = args.height
+        if args.relative_height:
+            height = int(int(screen['height']) * float(args.height) / 100)
+
+        command = compute_bar_command(args.args, screen, height)
         process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         if not args.no_clicks:
             thr = Thread(target=execute, args=(process, shell, lambda x, y: bar_callback(screen['name'], x, y)))
@@ -156,7 +171,7 @@ def restart_bar(output_name):
         if not thr.is_alive():
             thr.start()
 
-        bars.update({output_name: (process, thr, int(int(screen['width']) / (int(args.height) * 0.555)))})
+        bars.update({output_name: (process, thr, int(int(screen['width']) / (int(height) * 0.555)))})
         return
 
 def restart_callback(output):
@@ -169,11 +184,6 @@ def restart_callback(output):
 if __name__ == '__main__':
     parser = get_argparser()
     args = parser.parse_args()
-
-    if len(args.args) <= 1 or args.use_defaults:
-        global_args = process_extra_args(args.args)
-    else:
-        global_args = args.args[1:]
 
     powerline = LemonbarPowerline()
     powerline.update_renderer()

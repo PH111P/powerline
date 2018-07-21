@@ -441,6 +441,7 @@ def compute_highlight(ws, window):
 
 active_window_state = 0
 last_active_window = None
+last_active_window_name = None
 last_oneshot = 0
 menu_items = None
 current_layer = None
@@ -484,6 +485,7 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
 
         global active_window_state
         global last_active_window
+        global last_active_window_name
         global last_oneshot
         global menu_items
         global current_layer
@@ -502,8 +504,9 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                 if w['name'] == ws.name][0]
         output = segment_info.get('output')
 
-        if last_active_window != focused.window:
+        if last_active_window != focused.window and last_active_window:
             last_active_window = None
+            last_active_window_name = None
             active_window_state = 0
             start = 0
             menu_items = None
@@ -528,6 +531,7 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
             click_area = channel_value[0].split(':')[1]
             if active_window_state == 0:
                 last_active_window = focused.window
+                last_active_window_name = focused.name
                 menu_items = compute_menu(focused.window)
                 current_layer = menu_items
                 active_window_state = 1
@@ -560,6 +564,8 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
             last_oneshot = channel_value[1]
             active_window_state = 1
             if last_active_window != focused.window:
+                last_active_window = focused.window
+                last_active_window_name = focused.name
                 menu_items = compute_menu(focused.window)
                 current_layer = menu_items
                 start = 0

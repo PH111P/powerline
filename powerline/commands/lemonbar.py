@@ -38,6 +38,10 @@ def get_argparser(ArgumentParser=argparse.ArgumentParser):
         metavar='PIXELS', help='Bar height. Defaults to 18.'
     )
     parser.add_argument(
+        '--relative_height', '-R', action='store_true',
+        help='Interpret the given height as relative height in percent.'
+    )
+    parser.add_argument(
         '--interval', '-i',
         type=float, default=2,
         metavar='SECONDS', help='Refresh interval.'
