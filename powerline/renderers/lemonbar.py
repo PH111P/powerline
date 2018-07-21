@@ -81,7 +81,8 @@ class LemonbarRenderer(Renderer):
                     click_count += 1
 
         for i in [0, 1]:
-            if self.hov_cmd[i] != next_hov[i] and self.hov_cmd[i] != None:
+            # Ignore seperators
+            if self.hov_cmd[i] != next_hov[i] and self.hov_cmd[i] != None and 'name' in kwargs:
                 cl_hov += '%{A}'
                 self.hov_cmd[i] = None
 
@@ -142,13 +143,16 @@ class LemonbarRenderer(Renderer):
         self.clear_right = ('%{F-}', '%{B-}')
         self.center_is_wide = False
         res = '%{{c}}{0}%{{l}}{1}%{{r}}{2}'.format(
-            super(LemonbarRenderer, self).render(width=width if width else None, side='center',
-                *args, **kw2),
+            #super(LemonbarRenderer, self).render(width=width if width else None, side='center',
+            #    *args, **kw2),
+            'nai',
             super(LemonbarRenderer, self).render(width=width//2 if width else None, side='left',
                 *args, **kw2),
-            super(LemonbarRenderer, self).render(width=width//2 if width else None, side='right',
-                *args, **kw2)
+            'nai'
+            #super(LemonbarRenderer, self).render(width=width//2 if width else None, side='right',
+            #    *args, **kw2)
         )
+        # print(res)
         return res
 
     def get_theme(self, matcher_info):
