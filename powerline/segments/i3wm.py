@@ -155,6 +155,17 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
         Click values supplied: ``workspace_name`` (string) for workspaces and ``output_name`` (string) for outputs.
         '''
 
+    channel_name = 'i3wm.workspaces'
+
+    channel_value = None
+    if 'payloads' in segment_info and channel_name in segment_info['payloads']:
+        channel_value = segment_info['payloads'][channel_name]
+
+    if channel_value:
+        # Shrink the segment as far as possible
+        only_show = ['focused', 'visible']
+        show_multiple_icons = False
+
     output_count = 1
     if not output == "__all__":
         output = output or segment_info.get('output')
@@ -184,6 +195,7 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
         if output_count > 1:
             res += [{
                 'contents': output[0],
+                'payload_name': channel_name,
                 'highlight_groups': ['output'],
                 'click_values': {'output_name': output[0]}
                 }]
@@ -191,6 +203,7 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
             'contents': w['name'][min(len(w['name']), strip):] \
                     + (get_icon(w, separator, icons, show_multiple_icons) if show_icons else ""),
             'highlight_groups': workspace_groups(w),
+            'payload_name': channel_name,
             'click_values': {'workspace_name': w['name']}
             } for w in sort_ws(get_i3_connection().get_workspaces())
             if (not only_show or any(w[typ] for typ in only_show))
@@ -204,11 +217,13 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
             res += [{
                 'contents': n,
                 'highlight_groups': ['output'],
+                'payload_name': channel_name,
                 'click_values': {'output_name': n}
                 }]
             res += [{'contents': w['name'][min(len(w['name']), strip):] \
                 + (get_icon(w, separator, icons, show_multiple_icons) if show_icons else ""),
                 'highlight_groups': workspace_groups(w),
+                'payload_name': channel_name,
                 'click_values': {'workspace_name': w['name']}} \
                         for w in sort_ws(get_i3_connection().get_workspaces())
                 if (not only_show or any(w[typ] for typ in only_show))
@@ -505,12 +520,18 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
         output = segment_info.get('output')
 
         if last_active_window != focused.window and last_active_window:
+            # Please, don't kill me for this line
+            if global_menu and last_active_window and 'payloads' in segment_info \
+                    and 'i3wm.workspaces' in segment_info['payloads']:
+                segment_info['payloads']['i3wm.workspaces'] = None
+
             last_active_window = None
             last_active_window_name = None
             active_window_state = 0
             start = 0
             menu_items = None
             current_layer = None
+
 
         if focused.name == focused.workspace().name:
             return None

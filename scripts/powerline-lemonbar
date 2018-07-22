@@ -66,57 +66,75 @@ def handle_bar_command(output_name, cmd, segment_name):
     if cmd.find('#') > 0:
         cmd = cmd[0:cmd.find('#')]
 
+    if segment_name == 'DROP':
+        return 0
+
     global pause_clicks
 
     if cmd == 'toggle_clicks':
         pause_clicks = not pause_clicks
         segment_info['payloads'].update({'#pause_clicks': pause_clicks})
-        render()
-        return
+        return 1
     elif pause_clicks:
-        return
+        return 0
 
     # bar restarts
     if cmd == 'restart':
         restart_bar(output_name)
-        render(reschedule=True)
+        return 2
     elif cmd.startswith('restart:'):
         restart_bar(cmd[len(cmd.split(':')[0]) + 1:])
-        render(reschedule=True)
+        return 2
+
+    # check for target channel names
+    if '@' in cmd:
+        spl = re.split(':|@', cmd)
+        segment_name = spl[1]
+        cmd = spl[0] + cmd[len(spl[0] + spl[1]) + 1:]
+
     # communication with segments
-    elif cmd == 'ch_clear':
+    if cmd == 'ch_clear':
         # print('cleared comm chan {0}.'.format(segment_name))
         if segment_name:
             segment_info['payloads'].update({segment_name: None})
-        render()
+        return 1
     elif cmd == 'ch_fill':
         if segment_name:
             segment_info['payloads'].update({segment_name: True})
-        render()
+        return 1
     elif cmd == 'ch_toggle':
         if segment_name:
             if segment_name in segment_info['payloads'] and segment_info['payloads'][segment_name]:
                 segment_info['payloads'].update({segment_name: None})
             else:
                 segment_info['payloads'].update({segment_name: True})
-        render()
+        return 1
     elif cmd.startswith('pass:'):
         # print('passed {0} to comm chan {1}.'.format(cmd.split(':')[1], segment_name))
         if segment_name:
             segment_info['payloads'].update({segment_name: cmd[len(cmd.split(':')[0]) + 1:]})
-        render()
+        return 1
     elif cmd.startswith('pass_oneshot:'):
         if segment_name:
             import time
             segment_info['payloads'].update({segment_name: (cmd[len(cmd.split(':')[0]) + 1:], time.time())})
-        render()
+        return 1
+    return 0
+
 
 def bar_callback(output_name, line, segment_name):
     # powerline.pl.info('click on {0} (segment {2}): {1}'.format(output_name, line, segment_name))
     # print('click on {0} (segment {2}): {1}'.format(output_name, line, segment_name))
+    action = 0
     if line.startswith(INTERNAL_BAR_COMMAND.decode()):
         for cmd in line.split(';'):
-            handle_bar_command(output_name, cmd, segment_name)
+            action = max(action, handle_bar_command(output_name, cmd, segment_name))
+
+    if action == 1:
+        render()
+    elif action == 2:
+        render(reschedule=True)
+
 
 def compute_bar_command(arg, screen, height):
     if len(arg) > 1 and not args.use_defaults:
@@ -131,7 +149,7 @@ def compute_bar_command(arg, screen, height):
             res += ['-b']
 
         font_height = int(height * .6)
-        sep_height = min(font_height + 4, int(height * .8))
+        sep_height = min(font_height + 3, int(height * .7))
         mid = (font_height + sep_height) // 2
 
         res += ['-f', 'DejaVu Sans Mono-' + str(font_height)]
