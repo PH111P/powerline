@@ -533,9 +533,6 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
             current_layer = None
 
 
-        if focused.name == focused.workspace().name:
-            return None
-
         if o_name != output:
             # Get visible workspace
             ws = [w for w in get_i3_connection().get_workspaces() if w['output'] == output \
@@ -555,6 +552,9 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                 'click_values': { 'segment': '' },
                 'payload_name': 'DROP'
                 }]
+
+        if focused.name == focused.workspace().name:
+            return None
 
         cont = [focused.name]
         if cutoff and len(cont) > cutoff:
