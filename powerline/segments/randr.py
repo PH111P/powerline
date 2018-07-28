@@ -166,10 +166,10 @@ class ScreenRotationSegment(ThreadedSegment):
                     if o['mm_height'] and o['width']:
                         mx_mm_x = min(mx_mm_x, o['width'] * 1.0 / o['mm_height'])
 
-            # Don't ask where these magic numbers come from
+            ratio = max(mx_x / mx_y, mx_y / mx_x)
             if mx_x and mx_y and mx_mm_x and mx_mm_y:
-                self.window.xrandr_set_screen_size(mx_y, mx_x, int(mx_x / mx_mm_x * 1.75),
-                        int(mx_y / mx_mm_y * 1.75))
+                self.window.xrandr_set_screen_size(mx_y, mx_x, int(mx_x / mx_mm_x * ratio),
+                        int(mx_y / mx_mm_y * ratio))
 
         # Actually rotate these outputs, don't change anything besides the rotation
         for o in mirrored_outs:
@@ -519,10 +519,10 @@ class OutputSegment(ThreadedSegment):
                 if o['mm_height'] and o['width']:
                     mx_mm_x = min(mx_mm_x, o['width'] * 1.0 / o['mm_height'])
 
-        # Don't ask where these magic numbers come from
+        ratio = max(mx_x / mx_y, mx_y / mx_x)
         if mx_x and mx_y and mx_mm_x and mx_mm_y:
-            self.window.xrandr_set_screen_size(mx_x, mx_y, int(mx_x / mx_mm_x * 1.75),
-                    int(mx_y / mx_mm_y * 1.75))
+            self.window.xrandr_set_screen_size(mx_x, mx_y, int(mx_x / mx_mm_x * ratio),
+                    int(mx_y / mx_mm_y * ratio))
 
         for o in outs:
             randr.set_crtc_config(self.d, o['crtc_id'], 0, o['x'], o['y'],
