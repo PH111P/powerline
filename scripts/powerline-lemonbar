@@ -178,7 +178,7 @@ def restart_bar(output_name):
 
         height = args.height
         if args.relative_height:
-            height = int(int(screen['height']) * float(args.height) / 100)
+            height = int((min(int(screen['height']), int(screen['width']))) * float(args.height) / 100)
 
         command = compute_bar_command(args.args, screen, height)
         process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
