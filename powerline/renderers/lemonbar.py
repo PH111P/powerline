@@ -63,9 +63,11 @@ class LemonbarRenderer(Renderer):
                     continue
                 st = click[key].format(escaped_contents.strip(), **click_values).strip()
                 st = st.replace(':', '\\:') + SEGMENT_NAME.decode() \
-                        + ((kwargs['payload_name']) if 'payload_name' in kwargs else kwargs['name'])
+                        + ((kwargs['payload_name']) if 'payload_name' in kwargs else \
+                        (kwargs['name'] if 'name' in kwargs else ''))
                 st2 = click[key].replace(':', '\\:') + SEGMENT_NAME.decode() \
-                        + ((kwargs['payload_name']) if 'payload_name' in kwargs else kwargs['name'])
+                        + ((kwargs['payload_name']) if 'payload_name' in kwargs else \
+                        (kwargs['name'] if 'name' in kwargs else ''))
 
                 if key == 'hover enter':
                     if self.hov_cmd[0] == None:
@@ -115,7 +117,7 @@ class LemonbarRenderer(Renderer):
         reset = '%{F-B-}'
         if 'side' in kwargs:
             if kwargs['side'] == 'center':
-                if kwargs['width'] == 'auto':
+                if 'width' in kwargs and  kwargs['width'] == 'auto':
                     self.center_is_wide = True
                 if self.clear_left == ('%{F-}', '%{B-}'):
                     self.clear_left = (fg_col, bg_col)
