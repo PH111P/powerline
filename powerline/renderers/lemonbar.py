@@ -67,10 +67,10 @@ class LemonbarRenderer(Renderer):
                 st = click[key].format(escaped_contents.strip(), **click_values).strip()
                 st = st.replace(':', '\\:') + SEGMENT_NAME.decode() \
                         + ((kwargs['payload_name']) if 'payload_name' in kwargs else \
-                        (kwargs['name'] if 'name' in kwargs else ''))
+                        (str(kwargs['name']) if 'name' in kwargs else ''))
                 st2 = click[key].replace(':', '\\:') + SEGMENT_NAME.decode() \
                         + ((kwargs['payload_name']) if 'payload_name' in kwargs else \
-                        (kwargs['name'] if 'name' in kwargs else ''))
+                        (str(kwargs['name']) if 'name' in kwargs else ''))
 
                 if key == 'hover enter':
                     if self.hov_cmd[0] == None:
