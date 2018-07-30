@@ -149,7 +149,7 @@ def compute_bar_command(arg, screen, height):
             res += ['-b']
 
         font_height = int(int(height) * .6)
-        sep_height = min(font_height + 4, int(int(height) * .8))
+        sep_height = int(int(height) * .75)
         mid = (font_height + sep_height) // 2
 
         res += ['-f', 'DejaVu Sans Mono-' + str(font_height)]

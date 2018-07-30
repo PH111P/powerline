@@ -55,6 +55,6 @@ def get_argparser(ArgumentParser=argparse.ArgumentParser):
         'args', nargs=argparse.REMAINDER,
         help='Extra arguments for lemonbar. Should be preceded with ``--`` '
              'argument in order not to be confused with script own arguments.\n'
-             'Defaults to -a 40 -b -f \'DejaVu Sans Mono-{height*.6}\' -f \'PowerlineSymbols-{height*.7}\' -f \'FontAwesome-{height*.6+1}\'.'
+             'Defaults to -a 40 -b -f \'DejaVu Sans Mono-{height*.6}\' -f \'PowerlineSymbols-{height*.75}\' -f \'FontAwesome-{height*.65}\'.'
     )
     return parser
