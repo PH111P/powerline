@@ -38,6 +38,9 @@ class LemonbarRenderer(Renderer):
                 'hover leave': 7
                 }
 
+        if kwargs == None:
+            kwargs = {}
+
         text = ''
         click_count = 0
         cl_hov = ''
