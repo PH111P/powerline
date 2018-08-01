@@ -476,6 +476,8 @@ class Renderer(object):
                     if side == 'left' else
                     segment is last_segment
                     if side == 'right' else
+                    segment is first_segment or segment is last_segment
+                    if side == 'center' else
                     False
                 )) * theme.outer_padding
 
@@ -541,6 +543,8 @@ class Renderer(object):
                     if side == 'left' else
                     segment is last_segment
                     if side == 'right' else
+                    segment is first_segment or segment is last_segment
+                    if side == 'center' else
                     False
                 )) * theme.outer_padding * ' '
                 divider_type = 'soft' if self._compare_bg(compare_segment['highlight']['bg'], segment['highlight']['bg']) else 'hard'
@@ -552,7 +556,7 @@ class Renderer(object):
 
                 # XXX Make sure self.hl() calls are called in the same order
                 # segments are displayed. This is needed for Vim renderer to work.
-                if draw_divider:
+                if draw_divider and (side != 'center' or segment != last_segment):
                     divider_raw = self.escape(theme.get_divider(side, divider_type))
                     if side != 'right':
                         contents_raw = outer_padding + contents_raw + (divider_spaces * ' ')
@@ -592,7 +596,7 @@ class Renderer(object):
                         segment['_rendered_raw'] = divider_raw + contents_raw
                         segment['_rendered_hl'] = divider_highlighted + contents_highlighted
                 else:
-                    if side != 'right':
+                    if side == 'left' or (side == 'center' and segment != last_segment):
                         contents_raw = outer_padding + contents_raw
                     else:
                         contents_raw = contents_raw + outer_padding

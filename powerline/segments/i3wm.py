@@ -481,7 +481,8 @@ start = 0
 path = []
 
 @requires_segment_info
-def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=20, max_width=80, **kwargs):
+def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=20, \
+        max_width=80, auto_expand=False, **kwargs):
         '''
         Returns the title of the currently active window.
         To enhance the global menu support, add the following to your ``.bashrc``:
@@ -509,7 +510,9 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
         :param int item_length:
             Maximum length of a menu item.
         :param int max_width:
-            Maximum total length of the menu items.
+            Maximum total length of the content.
+        :param bool auto_expand:
+            Add spaces to center the segment.
 
         Highlight groups used: ``active_window_title:single`` or ``active_window_title:stacked_unfocused`` or ``active_window_title:stacked`` or ``active_window_title``.
         '''
@@ -662,38 +665,43 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
         show_next = current_layer and active_window_state > 0 \
                 and start < len(current_layer) - 1
 
-        if global_menu:
+        def shorten(string, length):
+            if len(string) < length - 1:
+                return string
+            return string[:length-1] + '…'
+
+        if global_menu and (auto_expand or show_prev):
             res += [{
-                'contents': '< |' if show_prev else '',
+                'contents': '<' if show_prev else '',
                 'highlight_groups': highlight,
                 'payload_name': channel_name if show_prev else 'DROP',
                 'draw_soft_divider': False,
-                'draw_inner_divider': False,
-                'width': 'auto',
+                'draw_inner_divider': True if show_prev else False,
+                'width': 'auto' if auto_expand else None,
                 'align': 'r',
                 'click_values': { 'segment': '$<' }
             }]
 
         for i in range(0, len(cont)):
+            draw_div = i != 0 or show_prev or not auto_expand
             res += [{
-                'contents': (' ' if i > 0 or show_prev else '') + (cont[i][:item_length] \
-                        if cont[i] != main_cont else cont[i]) \
-                        + (' |' if i + 1 < len(cont) or show_next else ''),
+                'contents': (shorten(cont[i],item_length) if cont[i] != main_cont \
+                        else shorten(cont[i], max_width)),
                 'highlight_groups': highlight,
                 'payload_name': channel_name,
-                'draw_inner_divider': False,
-                'draw_soft_divider': False,
+                'draw_inner_divider': draw_div,
+                'draw_soft_divider': True ,
                 'click_values': { 'segment': cont[i] if cont[i] != main_cont else '' }
                 }]
 
-        if global_menu:
+        if global_menu and (auto_expand or show_next):
             res += [{
-                'contents': ' >' if show_next else '',
+                'contents': '>' if show_next else '',
                 'highlight_groups': highlight,
                 'payload_name': channel_name if show_next else 'DROP',
-                'draw_soft_divider': False,
-                'width': 'auto',
-                'click_values': { 'segment': '$>' }
+                'width': 'auto' if auto_expand else None,
+                'click_values': { 'segment': '$>' },
+                'draw_inner_divider': bool(show_next),
             }]
         return res
 

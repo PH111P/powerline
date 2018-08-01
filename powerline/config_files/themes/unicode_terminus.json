@@ -6,7 +6,7 @@
         },
         "center": {
             "hard":                     " ",
-            "soft":                     " |"
+            "soft":                     "│ "
         },
         "right": {
             "hard":                     " ▐",
