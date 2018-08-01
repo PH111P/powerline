@@ -4,7 +4,8 @@
             {
                 "function":             "powerline.segments.i3wm.active_window",
                 "args": {
-                    "global_menu":      true
+                    "global_menu":      true,
+                    "auto_expand":      true
                 }
             }
         ],
