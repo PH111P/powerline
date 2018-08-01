@@ -454,6 +454,23 @@ def compute_highlight(ws, window):
 
     return highlight_groups
 
+def split_layer(layer, max_length):
+    res = []
+    ln = 0
+    cur = {}
+    lst = list(layer.keys())
+    for i in range(0, len(lst)):
+        if ln + len(lst[i]) > max_length:
+            res += [cur]
+            cur = {}
+            ln = 0
+        ln += len(lst[i])
+        cur.update({lst[i]: layer[lst[i]]})
+    if ln:
+        res += [cur]
+    return res
+
+
 active_window_state = 0
 last_active_window = None
 last_active_window_name = None
@@ -461,9 +478,10 @@ last_oneshot = 0
 menu_items = None
 current_layer = None
 start = 0
+path = []
 
 @requires_segment_info
-def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=20, items_per_page=5):
+def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=20, max_width=80, **kwargs):
         '''
         Returns the title of the currently active window.
         To enhance the global menu support, add the following to your ``.bashrc``:
@@ -490,8 +508,8 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
             Activate global menu support (experimental)
         :param int item_length:
             Maximum length of a menu item.
-        :param int items_per_page:
-            Maximum number of menu items per page.
+        :param int max_width:
+            Maximum total length of the menu items.
 
         Highlight groups used: ``active_window_title:single`` or ``active_window_title:stacked_unfocused`` or ``active_window_title:stacked`` or ``active_window_title``.
         '''
@@ -505,6 +523,12 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
         global menu_items
         global current_layer
         global start
+        global path
+
+        if len(path) > 0:
+            max_width = max_width - len('Main Menu')
+        if len(path) > 1:
+            max_width = max_width - len('Up a Level')
 
         channel_name = 'i3wm.active_window'
 
@@ -531,6 +555,7 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
             start = 0
             menu_items = None
             current_layer = None
+            path = []
 
 
         if o_name != output:
@@ -570,26 +595,45 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                 last_active_window = focused.window
                 last_active_window_name = focused.name
                 menu_items = compute_menu(focused.window)
-                current_layer = menu_items
+                current_layer = split_layer(menu_items, max_width)
+                path = []
                 active_window_state = 1
             elif click_area == 'Main Menu':
                 start = 0
+                current_layer = split_layer(menu_items, max_width)
+                path = []
+            elif click_area == 'Up a Level':
+                start = 0
+                path = path[:-1]
                 current_layer = menu_items
-            elif click_area == '$<':
-                start = max(0, start - items_per_page)
-            elif click_area == '$>':
-                start = min(len(current_layer) - items_per_page, start + items_per_page)
-            elif click_area != '':
-                if isinstance(current_layer[click_area], dict):
-                    current_layer = current_layer[click_area]
+                cnt = 0
+                for i in path:
+                    current_layer = current_layer[i]
+                    cnt += 1
+                    if cnt > 1:
+                        current_layer.update({'Up a Level': ''})
                     current_layer.update({'Main Menu': ''})
+                current_layer = split_layer(current_layer, max_width)
+            elif click_area == '$<':
+                start = max(0, start - 1)
+            elif click_area == '$>':
+                start = min(len(current_layer) - 1, start + 1)
+            elif click_area != '':
+                if isinstance(current_layer[start][click_area], dict):
+                    current_layer = current_layer[start][click_area]
+                    if len(path) > 0:
+                        current_layer.update({'Up a Level': ''})
+                    current_layer.update({'Main Menu': ''})
+                    current_layer = split_layer(current_layer, max_width)
                     start = 0
+                    path += [click_area]
                 else:
-                    if isinstance(current_layer[click_area], tuple):
-                        gtk_click(current_layer[click_area][0], current_layer[click_area][1])
+                    if isinstance(current_layer[start][click_area], tuple):
+                        gtk_click(current_layer[start][click_area][0], current_layer[start][click_area][1])
                     else:
-                        current_layer[click_area]()
-                    current_layer = menu_items
+                        current_layer[start][click_area]()
+                    current_layer = split_layer(menu_items, max_width)
+                    path = []
                     start = 0
 
         if channel_value and not isinstance(channel_value, str) and len(channel_value) == 2 \
@@ -604,18 +648,19 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                 last_active_window = focused.window
                 last_active_window_name = focused.name
                 menu_items = compute_menu(focused.window)
-                current_layer = menu_items
+                current_layer = split_layer(menu_items, max_width)
+                path = []
                 start = 0
 
         if current_layer and active_window_state:
-            cont = list(current_layer.keys())
+            cont = list(current_layer[start].keys())
 
         highlight = compute_highlight(ws, focused)
         res = []
 
         show_prev = start > 0 and active_window_state > 0
         show_next = current_layer and active_window_state > 0 \
-                and start < len(current_layer) - items_per_page
+                and start < len(current_layer) - 1
 
         if global_menu:
             res += [{
@@ -629,9 +674,7 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                 'click_values': { 'segment': '$<' }
             }]
 
-        d_start = start if active_window_state else 0
-
-        for i in range(d_start, min(len(cont), d_start + items_per_page)):
+        for i in range(0, len(cont)):
             res += [{
                 'contents': (' ' if i > 0 or show_prev else '') + (cont[i][:item_length] \
                         if cont[i] != main_cont else cont[i]) \
