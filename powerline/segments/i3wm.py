@@ -454,17 +454,18 @@ def compute_highlight(ws, window):
 
     return highlight_groups
 
-def split_layer(layer, max_length):
+def split_layer(layer, max_length, item_length):
     res = []
     ln = 0
     cur = {}
     lst = list(layer.keys())
     for i in range(0, len(lst)):
-        if ln + len(lst[i]) > max_length:
+        cl = min(len(lst[i]), item_length)
+        if ln + cl > max_length:
             res += [cur]
             cur = {}
             ln = 0
-        ln += len(lst[i])
+        ln += cl
         cur.update({lst[i]: layer[lst[i]]})
     if ln:
         res += [cur]
@@ -596,12 +597,12 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                 last_active_window = focused.window
                 last_active_window_name = focused.name
                 menu_items = compute_menu(focused.window)
-                current_layer = split_layer(menu_items, max_width)
+                current_layer = split_layer(menu_items, max_width, item_length)
                 path = []
                 active_window_state = 1
             elif click_area == 'Main Menu':
                 start = 0
-                current_layer = split_layer(menu_items, max_width)
+                current_layer = split_layer(menu_items, max_width, item_length)
                 path = []
             elif click_area == 'Up a Level':
                 start = 0
@@ -614,7 +615,7 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                     if cnt > 1:
                         current_layer.update({'Up a Level': ''})
                     current_layer.update({'Main Menu': ''})
-                current_layer = split_layer(current_layer, max_width)
+                current_layer = split_layer(current_layer, max_width, item_length)
             elif click_area == '$<':
                 start = max(0, start - 1)
             elif click_area == '$>':
@@ -625,7 +626,7 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                     if len(path) > 0:
                         current_layer.update({'Up a Level': ''})
                     current_layer.update({'Main Menu': ''})
-                    current_layer = split_layer(current_layer, max_width)
+                    current_layer = split_layer(current_layer, max_width, item_length)
                     start = 0
                     path += [click_area]
                 else:
@@ -633,7 +634,7 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                         gtk_click(current_layer[start][click_area][0], current_layer[start][click_area][1])
                     else:
                         current_layer[start][click_area]()
-                    current_layer = split_layer(menu_items, max_width)
+                    current_layer = split_layer(menu_items, max_width, item_length)
                     path = []
                     start = 0
 
@@ -649,7 +650,7 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                 last_active_window = focused.window
                 last_active_window_name = focused.name
                 menu_items = compute_menu(focused.window)
-                current_layer = split_layer(menu_items, max_width)
+                current_layer = split_layer(menu_items, max_width, item_length)
                 path = []
                 start = 0
 
