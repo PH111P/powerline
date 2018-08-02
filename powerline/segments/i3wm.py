@@ -517,8 +517,6 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
         Highlight groups used: ``active_window_title:single`` or ``active_window_title:stacked_unfocused`` or ``active_window_title:stacked`` or ``active_window_title``.
         '''
 
-        # TODO implement shortening function
-
         global active_window_state
         global last_active_window
         global last_active_window_name
@@ -682,6 +680,19 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                 'click_values': { 'segment': '$<' }
             }]
 
+        total_len = 0
+        for i in range(0, len(cont)):
+            total_len += min(len(cont[i]), item_length) if cont[i] != main_cont \
+                        else min(len(cont[i]), max_width)
+
+        def truncate(pl, wd, seg):
+            nl = max(5 * len(cont), int(total_len) - wd)
+            if int(total_len) <= nl:
+                return seg['contents']
+            shr = (int(total_len) - nl) // len(cont)
+            return shorten(seg['contents'], len(seg['contents']) - shr)
+
+
         for i in range(0, len(cont)):
             draw_div = i != 0 or show_prev or not auto_expand
             res += [{
@@ -691,7 +702,8 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                 'payload_name': channel_name,
                 'draw_inner_divider': draw_div,
                 'draw_soft_divider': True ,
-                'click_values': { 'segment': cont[i] if cont[i] != main_cont else '' }
+                'click_values': { 'segment': cont[i] if cont[i] != main_cont else '' },
+                'truncate': truncate
                 }]
 
         if global_menu and (auto_expand or show_next):
