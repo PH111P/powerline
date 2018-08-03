@@ -149,11 +149,15 @@ class ScreenRotationSegment(ThreadedSegment):
             mx_mm_x = 1000000.0
             mx_mm_y = 1000000.0
 
+            ratio = 1
+
             for o in outs:
                 if o['width']:
                     mx_x = max(mx_x, o['x'] + o['width'])
                 if o['height']:
                     mx_y = max(mx_y, o['y'] + o['height'])
+                if o['width'] and o['height']:
+                    ratio = max(ratio, max(o['width'] / o['height'], o['height'] / o['width'] ))
                 if o in mirrored_outs and o['crtc'].rotation in [xlib_rots['left'],
                         xlib_rots['right']]:
                     if o['mm_width'] and o['width']:
@@ -166,7 +170,6 @@ class ScreenRotationSegment(ThreadedSegment):
                     if o['mm_height'] and o['width']:
                         mx_mm_x = min(mx_mm_x, o['width'] * 1.0 / o['mm_height'])
 
-            ratio = max(mx_x / mx_y, mx_y / mx_x)
             if mx_x and mx_y and mx_mm_x and mx_mm_y:
                 self.window.xrandr_set_screen_size(mx_y, mx_x, int(mx_x / mx_mm_x * ratio),
                         int(mx_y / mx_mm_y * ratio))
@@ -503,11 +506,14 @@ class OutputSegment(ThreadedSegment):
         mx_mm_x = 1000000.0
         mx_mm_y = 1000000.0
 
+        ratio =  1
         for o in outs:
             if o['width']:
                 mx_x = max(mx_x, o['x'] + o['width'])
             if o['height']:
                 mx_y = max(mx_y, o['y'] + o['height'])
+            if o['width'] and o['height']:
+                ratio = max(ratio, max(o['width'] / o['height'], o['height'] / o['width'] ))
             if not o['crtc'].rotation in [xlib_rots['left'], xlib_rots['right']]:
                 if o['mm_width'] and o['width']:
                     mx_mm_x = min(mx_mm_x, o['width'] * 1.0 / o['mm_width'])
@@ -519,7 +525,6 @@ class OutputSegment(ThreadedSegment):
                 if o['mm_height'] and o['width']:
                     mx_mm_x = min(mx_mm_x, o['width'] * 1.0 / o['mm_height'])
 
-        ratio = max(mx_x / mx_y, mx_y / mx_x)
         if mx_x and mx_y and mx_mm_x and mx_mm_y:
             self.window.xrandr_set_screen_size(mx_x, mx_y, int(mx_x / mx_mm_x * ratio),
                     int(mx_y / mx_mm_y * ratio))
