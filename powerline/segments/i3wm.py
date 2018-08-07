@@ -483,7 +483,7 @@ path = []
 
 @requires_segment_info
 def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=20, \
-        max_width=80, auto_expand=False, **kwargs):
+        max_width=80, auto_expand=False, show_empty=False, **kwargs):
         '''
         Returns the title of the currently active window.
         To enhance the global menu support, add the following to your ``.bashrc``:
@@ -514,6 +514,8 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
             Maximum total length of the content.
         :param bool auto_expand:
             Add spaces to center the segment.
+        :param bool show_empty:
+            Show the sehment if no window is focused.
 
         Highlight groups used: ``active_window_title:single`` or ``active_window_title:stacked_unfocused`` or ``active_window_title:stacked`` or ``active_window_title``.
         '''
@@ -561,6 +563,8 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
 
 
         if o_name != output:
+            if not show_empty:
+                return None
             # Get visible workspace
             ws = [w for w in get_i3_connection().get_workspaces() if w['output'] == output \
                     and w['visible']]
