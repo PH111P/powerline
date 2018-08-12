@@ -537,6 +537,11 @@ class TestEnv(TestCommon):
             if hasattr(self.module, 'psutil') and not callable(self.module.psutil.Process.username):
                 username = property(username)
 
+        segment_info = {'environ': {}}
+
+        def user(*args, **kwargs):
+            return self.module.user(pl=pl, segment_info=segment_info, *args, **kwargs)
+
         struct_passwd = namedtuple('struct_passwd', ('pw_name',))
         new_psutil = new_module('psutil', Process=Process)
         new_pwd = new_module('pwd', getpwuid=lambda uid: struct_passwd(pw_name='def@DOMAIN.COM'))
@@ -547,21 +552,21 @@ class TestEnv(TestCommon):
                 with replace_attr(self.module, 'os', new_os):
                     with replace_attr(self.module, 'psutil', new_psutil):
                         with replace_attr(self.module, '_geteuid', lambda: 5):
-                            self.assertEqual(self.module.user(pl=pl), [
+                            self.assertEqual(user(), [
                                 {'contents': 'def@DOMAIN.COM', 'highlight_groups': ['user']}
                             ])
-                            self.assertEqual(self.module.user(pl=pl, hide_user='abc'), [
+                            self.assertEqual(user(hide_user='abc'), [
                                 {'contents': 'def@DOMAIN.COM', 'highlight_groups': ['user']}
                             ])
-                            self.assertEqual(self.module.user(pl=pl, hide_domain=False), [
+                            self.assertEqual(user(hide_domain=False), [
                                 {'contents': 'def@DOMAIN.COM', 'highlight_groups': ['user']}
                             ])
-                            self.assertEqual(self.module.user(pl=pl, hide_user='def@DOMAIN.COM'), None)
-                            self.assertEqual(self.module.user(pl=pl, hide_domain=True), [
+                            self.assertEqual(user(hide_user='def@DOMAIN.COM'), None)
+                            self.assertEqual(user(hide_domain=True), [
                                 {'contents': 'def', 'highlight_groups': ['user']}
                             ])
                         with replace_attr(self.module, '_geteuid', lambda: 0):
-                            self.assertEqual(self.module.user(pl=pl), [
+                            self.assertEqual(user(), [
                                 {'contents': 'def', 'highlight_groups': ['superuser', 'user']}
                             ])
 
@@ -710,6 +715,92 @@ class TestEnv(TestCommon):
             self.assertEqual(self.module.environment(pl=pl, segment_info=segment_info, variable=variable), value)
             segment_info['environ'].pop(variable)
             self.assertEqual(self.module.environment(pl=pl, segment_info=segment_info, variable=variable), None)
+
+
+class TestVcs(TestCommon):
+    module_name = 'vcs'
+
+    def test_branch(self):
+        pl = Pl()
+        create_watcher = get_fallback_create_watcher()
+        segment_info = {'getcwd': os.getcwd}
+        branch = partial(self.module.branch, pl=pl, create_watcher=create_watcher)
+        with replace_attr(self.module, 'guess', get_dummy_guess(status=lambda: None, directory='/tmp/tests')):
+            with replace_attr(self.module, 'tree_status', lambda repo, pl: None):
+                self.assertEqual(branch(segment_info=segment_info, status_colors=False), [{
+                        'highlight_groups': ['branch'],
+                        'contents': 'tests',
+                        'divider_highlight_group': None
+                }])
+                self.assertEqual(branch(segment_info=segment_info, status_colors=True), [{
+                    'contents': 'tests',
+                    'highlight_groups': ['branch_clean', 'branch'],
+                    'divider_highlight_group': None
+                }])
+        with replace_attr(self.module, 'guess', get_dummy_guess(status=lambda: 'D  ', directory='/tmp/tests')):
+            with replace_attr(self.module, 'tree_status', lambda repo, pl: 'D '):
+                self.assertEqual(branch(segment_info=segment_info, status_colors=False), [{
+                    'highlight_groups': ['branch'],
+                    'contents': 'tests',
+                    'divider_highlight_group': None
+                }])
+                self.assertEqual(branch(segment_info=segment_info, status_colors=True), [{
+                    'contents': 'tests',
+                    'highlight_groups': ['branch_dirty', 'branch'],
+                    'divider_highlight_group': None
+                }])
+                self.assertEqual(branch(segment_info=segment_info, status_colors=False), [{
+                    'highlight_groups': ['branch'],
+                    'contents': 'tests',
+                    'divider_highlight_group': None
+                }])
+        with replace_attr(self.module, 'guess', lambda path, create_watcher: None):
+            self.assertEqual(branch(segment_info=segment_info, status_colors=False), None)
+        with replace_attr(self.module, 'guess', get_dummy_guess(status=lambda: 'U')):
+            with replace_attr(self.module, 'tree_status', lambda repo, pl: 'U'):
+                self.assertEqual(branch(segment_info=segment_info, status_colors=False, ignore_statuses=['U']), [{
+                    'highlight_groups': ['branch'],
+                    'contents': 'tests',
+                    'divider_highlight_group': None
+                }])
+                self.assertEqual(branch(segment_info=segment_info, status_colors=True, ignore_statuses=['DU']), [{
+                    'highlight_groups': ['branch_dirty', 'branch'],
+                    'contents': 'tests',
+                    'divider_highlight_group': None
+                }])
+                self.assertEqual(branch(segment_info=segment_info, status_colors=True), [{
+                    'highlight_groups': ['branch_dirty', 'branch'],
+                    'contents': 'tests',
+                    'divider_highlight_group': None
+                }])
+                self.assertEqual(branch(segment_info=segment_info, status_colors=True, ignore_statuses=['U']), [{
+                    'highlight_groups': ['branch_clean', 'branch'],
+                    'contents': 'tests',
+                    'divider_highlight_group': None
+                }])
+
+    def test_stash(self):
+        pl = Pl()
+        create_watcher = get_fallback_create_watcher()
+        stash = partial(self.module.stash, pl=pl, create_watcher=create_watcher, segment_info={'getcwd': os.getcwd})
+
+        def forge_stash(n):
+            return replace_attr(self.module, 'guess', get_dummy_guess(stash=lambda: n, directory='/tmp/tests'))
+
+        with forge_stash(0):
+            self.assertEqual(stash(), None)
+        with forge_stash(1):
+            self.assertEqual(stash(), [{
+                'highlight_groups': ['stash'],
+                'contents': '1',
+                'divider_highlight_group': None
+            }])
+        with forge_stash(2):
+            self.assertEqual(stash(), [{
+                'highlight_groups': ['stash'],
+                'contents': '2',
+                'divider_highlight_group': None
+            }])
 
 
 class TestTime(TestCommon):
