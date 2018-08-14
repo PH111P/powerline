@@ -18,8 +18,7 @@ addons:
             - libiw-dev
             - libasound2-dev
 language: python
-install: tests/install.sh
-script:  echo "tests disabled" #tests/test.sh
+script:   echo "tests disabled" #tests/test.sh
 jobs:
     include:
         - stage: UCS2 python
