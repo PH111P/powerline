@@ -74,19 +74,18 @@ def wireless(pl, segment_info, device=None, format='{quality:3.0%} at {essid}',
         }]
 
     stats = iwlib.get_iwconfig(device)
-    essid = ''
+    stats = {a.lower(): stats[a].decode() if isinstance(stats[a], bytes) else stats[a] for a in stats}
+
     quality = 0
-    frequency = 0
-    if 'ESSID' in stats:
-        essid = stats['ESSID']
+    essid = ''
+    if 'essid' in stats:
+        essid = stats['essid']
         if 'stats' in stats and 'quality' in stats['stats']:
             quality = stats['stats']['quality']
-        if 'Frequency' in stats:
-            frequency = stats['Frequency']
 
     if essid == '' or quality == 0:
         return None if not format_down else [{
-            'contents': format_down.format(quality=0, essid=None, frequency=0),
+            'contents': format_down.format(quality=0, essid=None, **stats),
             'highlight_groups': ['wireless:down', 'wireless:quality', 'quality_gradient'],
             'gradient_level': 100,
             'payload_name': payload_name
@@ -95,20 +94,19 @@ def wireless(pl, segment_info, device=None, format='{quality:3.0%} at {essid}',
     if not auto_shrink or ('payloads' in segment_info and payload_name in
         segment_info['payloads'] and segment_info['payloads'][payload_name]):
             return [{
-                'contents': format.format(quality=quality/85,
-                essid=essid.decode(), frequency=frequency),
+                'contents': format.format(quality=quality/70, **stats),
                 'highlight_groups': ['wireless:quality', 'quality_gradient'],
-                'gradient_level': 100 * (85 - quality) / 85,
-                'click_values': {'essid': essid, 'quality': quality * 100 / 85},
+                'gradient_level': 100 * (70 - quality) / 70,
+                'click_values': {'essid': essid, 'quality': quality * 100 / 70},
                 'payload_name': payload_name
                 }]
     return [{
-        'contents': short_format.format(quality=quality/85, essid=essid.decode(), frequency=frequency),
+        'contents': short_format.format(quality=quality/70, **stats),
         'highlight_groups': ['wireless:quality', 'quality_gradient'],
-        'gradient_level': 100 * (85 - quality) / 85,
-        'click_values': {'essid': essid, 'quality': quality * 100 / 85},
+        'gradient_level': 100 * (70 - quality) / 70,
+        'click_values': {'essid': essid, 'quality': quality * 100 / 70},
         'payload_name': payload_name,
-        'truncate': lambda a,b,c: short_format.format(quality=quality/85, essid=essid.decode(), frequency=frequency)
+        'truncate': lambda a,b,c: short_format.format(quality=quality/70, **stats)
         }]
 
 
