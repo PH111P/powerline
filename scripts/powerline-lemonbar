@@ -19,6 +19,7 @@ args = []
 global_args = []
 
 pause_clicks = False
+last_render = 0
 
 segment_info={'payloads': {}}
 
@@ -39,6 +40,11 @@ def render(reschedule=False):
     t = Timer(args.interval, render, kwargs={'reschedule': True})
     stamp = time.time()
     global lock
+    global last_render
+    if int(stamp * 10) == int(last_render * 10) and not reschedule:
+        return
+    last_render = stamp
+
     try:
         for output in bars:
             process, thread, width = bars[output]

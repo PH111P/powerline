@@ -43,7 +43,7 @@ def get_argparser(ArgumentParser=argparse.ArgumentParser):
     )
     parser.add_argument(
         '--interval', '-i',
-        type=float, default=2,
+        type=float, default=5,
         metavar='SECONDS', help='Refresh interval.'
     )
     parser.add_argument(

@@ -46,14 +46,13 @@ WS_ICONS = {
         "multiple":         ""
         }
 
-def get_icon(w, separator, icons, show_multiple_icons):
+def get_icon(w, separator, icons, show_multiple_icons, ws_containers):
     if 'dummy' in w:
         return ""
     icons_tmp = WS_ICONS
     icons_tmp.update(icons)
     icons = icons_tmp
 
-    ws_containers = {w_con.name : w_con for w_con in get_i3_connection().get_tree().workspaces()}
     wins = [win for win in ws_containers[w['name']].leaves() \
             if win.parent.scratchpad_state == 'none']
     if len(wins) == 0:
@@ -88,14 +87,13 @@ def get_next_ws(ws, outputs):
                 'output': o} for o in outputs]
     return []
 
-def is_empty_workspace(w):
+def is_empty_workspace(w, ws_containers):
     if 'dummy' in w:
         return False
 
     if w['focused'] or w['visible']:
         return False
 
-    ws_containers = {w_con.name : w_con for w_con in get_i3_connection().get_tree().workspaces()}
     wins = [win for win in ws_containers[w['name']].leaves()]
 
     return False if len(wins) > 0 else True
@@ -156,6 +154,7 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
         '''
 
     channel_name = 'i3wm.workspaces'
+    conn = get_i3_connection()
 
     channel_value = None
     if 'payloads' in segment_info and channel_name in segment_info['payloads']:
@@ -170,13 +169,13 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
     if not output == "__all__":
         output = output or segment_info.get('output')
         if show_output:
-            output_count = len([o for o in get_i3_connection().get_outputs() if o['active']])
+            output_count = len([o for o in conn.get_outputs() if o['active']])
     else:
         output = None
     if output:
         output = [output]
     else:
-        output = [o['name'] for o in get_i3_connection().get_outputs() if o['active']]
+        output = [o['name'] for o in conn.get_outputs() if o['active']]
 
 
     def sort_ws(ws):
@@ -190,6 +189,7 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
             result += [w for w in ws if w['name'] == n]
         return result + [w for w in ws if not w['name'] in priority_workspaces]
 
+    ws_containers = {w_con.name : w_con for w_con in conn.get_tree().workspaces()}
     if len(output) <= 1:
         res = []
         if output_count > 1:
@@ -201,14 +201,15 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
                 }]
         res += [{
             'contents': w['name'][min(len(w['name']), strip):] \
-                    + (get_icon(w, separator, icons, show_multiple_icons) if show_icons else ""),
+                    + (get_icon(w, separator, icons, show_multiple_icons, ws_containers) \
+                        if show_icons else ""),
             'highlight_groups': workspace_groups(w),
             'payload_name': channel_name,
             'click_values': {'workspace_name': w['name']}
-            } for w in sort_ws(get_i3_connection().get_workspaces())
+            } for w in sort_ws(conn.get_workspaces())
             if (not only_show or any(w[typ] for typ in only_show))
             if w['output'] == output[0]
-            if not (hide_empty_workspaces and is_empty_workspace(w))
+            if not (hide_empty_workspaces and is_empty_workspace(w, ws_containers))
             ]
         return res
     else:
@@ -221,14 +222,15 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
                 'click_values': {'output_name': n}
                 }]
             res += [{'contents': w['name'][min(len(w['name']), strip):] \
-                + (get_icon(w, separator, icons, show_multiple_icons) if show_icons else ""),
+                + (get_icon(w, separator, icons, show_multiple_icons, ws_containers) \
+                if show_icons else ""),
                 'highlight_groups': workspace_groups(w),
                 'payload_name': channel_name,
                 'click_values': {'workspace_name': w['name']}} \
-                        for w in sort_ws(get_i3_connection().get_workspaces())
+                        for w in sort_ws(conn.get_workspaces())
                 if (not only_show or any(w[typ] for typ in only_show))
                 if w['output'] == n
-                if not (hide_empty_workspaces and is_empty_workspace(w))
+                if not (hide_empty_workspaces and is_empty_workspace(w, ws_containers))
                 ]
         return res
 
@@ -277,10 +279,10 @@ def scratchpad(pl, icons=SCRATCHPAD_ICONS):
         Highlight groups used: ``scratchpad`` or ``scratchpad:visible``, ``scratchpad`` or ``scratchpad:focused``, ``scratchpad`` or ``scratchpad:urgent``.
         '''
 
+    windows = get_i3_connection().get_tree().descendents()
     return [{'contents': icons.get(w.scratchpad_state, icons['changed']),
         'highlight_groups': scratchpad_groups(w)
-        } for w in get_i3_connection().get_tree().descendents()
-        if w.scratchpad_state != 'none']
+        } for w in windows if w.scratchpad_state != 'none']
 
 
 
@@ -529,6 +531,8 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
         global start
         global path
 
+        conn = get_i3_connection()
+
         if len(path) > 0:
             max_width = max_width - len('Main Menu')
         if len(path) > 1:
@@ -540,10 +544,10 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
         if global_menu and 'payloads' in segment_info and channel_name in segment_info['payloads']:
             channel_value = segment_info['payloads'][channel_name]
 
-        focused = get_i3_connection().get_tree().find_focused()
+        focused = conn.get_tree().find_focused()
         ws = focused.workspace()
 
-        o_name = [w['output'] for w in get_i3_connection().get_workspaces() \
+        o_name = [w['output'] for w in conn.get_workspaces() \
                 if w['name'] == ws.name][0]
         output = segment_info.get('output')
 
@@ -566,7 +570,7 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
             if not show_empty:
                 return None
             # Get visible workspace
-            ws = [w for w in get_i3_connection().get_workspaces() if w['output'] == output \
+            ws = [w for w in conn.get_workspaces() if w['output'] == output \
                     and w['visible']]
             if not len(ws):
                 return None

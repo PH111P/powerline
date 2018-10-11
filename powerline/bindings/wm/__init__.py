@@ -10,19 +10,22 @@ DEFAULT_UPDATE_INTERVAL = 2
 
 conn = None
 
-def get_i3_connection():
-    '''Return a valid, cached i3 Connection instance
-    '''
-    global conn
-    if not conn:
-        import i3ipc
-        conn = i3ipc.Connection()
-    try:
-        conn.get_tree()
-    except BrokenPipeError:
-        import i3ipc
-        conn = i3ipc.Connection()
-    return conn
+try:
+    import i3ipc
+    def get_i3_connection():
+        '''Return a valid, cached i3 Connection instance
+        '''
+        global conn
+        if not conn:
+            conn = i3ipc.Connection()
+        try:
+            conn.get_version()
+        except BrokenPipeError:
+            conn = i3ipc.Connection()
+        return conn
+except ImportError:
+    def get_i3_connection():
+        pass
 
 def get_randr_outputs(d = None, window = None):
     '''Return all randr outputs as a list.

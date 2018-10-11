@@ -118,7 +118,10 @@ class ScreenRotationSegment(ThreadedSegment):
         super(ScreenRotationSegment, self).set_state(**kwargs)
 
     def rotate(self, state):
-        outs = [o for o in get_randr_outputs(self.d, self.window) if o['crtc']]
+        outs = get_randr_outputs(self.d, self.window)
+        if outs == None:
+            return False
+        outs = [o for o in outs if o['crtc']]
         op = [o for o in outs if o['name'] == self.output]
         if not len(op):
             # The output to be rotated doesn't exist :(
@@ -456,7 +459,9 @@ class OutputSegment(ThreadedSegment):
         s = self.d.screen()
         self.window = s.root.create_window(0, 0, 1, 1, 1, s.root_depth)
 
-        self.outputs = [o for o in get_randr_outputs(self.d, self.window) if o['connection']]
+        outs = get_randr_outputs(self.d, self.window)
+        if outs != None:
+            self.outputs = [o for o in outs if o['connection']]
 
         self.auto_update = auto_update
 
@@ -466,7 +471,10 @@ class OutputSegment(ThreadedSegment):
 
     def update(self, *args, **kwargs):
         od_out = self.outputs
-        nw_out = [o for o in get_randr_outputs(self.d, self.window) if o['connection']]
+        outs = get_randr_outputs(self.d, self.window)
+        if outs == None:
+            return None
+        nw_out = [o for o in outs if o['connection']]
 
         old = [o['name'] for o in self.outputs]
         new = [o['name'] for o in nw_out]
@@ -537,7 +545,10 @@ class OutputSegment(ThreadedSegment):
 
     def configure_mirror(self, output=None):
         with self.lock:
-            self.outputs = [o for o in get_randr_outputs(self.d, self.window) if o['connection']]
+            outs = get_randr_outputs(self.d, self.window)
+            if outs == None:
+                return False
+            self.outputs = [o for o in outs if o['connection']]
 
         used_crtc = [o['crtc_id'] for o in self.outputs if o['crtc_id']]
         if output:
@@ -573,7 +584,10 @@ class OutputSegment(ThreadedSegment):
                 0, 0, 0, mode[0], o['crtc'].rotation, [o['id']])
 
         with self.lock:
-            self.outputs = [o for o in get_randr_outputs(self.d, self.window) if o['connection']]
+            outs = get_randr_outputs(self.d, self.window)
+            if outs == None:
+                return False
+            self.outputs = [o for o in outs if o['connection']]
         enabled_outputs = [o for o in self.outputs if o['crtc']]
         # Everything worked (hopefully), so redraw the bar
         self.bar_needs_resize = [o['name'] for o in enabled_outputs]
@@ -584,7 +598,10 @@ class OutputSegment(ThreadedSegment):
 
     def configure_extend(self, output=None):
         with self.lock:
-            self.outputs = [o for o in get_randr_outputs(self.d, self.window) if o['connection']]
+            outs = get_randr_outputs(self.d, self.window)
+            if outs == None:
+                return False
+            self.outputs = [o for o in outs if o['connection']]
         used_crtc = [o['crtc_id'] for o in self.outputs if o['crtc_id']]
         if output:
             free_crtc = [c for c in output['crtcs'] if c not in used_crtc]
@@ -609,7 +626,10 @@ class OutputSegment(ThreadedSegment):
                     0, wd, 0, output['mode_ids'][0], randr.Rotate_0, [output['id']])
 
         with self.lock:
-            self.outputs = [o for o in get_randr_outputs(self.d, self.window) if o['connection']]
+            outs = get_randr_outputs(self.d, self.window)
+            if outs == None:
+                return False
+            self.outputs = [o for o in outs if o['connection']]
         enabled_outputs = [o for o in self.outputs if o['crtc']]
         # Everything worked (hopefully), so redraw the bar
         self.bar_needs_resize = [o['name'] for o in enabled_outputs]
