@@ -41,7 +41,7 @@ def render(reschedule=False):
     stamp = time.time()
     global lock
     global last_render
-    if int(stamp * 10) == int(last_render * 10) and not reschedule:
+    if int(stamp * 3) == int(last_render * 3) and not reschedule:
         return
     last_render = stamp
 
@@ -178,9 +178,16 @@ def restart_bar(output_name):
         p, t, w = bars.pop(output_name)
         p.kill()
 
-    for screen in get_connected_randr_outputs(powerline.pl):
+    outputs = get_connected_randr_outputs(powerline.pl)
+    outputs = [o for o in outputs] # Needed as outputs is a generator
+
+    for screen in outputs:
         if screen['name'] != output_name:
             continue
+
+        if len([a for a in outputs if a['x'] == screen['x'] and a['y'] == screen['y']]) > 1:
+            if screen['primary'] == None:
+                continue
 
         height = args.height
         if args.relative_height:

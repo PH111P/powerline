@@ -463,6 +463,13 @@ class OutputSegment(ThreadedSegment):
         if outs != None:
             self.outputs = [o for o in outs if o['connection']]
 
+        prim = [o for o  in self.outputs if o['primary'] != None]
+        if len(prim) > 0:
+            prim = prim[0]
+            onaji = [o for o in self.outputs if o['x'] == prim['x'] and o['y'] == prim['y']]
+            if len(onaji) > 1:
+                self.mirror_state = 1
+
         self.auto_update = auto_update
 
         self.redraw_hook = redraw_hook
@@ -561,27 +568,47 @@ class OutputSegment(ThreadedSegment):
         # We need to find a mode that every connected output supports
         enabled_outputs = [o for o in self.outputs if o['crtc']]
 
+        # print([o['name'] for o in enabled_outputs])
+
         if len(enabled_outputs) == 0:
             return False
 
-        if output:
-            mode = output['mode_ids']
-        else:
-            mode = enabled_outputs[0]['mode_ids']
-        for e in enabled_outputs:
-            mode = [m for m in mode if m in e['mode_ids']]
+        def resolutions(modes):
+            return {(m['width'], m['height']) for m in modes}
 
-        if not len(mode):
-            # Outputs couldn't agree on mode
-            return False
+        ress = {}
+        mode_map = {}
+        if output:
+            # print(output['modes'])
+            ress = resolutions(output['modes'])
+            # print(ress)
+            mode_map.update({output['name']: output['modes']})
+        else:
+            ress = resolutions(enabled_outputs[0]['modes'])
+
+        # print(ress)
+
+        for e in enabled_outputs:
+            mode_map.update({e['name']: e['modes']})
+            ress = [m for m in ress if m in resolutions(e['modes'])]
+        if len(ress) > 0:
+            # Outputs could agree on a resolution, so pick the largest one
+            ress = sorted(ress, reverse=True)
+            # print(ress)
+            if output:
+                mode_map.update({output['name']: \
+                    [o for o in output['modes'] if (o['width'], o['height']) == ress[0]]})
+            for e in enabled_outputs:
+                mode_map.update({e['name']: \
+                    [o for o in e['modes'] if (o['width'], o['height']) == ress[0]]})
 
         if output:
             randr.set_crtc_config(self.d, free_crtc[0],
-                    0, 0, 0, mode[0], randr.Rotate_0, [output['id']])
+                0, 0, 0, mode_map[output['name']][0]['id'], randr.Rotate_0, [output['id']])
 
         for o in enabled_outputs:
             randr.set_crtc_config(self.d, o['crtc_id'],
-                0, 0, 0, mode[0], o['crtc'].rotation, [o['id']])
+                0, 0, 0, mode_map[o['name']][0]['id'], o['crtc'].rotation, [o['id']])
 
         with self.lock:
             outs = get_randr_outputs(self.d, self.window)
