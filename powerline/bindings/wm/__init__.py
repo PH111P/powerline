@@ -9,6 +9,7 @@ DEFAULT_UPDATE_INTERVAL = 2
 
 
 conn = None
+oldipc = False
 
 try:
     import i3ipc
@@ -16,12 +17,18 @@ try:
         '''Return a valid, cached i3 Connection instance
         '''
         global conn
+        global oldipc
         if not conn:
-            conn = i3ipc.Connection()
-        try:
-            conn.get_version()
-        except BrokenPipeError:
-            conn = i3ipc.Connection()
+            try:
+                conn = i3ipc.Connection(auto_reconnect=True)
+            except TypeError:
+                conn = i3ipc.Connection()
+                oldipc = True
+        if oldipc:
+            try:
+                conn.get_version()
+            except BrokenPipeError:
+                conn = i3ipc.Connection()
         return conn
 except ImportError:
     def get_i3_connection():

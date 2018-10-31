@@ -229,15 +229,27 @@ if __name__ == '__main__':
 
     if not args.no_i3:
         import i3ipc
-        conn = i3ipc.Connection()
+        newipc = False
+        try:
+            conn = i3ipc.Connection(auto_reconnect=True)
+            newipc = True
+        except TypeError:
+            conn = i3ipc.Connection()
+
         while True:
             conn.on('workspace', lambda conn, evt: render())
             conn.on('window', lambda conn, evt: render())
             conn.on('mode', lambda conn, evt: update(evt))
             render()
             conn.main()
+            if newipc: # Something really bad happened, let's just die
+                import sys
+                sys.exit(1)
             time.sleep(1) # If this gets executed, i3 got restarted / crashed / whatever
-            conn = i3ipc.Connection()
+            try:
+                conn = i3ipc.Connection(auto_reconnect=True)
+            except TypeError:
+                conn = i3ipc.Connection()
             powerline = LemonbarPowerline()
             powerline.update_renderer()
 
