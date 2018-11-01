@@ -589,7 +589,15 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
                 }]
 
         if focused.name == focused.workspace().name:
-            return None
+            if not show_empty:
+                return None
+            return [{
+                'contents': '',
+                'width': 'auto',
+                'highlight_groups': compute_highlight(ws, None),
+                'click_values': { 'segment': '' },
+                'payload_name': 'DROP'
+                }]
 
         cont = [focused.name]
         if cutoff and len(cont) > cutoff:
