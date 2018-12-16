@@ -164,7 +164,7 @@ class Renderer(object):
         self.theme_config = theme_config
         theme_kwargs['pl'] = pl
         self.pl = pl
-        if theme_config.get('use_non_breaking_spaces', True):
+        if theme_config.get('use_non_breaking_spaces', False):
             self.character_translations = self.character_translations.copy()
             self.character_translations[ord(' ')] = NBSP
         self.theme = Theme(theme_config=theme_config, **theme_kwargs)
