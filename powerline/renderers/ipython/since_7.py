@@ -116,10 +116,10 @@ class IPythonPygmentsRenderer(IPythonRenderer):
         name = (
             'Pl'
             + ''.join(('_a' + attr for attr in attrs))
-            + (('_f%6x' % guifg) if guifg is not None else '')
-            + (('_b%6x' % guibg) if guibg is not None else '')
+            + (('_f%06x' % guifg) if guifg is not None else '')
+            + (('_b%06x' % guibg) if guibg is not None else '')
         )
-        return PygmentsTokens([(getattr(Token.Generic.Prompt.Powerline, name), escaped_contents)])
+        return [(getattr(Token.Generic.Prompt.Powerline, name), escaped_contents)]
 
     def hlstyle(self, *args, **kwargs):
         return []

@@ -72,10 +72,10 @@ class PowerlinePrompts(Prompts):
             '        self.last_output.clear()\n'
             '        self.last_output_count = self.shell.execution_count\n'
             '    if "{0}" not in self.last_output:\n'
-            '        self.last_output["{0}"] = self.powerline.render('
+            '        self.last_output["{0}"] = (self.powerline.render('
             '            side="left",'
             '            matcher_info="{1}",'
             '            segment_info=self.shell,'
-            '        ) + [(Token.Generic.Prompt, " ")]\n'
+            '        ) + [(Token.Generic.Prompt, " ")])\n'
             '    return self.last_output["{0}"]'
         ).format(prompt, 'in2' if prompt == 'continuation' else prompt))
