@@ -12,6 +12,7 @@ except ImportError:
 
 from pygments.token import Token
 from prompt_toolkit.styles import DynamicStyle, Attrs
+from prompt_toolkit.formatted_text import PygmentsTokens
 
 from powerline.renderers.ipython import IPythonRenderer
 from powerline.ipython import IPythonInfo
@@ -118,7 +119,7 @@ class IPythonPygmentsRenderer(IPythonRenderer):
             + (('_f%6x' % guifg) if guifg is not None else '')
             + (('_b%6x' % guibg) if guibg is not None else '')
         )
-        return [(getattr(Token.Generic.Prompt.Powerline, name), escaped_contents)]
+        return PygmentsTokens([(getattr(Token.Generic.Prompt.Powerline, name), escaped_contents)])
 
     def hlstyle(self, *args, **kwargs):
         return []
