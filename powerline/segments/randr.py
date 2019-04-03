@@ -617,7 +617,9 @@ class OutputSegment(ThreadedSegment):
             self.outputs = [o for o in outs if o['connection']]
         enabled_outputs = [o for o in self.outputs if o['crtc']]
         # Everything worked (hopefully), so redraw the bar
-        self.bar_needs_resize = [o['name'] for o in enabled_outputs]
+        if not self.bar_needs_resize:
+            self.bar_needs_resize = []
+        self.bar_needs_resize += [o['name'] for o in enabled_outputs]
         self.resize_randr_screen()
         if self.redraw_hook:
             run(self.redraw_hook, shell=True)
@@ -659,7 +661,9 @@ class OutputSegment(ThreadedSegment):
             self.outputs = [o for o in outs if o['connection']]
         enabled_outputs = [o for o in self.outputs if o['crtc']]
         # Everything worked (hopefully), so redraw the bar
-        self.bar_needs_resize = [o['name'] for o in enabled_outputs]
+        if not self.bar_needs_resize:
+            self.bar_needs_resize = []
+        self.bar_needs_resize += [o['name'] for o in enabled_outputs]
         self.resize_randr_screen()
         if self.redraw_hook:
             run(self.redraw_hook, shell=True)
