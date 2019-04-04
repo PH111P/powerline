@@ -59,7 +59,7 @@ else:
 
 setup(
     name='powerline-status-i3',
-    version='1.8.4',
+    version='1.8.5',
     description='The ultimate statusline/prompt utility. A fork containing more features for the i3 window manager.',
     long_description=README,
     classifiers=[
