@@ -63,6 +63,7 @@ class PowerlinePrompts(Prompts):
         self.shell = shell
         powerline.do_setup(shell, self, shutdown_hook)
         self.last_output_count = None
+        self.last_mode = ''
         self.last_output = {}
 
     for prompt in ('in', 'continuation', 'rewrite', 'out'):
@@ -71,6 +72,11 @@ class PowerlinePrompts(Prompts):
             '    if self.last_output_count != self.shell.execution_count:\n'
             '        self.last_output.clear()\n'
             '        self.last_output_count = self.shell.execution_count\n'
+            '    if (getattr(self.shell.pt_app, "editing_mode", None) == "VI"\n'
+            '            and self.shell.prompt_includes_vi_mode\n'
+            '            and self.last_mode != str(self.shell.pt_app.app.vi_state.input_mode)[3:6]):\n'
+            '        self.last_output.clear()\n'
+            '        self.last_mode = str(self.shell.pt_app.app.vi_state.input_mode)[3:6]\n'
             '    if "{0}" not in self.last_output:\n'
             '        self.last_output["{0}"] = (self.powerline.render('
             '            side="left",'

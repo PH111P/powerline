@@ -6,6 +6,10 @@
                 "priority":             10
             },
             {
+                "function":             "powerline.segments.ipython.vi_mode",
+                "draw_soft_divider":    true
+            },
+            {
                 "type":                 "string",
                 "contents":             "In [",
                 "draw_soft_divider":    false,

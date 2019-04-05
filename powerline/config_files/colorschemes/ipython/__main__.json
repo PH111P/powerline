@@ -1,6 +1,7 @@
 {
     "groups": {
-        "prompt":           "information:additional",
-        "prompt_count":     "information:highlighted"
+        "vi_mode":          "level:1",
+        "prompt":           "level:4",
+        "prompt_count":     "level:4"
     }
 }
