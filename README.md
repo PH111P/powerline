@@ -27,7 +27,8 @@ the features that were added in this fork.
 * Added a volume segment.
 * Added GPMDP support in the player segment.
 * Merged and improved [ZyX-I's revinfo branch](https://github.com/ZyX-I/powerline/tree/revinfo), replacing the VCS segment.
-* Added an auto-rotate segment.
+* Added an auto-rotate segment (currently only works under X).
+* Added a vi-mode segment and corresponding mode support for ipython ≥ 7.0.0 
 * Click support (see documentation below)
 * Simplified gradients: specify start and end colors (and optionally intermediate colors) as hex values, values in-between colors (and corresponding cterm colors) will be generated automatically.
 * Support for global menus
