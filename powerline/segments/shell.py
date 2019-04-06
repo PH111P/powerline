@@ -21,20 +21,30 @@ def jobnum(pl, segment_info, show_zero=False):
     else:
         return str(jobnum)
 
+try:
+    import signal
+    exit_codes = dict((k, v) for v, k in reversed(sorted(signal.__dict__.items()))
+        if v.startswith('SIG') and not v.startswith('SIG_'))
+except ImportError:
+    exit_codes = dict()
 
 @requires_segment_info
-def last_status(pl, segment_info):
+def last_status(pl, segment_info, signal_names=True):
     '''Return last exit code.
 
     Highlight groups used: ``exit_fail``
     '''
     if not segment_info['args'].last_exit_code:
         return None
+
+    if signal_names and segment_info['args'].last_exit_code - 128 in exit_codes:
+        return [{'contents': exit_codes[segment_info['args'].last_exit_code - 128], 'highlight_groups': ['exit_fail']}]
+
     return [{'contents': str(segment_info['args'].last_exit_code), 'highlight_groups': ['exit_fail']}]
 
 
 @requires_segment_info
-def last_pipe_status(pl, segment_info):
+def last_pipe_status(pl, segment_info, signal_names=True):
     '''Return last pipe status.
 
     Highlight groups used: ``exit_fail``, ``exit_success``
@@ -43,10 +53,11 @@ def last_pipe_status(pl, segment_info):
         segment_info['args'].last_pipe_status
         or (segment_info['args'].last_exit_code,)
     )
+    print(exit_codes)
     if any(last_pipe_status):
         return [
             {
-                'contents': str(status),
+                'contents': exit_codes[segment_info['args'].last_exit_code - 128] if signal_names and segment_info['args'].last_exit_code - 128 in exit_codes else str(status),
                 'highlight_groups': ['exit_fail' if status else 'exit_success'],
                 'draw_inner_divider': True
             }
