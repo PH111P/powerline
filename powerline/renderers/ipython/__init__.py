@@ -10,6 +10,7 @@ class IPythonRenderer(PromptRenderer):
     def get_segment_info(self, segment_info, mode):
         r = self.segment_info.copy()
         r['ipython'] = segment_info
+        r['mode'] = mode
         return r
 
     def get_theme(self, matcher_info):

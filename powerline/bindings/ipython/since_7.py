@@ -63,7 +63,7 @@ class PowerlinePrompts(Prompts):
         self.shell = shell
         powerline.do_setup(shell, self, shutdown_hook)
         self.last_output_count = None
-        self.last_mode = ''
+        self.last_mode = None
         self.last_output = {}
 
     for prompt in ('in', 'continuation', 'rewrite', 'out'):
@@ -74,14 +74,15 @@ class PowerlinePrompts(Prompts):
             '        self.last_output_count = self.shell.execution_count\n'
             '    if (getattr(self.shell.pt_app, "editing_mode", None) == "VI"\n'
             '            and self.shell.prompt_includes_vi_mode\n'
-            '            and self.last_mode != str(self.shell.pt_app.app.vi_state.input_mode)[3:6]):\n'
+            '            and self.last_mode != str(self.shell.pt_app.app.vi_state.input_mode)):\n'
             '        self.last_output.clear()\n'
-            '        self.last_mode = str(self.shell.pt_app.app.vi_state.input_mode)[3:6]\n'
+            '        self.last_mode = str(self.shell.pt_app.app.vi_state.input_mode)\n'
             '    if "{0}" not in self.last_output:\n'
             '        self.last_output["{0}"] = (self.powerline.render('
             '            side="left",'
             '            matcher_info="{1}",'
             '            segment_info=self.shell,'
+            '            mode=self.last_mode,'
             '        ) + [(Token.Generic.Prompt, " ")])\n'
             '    return self.last_output["{0}"]'
         ).format(prompt, 'in2' if prompt == 'continuation' else prompt))

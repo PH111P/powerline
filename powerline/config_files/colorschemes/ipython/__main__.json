@@ -1,7 +1,49 @@
 {
     "groups": {
-        "vi_mode":          "level:1",
+        "vi_mode":                     { "fg": "level:1_fg",       "bg": "level:1_bg",     "attrs":        ["bold"] },
         "prompt":           "level:4",
         "prompt_count":     "level:4"
+    },
+    "mode_translations": {
+        "vi-insert": {
+            "colors": {
+                "level:1_bg":  "level:1_bg_alt",
+                "level:1_fg":  "level:1_fg_alt",
+                "level:2_bg":  "level:2_bg_alt",
+                "level:2_fg":  "level:2_fg_alt",
+                "level:3_bg":  "level:3_bg_alt",
+                "level:3_fg":  "level:3_fg_alt",
+                "level:4_bg":  "level:4_bg_alt",
+                "level:4_fg":  "level:4_fg_alt"
+            },
+            "groups": {
+                "vi_mode":                 { "fg": "level:1_fg_alt", "bg": "level:1_bg_alt",               "attrs": ["bold"] }
+            }
+        },
+        "vi-insert-multiple": {
+            "colors": {
+                "level:1_bg":  "level:1_bg_alt",
+                "level:1_fg":  "level:1_fg_alt",
+                "level:2_bg":  "level:2_bg_alt",
+                "level:2_fg":  "level:2_fg_alt",
+                "level:3_bg":  "level:3_bg_alt",
+                "level:3_fg":  "level:3_fg_alt",
+                "level:4_bg":  "level:4_bg_alt",
+                "level:4_fg":  "level:4_fg_alt"
+            },
+            "groups": {
+                "vi_mode":                 { "fg": "level:1_fg_alt", "bg": "level:1_bg_alt",               "attrs": ["bold"] }
+            }
+        },
+
+        "vi-replace": {
+            "colors": {
+                "level:1_bg":  "level:1_bg_rep",
+                "level:1_fg":  "level:1_fg_rep"
+            },
+            "groups": {
+                "vi_mode":                 { "fg": "level:1_fg_rep", "bg": "level:1_bg_rep",               "attrs": ["bold"] }
+            }
+        }
     }
 }

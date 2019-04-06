@@ -3,6 +3,14 @@ from __future__ import (unicode_literals, division, absolute_import, print_funct
 
 from powerline.theme import requires_segment_info
 
+vim_modes = {
+    'vi-navigation': 'NORMAL',
+    'vi-insert': 'INSERT',
+    'vi-insert-multiple': 'INSMUL',
+    'vi-replace': 'RPLACE'
+}
+
+
 
 @requires_segment_info
 def prompt_count(pl, segment_info):
@@ -10,10 +18,22 @@ def prompt_count(pl, segment_info):
 
 
 @requires_segment_info
-def vi_mode(pl, segment_info):
-    ipython = segment_info['ipython']._shell
-    if (getattr(ipython.pt_app, 'editing_mode', None) == 'VI'
-            and ipython.prompt_includes_vi_mode):
-        return str(ipython.pt_app.app.vi_state.input_mode)[3:6]
-    else:
+def vi_mode(pl, segment_info, override=None):
+    '''Return the current vim mode.
+
+    :param dict override:
+        dict for overriding default mode strings, e.g. ``{ 'vi-navigation': 'NORM' }``
+    '''
+
+    if not 'mode' in segment_info:
         return None
+    mode = segment_info['mode']
+    if mode == None:
+        return None
+    if not override:
+        return vim_modes[mode]
+    try:
+        return override[mode]
+    except KeyError:
+        return vim_modes[mode]
+    return 'SQUID '
