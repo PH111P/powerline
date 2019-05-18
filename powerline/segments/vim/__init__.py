@@ -531,31 +531,6 @@ Additionally ``vcsinfo:{name}`` is used.
 ''')
 
 
-@requires_filesystem_watcher
-@requires_segment_info
-def file_vcs_status(pl, segment_info, create_watcher):
-    '''Return the VCS status for this buffer.
-
-    Highlight groups used: ``file_vcs_status``.
-    '''
-    name = buffer_name(segment_info)
-    skip = not (name and (not vim_getbufoption(segment_info, 'buftype')))
-    if not skip:
-        repo = guess(path=name, create_watcher=create_watcher)
-        if repo is not None:
-            status = repo.status(os.path.relpath(name, repo.directory))
-            if not status:
-                return None
-            status = status.strip()
-            ret = []
-            for status in status:
-                ret.append({
-                    'contents': status,
-                    'highlight_groups': ['file_vcs_status_' + status, 'file_vcs_status'],
-                })
-            return ret
-
-
 trailing_whitespace_cache = None
 
 

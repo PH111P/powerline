@@ -38,9 +38,6 @@
                 "draw_soft_divider": false
             },
             {
-                "function":         "file_vcs_status"
-            },
-            {
                 "function":         "modified_indicator",
                 "draw_soft_divider": false,
                 "args": {
