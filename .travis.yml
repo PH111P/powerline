@@ -21,11 +21,7 @@ language: python
 script:   echo "tests disabled" #tests/test.sh
 jobs:
     include:
-        - stage: PyPy
         - python: "pypy3"
-        - stage: Latest Python
-        - python: "3.7"
-        - stage: Intermediate versions
         - python: "3.4"
         - python: "3.5"
         - python: "3.6"
