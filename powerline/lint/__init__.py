@@ -226,6 +226,16 @@ shell_colorscheme_spec = (Spec(
         mode_translations_value_spec(),
     ).optional().context_message('Error while loading mode translations (key {key})'),
 ).context_message('Error while loading shell colorscheme'))
+ipython_mode_spec = Spec().oneof(set(['vi-navigation', 'vi-insert', 'vi-insert-multiple',
+    'vi-replace'])).copy
+ipython_colorscheme_spec = (Spec(
+    name=name_spec(),
+    groups=groups_spec(),
+    mode_translations=Spec().unknown_spec(
+        ipython_mode_spec(),
+        mode_translations_value_spec(),
+    ).optional().context_message('Error while loading mode translations (key {key})'),
+).context_message('Error while loading vim colorscheme'))
 
 
 args_spec = Spec(
@@ -570,8 +580,10 @@ def check(paths=None, debug=False, echoerr=echoerr, require_ext=None):
                 spec = vim_colorscheme_spec
             elif ext == 'shell':
                 spec = shell_colorscheme_spec
+            elif ext == 'ipython':
+                spec = ipython_colorscheme_spec
             else:
-                spec = colorscheme_spec
+                spec = top_colorscheme_spec
             if spec.match(config, context=Context(config), data=data, echoerr=ee)[1]:
                 hadproblem = True
 

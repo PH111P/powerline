@@ -39,7 +39,13 @@
         "vi-replace": {
             "colors": {
                 "level:1_bg":  "level:1_bg_rep",
-                "level:1_fg":  "level:1_fg_rep"
+                "level:1_fg":  "level:1_fg_rep",
+                "level:2_bg":  "level:2_bg_rep",
+                "level:2_fg":  "level:2_fg_rep",
+                "level:3_bg":  "level:3_bg_rep",
+                "level:3_fg":  "level:3_fg_rep",
+                "level:4_bg":  "level:4_bg_rep",
+                "level:4_fg":  "level:4_fg_rep"
             },
             "groups": {
                 "vi_mode":                 { "fg": "level:1_fg_rep", "bg": "level:1_bg_rep",               "attrs": ["bold"] }

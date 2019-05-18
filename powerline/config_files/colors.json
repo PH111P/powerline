@@ -20,9 +20,21 @@
 
         "level:1_fg_vis": "0xffffff",
         "level:1_bg_vis": "0xaf8000",
+        "level:2_fg_vis": "0xffffff",
+        "level:2_bg_vis":        36,
+        "level:3_fg_vis": "0xffffff",
+        "level:3_bg_vis":        29,
+        "level:4_fg_vis": "0xffffff",
+        "level:4_bg_vis":        23,
 
         "level:1_fg_rep": "0xffffff",
         "level:1_bg_rep": "0xaf2900",
+        "level:2_fg_rep": "0xffffff",
+        "level:2_bg_rep":        36,
+        "level:3_fg_rep": "0xffffff",
+        "level:3_bg_rep":        29,
+        "level:4_fg_rep": "0xffffff",
+        "level:4_bg_rep":        23,
 
         "transparent":    "0x01000000",
 

@@ -88,7 +88,13 @@
         "v": {
             "colors": {
                 "level:1_bg":  "level:1_bg_vis",
-                "level:1_fg":  "level:1_fg_vis"
+                "level:1_fg":  "level:1_fg_vis",
+                "level:2_bg":  "level:2_bg_vis",
+                "level:2_fg":  "level:2_fg_vis",
+                "level:3_bg":  "level:3_bg_vis",
+                "level:3_fg":  "level:3_fg_vis",
+                "level:4_bg":  "level:4_bg_vis",
+                "level:4_fg":  "level:4_fg_vis"
             },
             "groups": {
                 "mode":                 { "fg": "level:1_fg_vis", "bg": "level:1_bg_vis",           "attrs": ["bold"] }
@@ -97,7 +103,13 @@
         "V": {
             "colors": {
                 "level:1_bg":  "level:1_bg_vis",
-                "level:1_fg":  "level:1_fg_vis"
+                "level:1_fg":  "level:1_fg_vis",
+                "level:2_bg":  "level:2_bg_vis",
+                "level:2_fg":  "level:2_fg_vis",
+                "level:3_bg":  "level:3_bg_vis",
+                "level:3_fg":  "level:3_fg_vis",
+                "level:4_bg":  "level:4_bg_vis",
+                "level:4_fg":  "level:4_fg_vis"
             },
             "groups": {
                 "mode":                 { "fg": "level:1_fg_vis", "bg": "level:1_bg_vis",           "attrs": ["bold"] }
@@ -106,7 +118,13 @@
         "^V": {
             "colors": {
                 "level:1_bg":  "level:1_bg_vis",
-                "level:1_fg":  "level:1_fg_vis"
+                "level:1_fg":  "level:1_fg_vis",
+                "level:2_bg":  "level:2_bg_vis",
+                "level:2_fg":  "level:2_fg_vis",
+                "level:3_bg":  "level:3_bg_vis",
+                "level:3_fg":  "level:3_fg_vis",
+                "level:4_bg":  "level:4_bg_vis",
+                "level:4_fg":  "level:4_fg_vis"
             },
             "groups": {
                 "mode":                 { "fg": "level:1_fg_vis", "bg": "level:1_bg_vis",           "attrs": ["bold"] }
@@ -115,7 +133,13 @@
         "R": {
             "colors": {
                 "level:1_bg":  "level:1_bg_rep",
-                "level:1_fg":  "level:1_fg_rep"
+                "level:1_fg":  "level:1_fg_rep",
+                "level:2_bg":  "level:2_bg_rep",
+                "level:2_fg":  "level:2_fg_rep",
+                "level:3_bg":  "level:3_bg_rep",
+                "level:3_fg":  "level:3_fg_rep",
+                "level:4_bg":  "level:4_bg_rep",
+                "level:4_fg":  "level:4_fg_rep"
             },
             "groups": {
                 "mode":                 { "fg": "level:1_fg_rep", "bg": "level:1_bg_rep",           "attrs": ["bold"] }
@@ -124,7 +148,13 @@
         "Rc": {
             "colors": {
                 "level:1_bg":  "level:1_bg_rep",
-                "level:1_fg":  "level:1_fg_rep"
+                "level:1_fg":  "level:1_fg_rep",
+                "level:2_bg":  "level:2_bg_rep",
+                "level:2_fg":  "level:2_fg_rep",
+                "level:3_bg":  "level:3_bg_rep",
+                "level:3_fg":  "level:3_fg_rep",
+                "level:4_bg":  "level:4_bg_rep",
+                "level:4_fg":  "level:4_fg_rep"
             },
             "groups": {
                 "mode":                 { "fg": "level:1_fg_rep", "bg": "level:1_bg_rep",           "attrs": ["bold"] }
@@ -133,7 +163,13 @@
         "Rx": {
             "colors": {
                 "level:1_bg":  "level:1_bg_rep",
-                "level:1_fg":  "level:1_fg_rep"
+                "level:1_fg":  "level:1_fg_rep",
+                "level:2_bg":  "level:2_bg_rep",
+                "level:2_fg":  "level:2_fg_rep",
+                "level:3_bg":  "level:3_bg_rep",
+                "level:3_fg":  "level:3_fg_rep",
+                "level:4_bg":  "level:4_bg_rep",
+                "level:4_fg":  "level:4_fg_rep"
             },
             "groups": {
                 "mode":                 { "fg": "level:1_fg_rep", "bg": "level:1_bg_rep",           "attrs": ["bold"] }
