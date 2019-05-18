@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 import json
 
 from powerline.lib.dict import REMOVE_THIS_KEY

@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 from powerline.theme import requires_segment_info
 from powerline.lib.dict import updated
 from powerline.bindings.wm import get_i3_connection, get_connected_randr_outputs

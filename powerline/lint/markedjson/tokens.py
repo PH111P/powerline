@@ -1,7 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
-
 class Token(object):
     def __init__(self, start_mark, end_mark):
         self.start_mark = start_mark

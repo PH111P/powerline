@@ -1,6 +1,3 @@
-
-from __future__ import (division, absolute_import, print_function)
-
 import argparse
 
 import powerline.bindings.config as config

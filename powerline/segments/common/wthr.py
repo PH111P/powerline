@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 import json
 
 from powerline.lib.url import urllib_read, urllib_urlencode

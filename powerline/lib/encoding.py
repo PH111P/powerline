@@ -1,5 +1,3 @@
-
-
 '''Encodings support
 
 This is the only module from which functions obtaining encoding should be
@@ -10,9 +8,6 @@ string.
 All functions in this module must always return a valid encoding. Most of them
 are not thread-safe.
 '''
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 import sys
 import locale
 

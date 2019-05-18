@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 from powerline.lib.watcher import create_file_watcher
 
 

@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 from xml.sax.saxutils import escape as _escape
 
 from powerline.renderer import Renderer

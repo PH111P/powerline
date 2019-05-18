@@ -1,12 +1,7 @@
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 import re
 
 from powerline.theme import requires_segment_info
 from powerline.bindings.wm import get_i3_connection
-
-WORKSPACE_REGEX = re.compile(r'^[0-9]+: ?')
-
 
 def workspace_groups(w):
     group = []
@@ -18,11 +13,6 @@ def workspace_groups(w):
         group.append('workspace:visible')
     group.append('workspace')
     return group
-
-def format_name(name, strip=False):
-    if strip:
-        return WORKSPACE_REGEX.sub('', name, count=1)
-    return name
 
 WS_ICONS = {
         "Xfce4-terminal":   "",

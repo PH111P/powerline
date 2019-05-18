@@ -1,4 +1,3 @@
-from __future__ import (unicode_literals, division, absolute_import, print_function)
 from powerline.lib.threaded import ThreadedSegment
 from powerline.segments import with_docstring
 from powerline.theme import requires_segment_info

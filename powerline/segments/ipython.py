@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 from powerline.theme import requires_segment_info
 
 vim_modes = {
@@ -10,12 +7,9 @@ vim_modes = {
     'vi-replace': 'RPLACE'
 }
 
-
-
 @requires_segment_info
 def prompt_count(pl, segment_info):
     return str(segment_info['ipython'].prompt_count)
-
 
 @requires_segment_info
 def vi_mode(pl, segment_info, override=None):

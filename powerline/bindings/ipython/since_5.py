@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 from weakref import ref
 
 from IPython.terminal.prompts import Prompts

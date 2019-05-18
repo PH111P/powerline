@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 import re
 
 from imaplib import IMAP4_SSL_PORT, IMAP4_SSL, IMAP4

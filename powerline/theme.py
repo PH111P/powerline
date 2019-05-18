@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 import itertools
 
 from powerline.segment import gen_segment_getter, process_segment, get_fallback_segment

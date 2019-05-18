@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 try:
     from urllib.error import HTTPError  # NOQA
     from urllib.request import urlopen  # NOQA

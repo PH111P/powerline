@@ -1,7 +1,4 @@
 
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
-
 class Node(object):
     def __init__(self, tag, value, start_mark, end_mark):
         self.tag = tag

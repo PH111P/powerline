@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 from powerline.renderer import Renderer
 from powerline.theme import Theme
 from powerline.lemonbar import SEGMENT_NAME

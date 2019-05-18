@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 from powerline.theme import requires_segment_info
 from powerline.segments import with_docstring
 from powerline.segments.common.env import CwdSegment

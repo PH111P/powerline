@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 from inspect import ArgSpec, getargspec
 
 from powerline.segments import Segment

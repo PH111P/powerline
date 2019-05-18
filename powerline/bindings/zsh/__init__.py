@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 import atexit
 
 from weakref import WeakValueDictionary, ref

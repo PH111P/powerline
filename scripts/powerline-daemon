@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # vim:fileencoding=utf-8:noet
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 import socket
 import os
 import errno
@@ -179,11 +177,11 @@ def safe_bytes(o, encoding=get_preferred_output_encoding()):
 			# We are assuming that o is a unicode object
 			return o.encode(encoding, 'replace')
 		except Exception:
-			# Object may have defined __bytes__ (python 3) or __str__ method 
+			# Object may have defined __bytes__ (python 3) or __str__ method
 			# (python 2)
-			# This also catches problem with non_ascii_bytes.encode('utf-8') 
-			# that first tries to decode to UTF-8 using ascii codec (and fails 
-			# in this case) and then encode to given encoding: errors= argument 
+			# This also catches problem with non_ascii_bytes.encode('utf-8')
+			# that first tries to decode to UTF-8 using ascii codec (and fails
+			# in this case) and then encode to given encoding: errors= argument
 			# is not used in the first stage.
 			return bytes(o)
 	except Exception as e:
@@ -265,11 +263,11 @@ def shutdown(sock, read_sockets, write_sockets, state):
 	Specifically it
 
 	#. Closes all sockets.
-	#. Notifies segments based on 
-	  :py:class:`powerline.lib.threaded.ThreadedSegment` and WM-specific 
+	#. Notifies segments based on
+	  :py:class:`powerline.lib.threaded.ThreadedSegment` and WM-specific
 	  threads that daemon is shutting down.
 	#. Waits for threads to finish, but no more then 2 seconds total.
-	#. Waits so that total execution time of this function is 2 seconds in order 
+	#. Waits so that total execution time of this function is 2 seconds in order
 	   to allow ThreadedSegments to finish.
 	'''
 	total_wait_time = 2

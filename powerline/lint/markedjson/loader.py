@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 from powerline.lint.markedjson.reader import Reader
 from powerline.lint.markedjson.scanner import Scanner
 from powerline.lint.markedjson.parser import Parser

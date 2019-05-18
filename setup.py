@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 import os
 import sys
 import subprocess
@@ -17,9 +14,6 @@ try:
     README = open(os.path.join(CURRENT_DIR, 'README.md'), 'rb').read().decode('utf-8')
 except IOError:
     README = ''
-
-OLD_PYTHON = sys.version_info < (2, 7)
-
 
 def compile_client():
     '''Compile the C powerline-client script.'''
@@ -59,7 +53,7 @@ else:
 
 setup(
     name='powerline-status-i3',
-    version='1.8.5',
+    version='1.8.6',
     description='The ultimate statusline/prompt utility. A fork containing more features for the i3 window manager.',
     long_description=README,
     classifiers=[
@@ -71,9 +65,8 @@ setup(
         'Natural Language :: English',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
@@ -85,18 +78,6 @@ setup(
     # XXX Python 3 doesn’t allow compiled C files to be included in the scripts
     # list below. This is because Python 3 distutils tries to decode the file to
     # ASCII, and fails when powerline-client is a binary.
-    #
-    # XXX Python 2 fucks up script contents*. Not using it to install scripts
-    # any longer.
-    # * Consider the following input:
-    #     % alias hex1=$'hexdump -e \'"" 1/1 "%02X\n"\''
-    #     % diff <(hex1 ./scripts/powerline) <(hex1 ~/.local/bin/powerline)
-    #   This will show output like
-    #     375c375
-    #     < 0D
-    #     ---
-    #     > 0A
-    #   (repeated, with diff segment header numbers growing up).
     #
     # FIXME Current solution does not work with `pip install -e`. Still better
     # then solution that is not working at all.
@@ -114,7 +95,7 @@ setup(
     packages=find_packages(exclude=('tests', 'tests.*')),
     include_package_data=True,
     zip_safe=False,
-    install_requires=['i3ipc', 'python-xlib']+(['argparse'] if OLD_PYTHON else []),
+    install_requires=['i3ipc', 'python-xlib'],
     extras_require={
         'volume segment': [
             'pyalsaaudio'
@@ -133,5 +114,4 @@ setup(
             'iwlib'
         ]
     },
-    test_suite='tests' if not OLD_PYTHON else None,
 )

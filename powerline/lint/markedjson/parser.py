@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 from powerline.lint.markedjson.error import MarkedError
 from powerline.lint.markedjson import tokens
 from powerline.lint.markedjson import events

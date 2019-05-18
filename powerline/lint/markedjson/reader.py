@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 import codecs
 
 from powerline.lint.markedjson.error import MarkedError, Mark, NON_PRINTABLE_RE

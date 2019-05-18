@@ -1,7 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
-
 # Abstract classes.
 class Event(object):
     def __init__(self, start_mark=None, end_mark=None):

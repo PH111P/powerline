@@ -1,6 +1,3 @@
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 import os
 
 from multiprocessing import cpu_count as _cpu_count

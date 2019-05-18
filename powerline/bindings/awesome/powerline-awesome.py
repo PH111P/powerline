@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-
-from __future__ import (unicode_literals, division, absolute_import, print_function)
-
 import sys
 
 from powerline.bindings.wm import DEFAULT_UPDATE_INTERVAL
