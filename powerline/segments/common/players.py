@@ -1,4 +1,5 @@
 import sys
+import re
 
 from powerline.lib.shell import asrun, run_cmd
 from powerline.lib.unicode import out_u
@@ -295,55 +296,60 @@ Requires cmus-remote command be acessible from $PATH.
 
 
 class MpdPlayerSegment(PlayerSegment):
-    def get_channel_name(self, pl):
-        return 'players.mpd'
-
     def get_player_status(self, pl, host='localhost', password=None, port=6600):
         try:
             import mpd
         except ImportError:
             if password:
                 host = password + '@' + host
-            now_playing = run_cmd(pl, [
-                'mpc', 'current',
-                '-f', '%album%\n%artist%\n%title%\n%time%',
-                '-h', host,
-                '-p', str(port)
-            ], strip=False)
-            if not now_playing:
-                return
-            now_playing = now_playing.split('\n')
-            return {
-                'album': now_playing[0],
-                'artist': now_playing[1],
-                'title': now_playing[2],
-                'total': now_playing[3],
-            }
-        else:
-            try:
-                client = mpd.MPDClient(use_unicode=True)
-            except TypeError:
-                # python-mpd 1.x does not support use_unicode
-                client = mpd.MPDClient()
-            client.connect(host, port)
-            if password:
-                client.password(password)
-            now_playing = client.currentsong()
-            if not now_playing:
-                return
-            status = client.status()
-            client.close()
-            client.disconnect()
-            return {
-                'state': status.get('state'),
-                'album': now_playing.get('album'),
-                'artist': now_playing.get('artist'),
-                'title': now_playing.get('title'),
-                'elapsed': _convert_seconds(status.get('elapsed', 0)),
-                'total': _convert_seconds(now_playing.get('time', 0)),
-                'elapsed_raw': int(float(status.get('elapsed', 0))),
-                'total_raw': int(float(now_playing.get('time', 0))),
-            }
+                now_playing = run_cmd(pl, [
+                    'mpc',
+                    '-h', host,
+                    '-p', str(port)
+                    ], strip=False)
+                album = run_cmd(pl, [
+                    'mpc', 'current',
+                    '-f', '%album%',
+                    '-h', host,
+                    '-p', str(port)
+                    ])
+                if not now_playing or now_playing.count("\n") != 3:
+                    return
+                now_playing = re.match(
+                        r"(.*) - (.*)\n\[([a-z]+)\] +[#0-9\/]+ +([0-9\:]+)\/([0-9\:]+)",
+                        now_playing
+                        )
+                return {
+                        'state': _convert_state(now_playing[3]),
+                        'album': album,
+                        'artist': now_playing[1],
+                        'title': now_playing[2],
+                        'elapsed': now_playing[4],
+                        'total': now_playing[5]
+                        }
+            else:
+                try:
+                    client = mpd.MPDClient(use_unicode=True)
+                except TypeError:
+                    # python-mpd 1.x does not support use_unicode
+                    client = mpd.MPDClient()
+                    client.connect(host, port)
+                    if password:
+                        client.password(password)
+                    now_playing = client.currentsong()
+                    if not now_playing:
+                        return
+                    status = client.status()
+                    client.close()
+                    client.disconnect()
+                    return {
+                            'state': status.get('state'),
+                            'album': now_playing.get('album'),
+                            'artist': now_playing.get('artist'),
+                            'title': now_playing.get('title'),
+                            'elapsed': _convert_seconds(status.get('elapsed', 0)),
+                            'total': _convert_seconds(now_playing.get('time', 0)),
+                            }
 
 
 mpd = with_docstring(MpdPlayerSegment(),
