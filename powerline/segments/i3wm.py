@@ -5,11 +5,11 @@ from powerline.bindings.wm import get_i3_connection
 
 def workspace_groups(w):
     group = []
-    if w['focused']:
+    if w.focused:
         group.append('workspace:focused')
-    if w['urgent']:
+    if w.urgent:
         group.append('workspace:urgent')
-    if w['visible']:
+    if w.visible:
         group.append('workspace:visible')
     group.append('workspace')
     return group
@@ -28,7 +28,7 @@ WS_ICONS = {
         "Skype":            "",
         "TelegramDesktop":  "",
         "feh":              "",
-        "Firefox":          "",
+        "firefox":          "",
         "Evince":           "",
         "Okular":           "",
         "libreoffice-calc": "",
@@ -37,13 +37,13 @@ WS_ICONS = {
         }
 
 def get_icon(w, separator, icons, show_multiple_icons, ws_containers):
-    if 'dummy' in w:
+    if w.num == -5:
         return ""
     icons_tmp = WS_ICONS
     icons_tmp.update(icons)
     icons = icons_tmp
 
-    wins = [win for win in ws_containers[w['name']].leaves() \
+    wins = [win for win in ws_containers[w.name].leaves() \
             if win.parent.scratchpad_state == 'none']
     if len(wins) == 0:
         return ""
@@ -64,27 +64,33 @@ def get_icon(w, separator, icons, show_multiple_icons, ws_containers):
 
     return result
 
+import copy
 def get_next_ws(ws, outputs):
-    names = [w['name'] for w in ws]
+    names = [w.name for w in ws]
     for i in range(1, 100):
         if not str(i) in names:
-            return [{
-                'name': str(i),
-                'urgent': False,
-                'focused': False,
-                'visible': False,
-                'dummy': True,
-                'output': o} for o in outputs]
+            res_ls = []
+            res = copy.deepcopy(ws[0])
+            res.num = -5
+            res.name = str(i)
+            res.urgent = False
+            res.focused = False
+            res.visible = False
+            for o in outputs:
+                r2 = copy.deepcopy(res)
+                r2.output = o
+                res_ls += [r2]
+            return res_ls
     return []
 
 def is_empty_workspace(w, ws_containers):
-    if 'dummy' in w:
+    if w.num == -5:
         return False
 
-    if w['focused'] or w['visible']:
+    if w.focused or w.visible:
         return False
 
-    wins = [win for win in ws_containers[w['name']].leaves()]
+    wins = [win for win in ws_containers[w.name].leaves()]
 
     return False if len(wins) > 0 else True
 
@@ -159,25 +165,26 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
     if not output == "__all__":
         output = output or segment_info.get('output')
         if show_output:
-            output_count = len([o for o in conn.get_outputs() if o['active']])
+            output_count = len([o for o in conn.get_outputs() if o.active])
     else:
         output = None
     if output:
         output = [output]
     else:
-        output = [o['name'] for o in conn.get_outputs() if o['active']]
+        output = [o.name for o in conn.get_outputs() if o.active]
 
 
     def sort_ws(ws):
         import re
         def natural_key(ws):
-            str = ws['name']
+            str = ws.name
             return [int(s) if s.isdigit() else s for s in re.split(r'(\d+)', str)]
-        ws = sorted(ws, key=natural_key) + (get_next_ws(ws, output) if show_dummy_workspace else [])
+        ws = sorted(ws, key=natural_key)
         result = []
         for n in priority_workspaces:
-            result += [w for w in ws if w['name'] == n]
-        return result + [w for w in ws if not w['name'] in priority_workspaces]
+            result += [w for w in ws if w.name == n]
+        return result + [w for w in ws if not w.name in priority_workspaces] \
+            + (get_next_ws(ws, output) if show_dummy_workspace else [])
 
     ws_containers = {w_con.name : w_con for w_con in conn.get_tree().workspaces()}
     if len(output) <= 1:
@@ -190,15 +197,15 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
                 'click_values': {'output_name': output[0]}
                 }]
         res += [{
-            'contents': w['name'][min(len(w['name']), strip):] \
+            'contents': w.name[min(len(w.name), strip):] \
                     + (get_icon(w, separator, icons, show_multiple_icons, ws_containers) \
                         if show_icons else ""),
             'highlight_groups': workspace_groups(w),
             'payload_name': channel_name,
-            'click_values': {'workspace_name': w['name']}
+            'click_values': {'workspace_name': w.name}
             } for w in sort_ws(conn.get_workspaces())
             if (not only_show or any(w[typ] for typ in only_show))
-            if w['output'] == output[0]
+            if w.output == output[0]
             if not (hide_empty_workspaces and is_empty_workspace(w, ws_containers))
             ]
         return res
@@ -211,15 +218,15 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
                 'payload_name': channel_name,
                 'click_values': {'output_name': n}
                 }]
-            res += [{'contents': w['name'][min(len(w['name']), strip):] \
+            res += [{'contents': w.name[min(len(w.name), strip):] \
                 + (get_icon(w, separator, icons, show_multiple_icons, ws_containers) \
                 if show_icons else ""),
                 'highlight_groups': workspace_groups(w),
                 'payload_name': channel_name,
-                'click_values': {'workspace_name': w['name']}} \
+                'click_values': {'workspace_name': w.name}} \
                         for w in sort_ws(conn.get_workspaces())
                 if (not only_show or any(w[typ] for typ in only_show))
-                if w['output'] == n
+                if w.output == n
                 if not (hide_empty_workspaces and is_empty_workspace(w, ws_containers))
                 ]
         return res
@@ -269,7 +276,7 @@ def scratchpad(pl, icons=SCRATCHPAD_ICONS):
         Highlight groups used: ``scratchpad`` or ``scratchpad:visible``, ``scratchpad`` or ``scratchpad:focused``, ``scratchpad`` or ``scratchpad:urgent``.
         '''
 
-    windows = get_i3_connection().get_tree().descendents()
+    windows = get_i3_connection().get_tree().descendants()
     return [{'contents': icons.get(w.scratchpad_state, icons['changed']),
         'highlight_groups': scratchpad_groups(w)
         } for w in windows if w.scratchpad_state != 'none']
@@ -427,7 +434,7 @@ def compute_menu(window_id):
 
 def compute_highlight(ws, window):
     highlight_groups = []
-    desc = [d.layout in ['tabbed', 'stacked'] for d in ws.descendents() \
+    desc = [d.layout in ['tabbed', 'stacked'] for d in ws.descendants() \
             if d.parent.type == 'workspace' and d.floating in ['user_off', 'auto_off'] \
             and d.type != 'floating_con']
 
@@ -537,8 +544,8 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
         focused = conn.get_tree().find_focused()
         ws = focused.workspace()
 
-        o_name = [w['output'] for w in conn.get_workspaces() \
-                if w['name'] == ws.name][0]
+        o_name = [w.output for w in conn.get_workspaces() \
+                if w.name == ws.name][0]
         output = segment_info.get('output')
 
         if last_active_window != focused.window and last_active_window:
@@ -560,11 +567,11 @@ def active_window(pl, segment_info, cutoff=100, global_menu=False, item_length=2
             if not show_empty:
                 return None
             # Get visible workspace
-            ws = [w for w in conn.get_workspaces() if w['output'] == output \
-                    and w['visible']]
+            ws = [w for w in conn.get_workspaces() if w.output == output \
+                    and w.visible]
             if not len(ws):
                 return None
-            ws = [w for w in focused.workspaces() if w.name == ws[0]['name']]
+            ws = [w for w in focused.workspaces() if w.name == ws[0].name]
             if not len(ws):
                 return None
 
