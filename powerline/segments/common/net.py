@@ -48,7 +48,7 @@ class NetworkManagerSegment(ThreadedSegment):
             cdata['connection'] = cdata['general_connection'] \
                     if cdata['general_connection'] != '' else None
             try:
-                cdata['quality'] = int(cdata['ap1_signal'])*100//80 if 'ap1_signal' in cdata else 0
+                cdata['quality'] = min(100, int(cdata['ap1_signal'])*100//80) if 'ap1_signal' in cdata else 0
                 cdata['essid'] = cdata['ap1_ssid'] if 'ap1_ssid' in cdata else None
                 cdata['security'] = cdata['ap1_security'] if 'ap1_security' in cdata else None
                 cdata['channel'] = int(cdata['ap1_chan']) if 'ap1_chan' in cdata else None
