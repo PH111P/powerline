@@ -50,7 +50,6 @@ def last_pipe_status(pl, segment_info, signal_names=True):
         segment_info['args'].last_pipe_status
         or (segment_info['args'].last_exit_code,)
     )
-    print(exit_codes)
     if any(last_pipe_status):
         return [
             {
