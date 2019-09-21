@@ -6,8 +6,142 @@ from powerline.lib.url import urllib_read
 from powerline.lib.threaded import ThreadedSegment, KwThreadedSegment
 from powerline.lib.monotonic import monotonic
 from powerline.lib.humanize_bytes import humanize_bytes
+from powerline.lib.shell import readlines
 from powerline.segments import with_docstring
 from powerline.theme import requires_segment_info
+
+@requires_segment_info
+class NetworkManagerSegment(ThreadedSegment):
+    interval = 100
+
+    def set_state(self, **kwargs):
+        super(NetworkManagerSegment, self).set_state(**kwargs)
+
+    def update(self, *args, **kwargs):
+        raw_data = [a.split(':', 1) for a in readlines(cmd = ['nmcli','--terse',
+            '--fields=general,ap,ip4,ip6', 'device', 'show'], cwd=None)]
+
+        nm_data = {}
+        i = 0
+        while i < len(raw_data):
+            cdev = raw_data[i]
+            if len(cdev) != 2 or cdev[0] != 'GENERAL.DEVICE':
+                continue
+            cdev = cdev[1]
+            cdata = {}
+            i = i + 1
+            while i < len(raw_data):
+                if len(raw_data[i]) == 1: # Ignore empty lines
+                    i = i + 1
+                    continue
+                if raw_data[i][0] == 'GENERAL.DEVICE': # Found new device
+                    break
+                cdata[raw_data[i][0].lower() \
+                    .replace('[', '').replace(']','').replace('.','_')] = raw_data[i][1]
+                if 'IP' in raw_data[i][0] and 'ADDRESS' in raw_data[i][0]:
+                    cdata[raw_data[i][0].lower() \
+                        .replace('[', '').replace(']','').replace('.','_') + '_short'] = \
+                        raw_data[i][1].split('/')[0]
+                i = i + 1
+            cdata['device'] = cdev
+            cdata['type'] = cdata['general_type']
+            cdata['connection'] = cdata['general_connection'] \
+                    if cdata['general_connection'] != '' else None
+            try:
+                cdata['quality'] = int(cdata['ap1_signal'])*100//80 if 'ap1_signal' in cdata else 0
+                cdata['essid'] = cdata['ap1_ssid'] if 'ap1_ssid' in cdata else None
+                cdata['security'] = cdata['ap1_security'] if 'ap1_security' in cdata else None
+                cdata['channel'] = int(cdata['ap1_chan']) if 'ap1_chan' in cdata else None
+            except Error:
+                pass
+            nm_data[cdev] = cdata
+
+        return nm_data
+
+    def render(self, nm_data, segment_info, name='status', device=None,
+            format='{device} {type} {connection}', short_format='', format_down=None,
+            auto_shrink=False, device_types=None, **kwargs):
+        channel_name = 'net.nm_' + name
+
+        if auto_shrink and not ('payloads' in segment_info and channel_name in
+            segment_info['payloads'] and segment_info['payloads'][channel_name]):
+            format = short_format
+
+        if not nm_data:
+            return None
+
+        if device:
+            nm_data = { a: nm_data[a] for a in nm_data if a == device }
+        if device_types:
+            nm_data = { a: nm_data[a] for a in nm_data if nm_data['type'] in device_types }
+
+        extra_groups_up = []
+        extra_groups_down = []
+
+        if name == 'wifi':
+            # Filter everything that is not of type 'wifi'
+            extra_groups_up = ['wireless:quality', 'wireless:down']
+            extra_groups_down = ['wireless:down', 'wireless:quality']
+            nm_data = { a: nm_data[a] for a in nm_data if nm_data[a]['type'] == 'wifi' }
+        if name == 'ethernet':
+            extra_groups_up = ['ethernet:up']
+            extra_groups_down = ['ethernet:down']
+            nm_data = { a: nm_data[a] for a in nm_data if nm_data[a]['type'] == 'ethernet' }
+
+        if format_down == None:
+            return [{'contents': format.format(**nm_data[a]),
+                'draw_inner_divider': True,
+                'gradient_level': 100 - nm_data[a]['quality'],
+                'highlight_groups': extra_groups_up + ['net:' + name],
+                'click_values': nm_data[a],
+                'payload_name': channel_name} for a in nm_data if nm_data[a]['connection']]
+        else:
+            return [{'contents': format.format(**nm_data[a]) if nm_data[a]['connection']
+                else format_down.format(**nm_data[a]),
+                'draw_inner_divider': True,
+                'gradient_level': 100 - nm_data[a]['quality'],
+                'highlight_groups': (extra_groups_up if nm_data[a]['connection'] else
+                    extra_groups_down) + ['net:' + name],
+                'click_values': nm_data[a],
+                'payload_name': channel_name} for a in nm_data]
+
+
+network_manager = with_docstring(NetworkManagerSegment(),
+'''Return what NetworkManager knows about the current connection. Requires ``nmcli``
+
+    :param string name:
+        the name of the segment, defaults to ``status``.
+        Setting this value changes the highlight groups used.
+
+        ========  =================================================================================
+        Name      Highlight Groups Used
+        ========  =================================================================================
+        status    ``net:status``
+        wifi      ``wireless:quality``, `net:wifi` or ``wireless:down``, ``net:wifi``
+        ethernet  ``ethernet:up``, ``ethernet:down``
+        ========  =================================================================================
+    :param string device:
+        the device to use. Per default this segment will list data for all active devices.
+    :param string format:
+        the output format
+    :param string short_format:
+        optional shorter format when the powerline needs to shrink segments
+    :param string format_down:
+        if set to any other value than ``None``, it will be shown when no connection is present
+        on the specified device
+    :param bool auto_shrink:
+        if set to true, this segment will use ``short_format`` per default,
+        only using ``format`` when any message is present on the ``net.nm_<name>``
+        message channel.
+    :param list device_types:
+        filter for the given device types. May include ``wifi``, ``ethernet``, ``gsm``, ``lo``, etc
+        Consult ``man nmcli`` for a comprehensive list.
+
+    Highlight groups used: ``ethernet:up``, ``ethernet:down`` or ``net:ethernet`` or ``wireless:quality`` (gradient), ``wireless:down`` or ``net:wifi`` or ``net:status``
+
+    Click values supplied: (any value available in format)
+''')
+
 
 
 @requires_segment_info
