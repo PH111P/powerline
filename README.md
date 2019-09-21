@@ -24,6 +24,8 @@ the features that were added in this fork.
 * Enhanced battery segment, having the same features as the i3bar one. Further, this segment
   now works with multiple batteries.
 * Enhanced wifi segment to match i3bar's.
+* Added a NetworkManager segment based on `nmcli`
+* Added a Bluetooth segment using `dbus` and `Bluez`
 * Added a volume segment.
 * Added GPMDP support in the player segment.
 * Merged and improved [ZyX-I's revinfo branch](https://github.com/ZyX-I/powerline/tree/revinfo), replacing the VCS segment.
@@ -82,6 +84,7 @@ namely:
 
 Optionally, the following packages should be installed if you want to use the corresponding segments.
 
+* nmcli (NetworkManager segment)
 * python-iwlib (wifi segment)
 * python-pyalsaaudio (volume segment, available from AUR)
 * xorg-xinput (screen rotation segment, used to map input devices to outputs)
