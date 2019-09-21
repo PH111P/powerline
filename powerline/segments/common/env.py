@@ -1,6 +1,7 @@
 import os
 
 from powerline.lib.unicode import out_u
+from powerline.lib.shell import run_cmd
 from powerline.theme import requires_segment_info
 from powerline.segments import Segment, with_docstring
 
@@ -198,8 +199,7 @@ def clip(pl, hide_empty=True, cutoff=10):
     Highlight groups used: ``clip``.
     '''
 
-    import subprocess
-    clp = subprocess.run(['xsel', '-bo'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    clp = run_cmd(pl, ['xsel', '-bo'])
     if len(clp) < 1 and hide_empty:
         return None
     return [{
