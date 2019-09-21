@@ -1,4 +1,4 @@
-import subprocess
+from powerline.lib.shell import run_cmd
 from powerline.theme import requires_segment_info
 
 def generic_shell(pl, command, highlight_groups=["generic_shell"]):
@@ -12,13 +12,7 @@ def generic_shell(pl, command, highlight_groups=["generic_shell"]):
     Click values supplied: ``contents`` (string)
     '''
 
-    shell = subprocess.Popen(['/bin/sh'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    shell.stdin.write((command + '\n').encode('utf-8'));
-    shell.stdin.flush();
-    shell.stdin.close();
-
-    contents = shell.stdout.read().decode().strip('\n ')
-
+    contents = run_cmd(pl, ['/bin/sh'], command + '\n').strip('\n ')
     return [{
         'contents': contents,
         'click_values': {'contents': contents},
