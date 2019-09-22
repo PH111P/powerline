@@ -18,7 +18,7 @@ MODES = ['locked', 'auto']
 @requires_segment_info
 class ScreenRotationSegment(ThreadedSegment):
 
-    interval = 1
+    interval = 2
 
     current_state = 0
 
@@ -432,7 +432,7 @@ srot = with_docstring(ScreenRotationSegment(),
 
 @requires_segment_info
 class OutputSegment(ThreadedSegment):
-    interval = 1
+    interval = 2
 
     d = None
     window = None

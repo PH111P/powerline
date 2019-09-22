@@ -123,6 +123,10 @@ def handle_bar_command(output_name, cmd, segment_name):
             import time
             segment_info['payloads'].update({segment_name: (cmd[len(cmd.split(':')[0]) + 1:], time.time())})
         return 1
+    elif cmd == 'update':
+        if segment_name:
+            powerline.force_update(mode=modes[0], segment_name=segment_name, matcher_info=output_name, segment_info=segment_info)
+            return 1
     return 0
 
 

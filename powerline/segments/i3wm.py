@@ -204,7 +204,7 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
             'payload_name': channel_name,
             'click_values': {'workspace_name': w.name}
             } for w in sort_ws(conn.get_workspaces())
-            if (not only_show or any(w[typ] for typ in only_show))
+            if (not only_show or any(getattr(w, typ) for typ in only_show))
             if w.output == output[0]
             if not (hide_empty_workspaces and is_empty_workspace(w, ws_containers))
             ]
@@ -225,7 +225,7 @@ def workspaces(pl, segment_info, only_show=None, output=None, strip=0, separator
                 'payload_name': channel_name,
                 'click_values': {'workspace_name': w.name}} \
                         for w in sort_ws(conn.get_workspaces())
-                if (not only_show or any(w[typ] for typ in only_show))
+                if (not only_show or any(getattr(w, typ) for typ in only_show))
                 if w.output == n
                 if not (hide_empty_workspaces and is_empty_workspace(w, ws_containers))
                 ]

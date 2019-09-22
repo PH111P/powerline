@@ -133,7 +133,7 @@ class LemonbarRenderer(Renderer):
         return text + escaped_contents + reset + ('%{A}' * click_count) + cl_hov
 
     def render(self, width, *args, **kwargs):
-        kw2 = kwargs
+        kw2 = kwargs.copy()
         if 'segment_info' in kwargs:
             kw2['segment_info'].update({'output': kwargs.get('matcher_info')})
         else:

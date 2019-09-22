@@ -1,5 +1,5 @@
 from powerline.lib.watcher import create_file_watcher
-
+from powerline.lib.dict import mergedicts_copy
 
 def list_segment_key_values(segment, theme_configs, segment_data, key, function_name=None, name=None, module=None, default=None):
     try:
@@ -367,12 +367,13 @@ def gen_segment_getter(pl, ext, common_config, theme_configs, default_module, ge
                 'divider_highlight_group': None,
                 'before': None,
                 'after': None,
-                'contents_func': lambda pl, segment_info, parsed_segments, side, mode, colorscheme: (
+                'contents_func': lambda pl, segment_info, parsed_segments, side, mode, colorscheme, **opt: (
                     process_segment_lister(
                         pl, segment_info, parsed_segments, side, mode, colorscheme,
                         patcher_args=args,
                         subsegments=subsegments,
                         lister=_contents_func,
+                        **opt
                     )
                 ),
                 'contents': None,
@@ -406,9 +407,9 @@ def gen_segment_getter(pl, ext, common_config, theme_configs, default_module, ge
                 args[str('create_watcher')] = create_watcher
 
             if hasattr(_contents_func, 'powerline_requires_segment_info'):
-                contents_func = lambda pl, segment_info: _contents_func(pl=pl, segment_info=segment_info, **args)
+                contents_func = lambda pl, segment_info, **opt: _contents_func(pl=pl, segment_info=segment_info, **mergedicts_copy(args, opt))
             else:
-                contents_func = lambda pl, segment_info: _contents_func(pl=pl, **args)
+                contents_func = lambda pl, segment_info, **opt: _contents_func(pl=pl, **mergedicts_copy(args, opt))
         else:
             startup_func = None
             shutdown_func = None

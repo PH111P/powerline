@@ -41,7 +41,7 @@ class ThreadedSegment(Segment, MultiRunnedThread):
         self.update_value = None
         self.updated = False
 
-    def __call__(self, pl, update_first=True, **kwargs):
+    def __call__(self, pl, update_first=True, force_update=False, **kwargs):
         if self.run_once:
             self.pl = pl
             self.set_state(**kwargs)
@@ -53,9 +53,9 @@ class ThreadedSegment(Segment, MultiRunnedThread):
             #
             # If running once .update() is called in __call__.
             self.start()
-            update_value = self.get_update_value(self.do_update_first)
+            update_value = self.get_update_value(self.do_update_first or force_update)
         else:
-            update_value = self.get_update_value(not self.updated)
+            update_value = self.get_update_value(not self.updated or force_update)
 
         if self.crashed:
             return self.crashed_value

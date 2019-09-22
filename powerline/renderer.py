@@ -408,6 +408,54 @@ class Renderer(object):
 
         return construct_returned_value(rendered_highlighted, segments, current_width, output_raw, output_width)
 
+    def force_update(self, mode, segment_name, matcher_info, segment_info = None, *args, **kwargs):
+        '''Force the first segment with name ``segment_name`` to update its content.
+        '''
+        theme = self.get_theme(matcher_info)
+        self.do_force_update(
+                mode,
+                segment_name,
+                theme,
+                segment_info=self.get_segment_info(segment_info, mode),
+                *args,
+                **kwargs)
+
+    def do_force_update(self, mode, segment_name, theme, segment_info = None, *args, **kwargs):
+        '''Force the first segment with name ``segment_name`` to update its content.
+        May silently render segment to obtain their ``payload_name``.
+        Only works for ThreadedSegments
+        '''
+        for i in range(0, len(theme.segments)):
+            for side in theme.segments[i]:
+                target = [segment for segment in theme.segments[i][side]
+                        if 'type' in segment and segment['type'] == 'function' and
+                        'name' in segment and segment['name'] == segment_name]
+                if len(target) > 0:
+                    try:
+                        target[0]['contents_func'](theme.pl, segment_info, force_update=True)
+                    except TypeError:
+                        pass
+                    return
+
+        # Some segments' have differing name and payload_name, so compute the latter
+        for i in range(0, len(theme.segments)):
+            for side in theme.segments[i]:
+                for segment in theme.segments[i][side]:
+                    if segment['type'] != 'function':
+                        continue
+                    contents = segment['contents_func'](theme.pl, segment_info)
+                    if contents == None:
+                        continue
+                    pns = [True for seg in contents if 'payload_name' in seg
+                            and seg['payload_name'] == segment_name]
+                    if len(pns):
+                        try:
+                            segment['contents_func'](theme.pl, segment_info, force_update=True)
+                        except TypeError:
+                            pass
+                        return
+        return
+
     def _prepare_segments(self, segments, calculate_contents_len):
         '''Translate non-printable characters and calculate segment width
         '''
