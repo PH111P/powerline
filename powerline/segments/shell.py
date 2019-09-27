@@ -29,14 +29,19 @@ except ImportError:
 def last_status(pl, segment_info, signal_names=True):
     '''Return last exit code.
 
+    :param bool signal_names:
+        If True (default), translate signal numbers to human-readable names.
+
     Highlight groups used: ``exit_fail``
     '''
     if not segment_info['args'].last_exit_code:
         return None
 
-    if signal_names and segment_info['args'].last_exit_code - 128 in exit_codes:
-        return [{'contents': exit_codes[segment_info['args'].last_exit_code - 128], 'highlight_groups': ['exit_fail']}]
-
+    try:
+        if signal_names and segment_info['args'].last_exit_code - 128 in exit_codes:
+            return [{'contents': exit_codes[segment_info['args'].last_exit_code - 128], 'highlight_groups': ['exit_fail']}]
+    except TypeError:
+        pass
     return [{'contents': str(segment_info['args'].last_exit_code), 'highlight_groups': ['exit_fail']}]
 
 
@@ -44,24 +49,31 @@ def last_status(pl, segment_info, signal_names=True):
 def last_pipe_status(pl, segment_info, signal_names=True):
     '''Return last pipe status.
 
+    :param bool signal_names:
+        If True (default), translate signal numbers to human-readable names.
+
     Highlight groups used: ``exit_fail``, ``exit_success``
     '''
     last_pipe_status = (
-        segment_info['args'].last_pipe_status
-        or (segment_info['args'].last_exit_code,)
-    )
+            segment_info['args'].last_pipe_status
+            or (segment_info['args'].last_exit_code,)
+            )
     if any(last_pipe_status):
-        return [
-            {
-                'contents': exit_codes[segment_info['args'].last_exit_code - 128] if signal_names and segment_info['args'].last_exit_code - 128 in exit_codes else str(status),
+        try:
+            return [{
+                'contents': exit_codes[status - 128] if signal_names and \
+                        status - 128 in exit_codes else str(status),
+                        'highlight_groups': ['exit_fail' if status else 'exit_success'],
+                        'draw_inner_divider': True
+                        } for status in last_pipe_status]
+        except TypeError:
+            return [{
+                'contents': str(status),
                 'highlight_groups': ['exit_fail' if status else 'exit_success'],
                 'draw_inner_divider': True
-            }
-            for status in last_pipe_status
-        ]
-    else:
-        return None
-
+                } for status in last_pipe_status]
+        else:
+            return None
 
 @requires_segment_info
 def mode(pl, segment_info, override={'vicmd': 'COMMND', 'viins': 'INSERT'}, default=None):
@@ -92,7 +104,6 @@ def mode(pl, segment_info, override={'vicmd': 'COMMND', 'viins': 'INSERT'}, defa
         # somebody knowing what he is doing there is absolutely no need in
         # keeping translations dictionary.
         return mode.upper()
-
 
 @requires_segment_info
 def continuation(pl, segment_info, omit_cmdsubst=True, right_align=False, renames={}):
@@ -140,7 +151,6 @@ def continuation(pl, segment_info, omit_cmdsubst=True, right_align=False, rename
         ret[-1].update(width='auto', align='l', highlight_groups=['continuation:current', 'continuation'])
 
     return ret
-
 
 @requires_segment_info
 class ShellCwdSegment(CwdSegment):
