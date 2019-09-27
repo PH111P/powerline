@@ -55,9 +55,9 @@ def last_pipe_status(pl, segment_info, signal_names=True):
     Highlight groups used: ``exit_fail``, ``exit_success``
     '''
     last_pipe_status = (
-            segment_info['args'].last_pipe_status
-            or (segment_info['args'].last_exit_code,)
-            )
+        segment_info['args'].last_pipe_status
+        or (segment_info['args'].last_exit_code,)
+    )
     if any(last_pipe_status):
         try:
             return [{
@@ -72,8 +72,8 @@ def last_pipe_status(pl, segment_info, signal_names=True):
                 'highlight_groups': ['exit_fail' if status else 'exit_success'],
                 'draw_inner_divider': True
                 } for status in last_pipe_status]
-        else:
-            return None
+    else:
+        return None
 
 @requires_segment_info
 def mode(pl, segment_info, override={'vicmd': 'COMMND', 'viins': 'INSERT'}, default=None):
