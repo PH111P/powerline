@@ -259,23 +259,57 @@ def gen_segment_getter(pl, ext, common_config, theme_configs, default_module, ge
         return get_segment_key(merge, segment, theme_configs, data['segment_data'], key, function_name, name, module, default)
     data['get_key'] = get_key
 
-    def get_selector(function_name):
+    def get_selector(function_details):
+        function_name = None
+        simple_mode = True
+        if isinstance(function_details, str):
+            # simple definition of include/exclude function
+            function_name = function_details
+        if isinstance(function_details, dict):
+            function_details = dict((
+                (str(k), v)
+                for k, v in
+                function_details.items()
+            ))
+            function_name = function_details.get('name')
+            simple_mode = False
+
+        if not function_name:
+            pl.error('Failed to get segment selector name, ignoring the selector')
+            return None
+
         if '.' in function_name:
             module, function_name = function_name.rpartition('.')[::2]
         else:
             module = 'powerline.selectors.' + ext
         function = get_module_attr(module, function_name, prefix='segment_generator/selector_function')
+
+        if getattr(function, 'powerline_layered_selector', False):
+            if simple_mode or not 'args' in function_details:
+                # simple mode doesn't support args for include/exclude functions
+                function = None
+            else:
+                layered_args = dict((
+                    (str(k), v) if not getattr(function, 'powerline_recursive_selector', False)
+                    else (str(k), get_selector(v))
+                    for k, v in
+                    function_details.get('args').items()
+                ))
+                try:
+                    function = function(**layered_args)
+                except TypeError:
+                    function = None
         if not function:
             pl.error('Failed to get segment selector, ignoring it')
         return function
 
     def get_segment_selector(segment, selector_type):
         try:
-            function_name = segment[selector_type + '_function']
+            function_details = segment[selector_type + '_function']
         except KeyError:
             function = None
         else:
-            function = get_selector(function_name)
+            function = get_selector(function_details)
         try:
             modes = segment[selector_type + '_modes']
         except KeyError:
@@ -342,12 +376,15 @@ def gen_segment_getter(pl, ext, common_config, theme_configs, default_module, ge
         else:
             highlight_groups = segment.get('highlight_groups') or [name]
 
-        if segment_type in ('function', 'segment_list'):
+        # if segment_type in ('function', 'segment_list'):
+        if 'args' in segment:
             args = dict((
                 (str(k), v)
                 for k, v in
                 get_key(True, segment, module, function_name, name, 'args', {}).items()
             ))
+        else:
+            args = {}
 
         display_condition = gen_display_condition(segment)
 

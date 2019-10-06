@@ -14,6 +14,14 @@ def requires_filesystem_watcher(func):
     return func
 
 
+def layered_selector(func):
+    func.powerline_layered_selector = True
+    return func
+
+def recursive_selector(func):
+    func.powerline_recursive_selector = True
+    return func
+
 def new_empty_segment_line():
     return {
         'left': [],
