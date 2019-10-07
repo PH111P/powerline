@@ -13,22 +13,6 @@ def mode(target_modes):
     )
 
 @layered_selector
-def time(target_start_time, target_end_time):
-    '''Returns True if the current time to is between ``target_start_time`` and ``target_end_time``.
-    Times are to be specified in the format  . . . (TODO)
-
-    :param string target_start_time:
-        The (inclusive) start time.
-    :param string target_end_time:
-        The (exclusive) end time.
-    '''
-
-    #TODO
-    return lambda pl, segment_info, mode: (
-        True
-    )
-
-@layered_selector
 @recursive_selector
 def all_of(**kwargs):
     '''Checks whether all of the given conditions are satisfied

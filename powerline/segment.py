@@ -300,7 +300,7 @@ def gen_segment_getter(pl, ext, common_config, theme_configs, default_module, ge
                 except TypeError:
                     function = None
         if not function:
-            pl.error('Failed to get segment selector, ignoring it')
+            pl.error('Failed to get segment selector "{0}", ignoring it'.format(function_name))
         return function
 
     def get_segment_selector(segment, selector_type):
@@ -376,15 +376,12 @@ def gen_segment_getter(pl, ext, common_config, theme_configs, default_module, ge
         else:
             highlight_groups = segment.get('highlight_groups') or [name]
 
-        # if segment_type in ('function', 'segment_list'):
-        if 'args' in segment:
+        if segment_type in ('function', 'segment_list'):
             args = dict((
                 (str(k), v)
                 for k, v in
                 get_key(True, segment, module, function_name, name, 'args', {}).items()
             ))
-        else:
-            args = {}
 
         display_condition = gen_display_condition(segment)
 
