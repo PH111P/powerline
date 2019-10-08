@@ -308,7 +308,7 @@ class Spec(object):
         havemarks(value)
         new_echoerr = DelayedEchoErr(
             echoerr,
-            'One of the either variants failed. Messages from the first variant:',
+            'None of the possible specifications fulfilled. Messages from the first variant:',
             'messages from the next variant:'
         )
 

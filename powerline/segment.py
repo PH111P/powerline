@@ -271,7 +271,7 @@ def gen_segment_getter(pl, ext, common_config, theme_configs, default_module, ge
                 for k, v in
                 function_details.items()
             ))
-            function_name = function_details.get('name')
+            function_name = function_details.get('function')
             simple_mode = False
 
         if not function_name:

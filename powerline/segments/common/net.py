@@ -147,12 +147,10 @@ network_manager = with_docstring(NetworkManagerSegment(),
         filter for the given device types. May include ``wifi``, ``ethernet``, ``gsm``, ``lo``, etc
         Consult ``man nmcli`` for a comprehensive list.
 
-    Highlight groups used: ``ethernet:up``, ``ethernet:down`` or ``net:ethernet`` or ``wireless:quality`` (gradient), ``wireless:down`` or ``net:wifi`` or ``net:status``
+    Highlight groups used: ``ethernet:up`` or ``net:ethernet``, ``ethernet:down`` or ``net:ethernet``, ``wireless:quality`` (gradient) or ``net:wifi``, ``wireless:down`` or ``net:wifi``, ``net:status``
 
     Click values supplied: (any value available in format)
 ''')
-
-
 
 @requires_segment_info
 def hostname(pl, segment_info, only_if_ssh=False, exclude_domain=False):
@@ -191,7 +189,7 @@ def wireless(pl, segment_info, device=None, format='{quality:3.0%} at {essid}',
         only using ``format`` when any message is present on the ``net.wireless``
         message channel.
 
-    Highlight groups used: ``wireless:quality`` (gradient) or ``wireless:down`` (when no connection is present)
+    Highlight groups used: ``wireless:quality`` (gradient), ``wireless:down`` alternatively ``wireless:quality`` (gradient)
 
     Click values supplied: ``quality`` (int), ``essid`` (string)
     '''

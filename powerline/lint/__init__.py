@@ -243,7 +243,15 @@ args_spec = Spec(
     segment_info=Spec().error('Segment info dictionary must be set by powerline').optional(),
 ).unknown_spec(Spec(), Spec()).optional().copy
 segment_module_spec = Spec().type(unicode).func(check_segment_module).optional().copy
-exinclude_spec = Spec().re(function_name_re).func(check_exinclude_function).copy
+exinclude_spec = Spec().either(
+    Spec(
+        function=Spec().re(function_name_re).func(check_segment_function),
+        args=Spec().unknown_spec(Spec(), Spec()).func(
+            lambda *args, **kwargs: check_args(get_one_segment_function, *args, **kwargs)
+        )
+    ).func(lambda *args, **kwargs: (True, True, False)),
+    Spec().re(function_name_re).func(check_exinclude_function)
+).copy
 segment_spec_base = Spec(
     name=Spec().re('^[a-zA-Z_]\w*$').optional(),
     function=Spec().re(function_name_re).func(check_segment_function).optional(),
