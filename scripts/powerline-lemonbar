@@ -89,6 +89,8 @@ def handle_bar_command(output_name, cmd, segment_name):
     elif cmd.startswith('restart:'):
         restart_bar(cmd[len(cmd.split(':')[0]) + 1:])
         return 2
+    elif cmd == 'redraw':
+        return 1
 
     # check for target channel names
     if '@' in cmd:
@@ -134,7 +136,8 @@ def bar_callback(output_name, line, segment_name):
     # powerline.pl.info('click on {0} (segment {2}): {1}'.format(output_name, line, segment_name))
     # print('click on {0} (segment {2}): {1}'.format(output_name, line, segment_name))
     action = 0
-    if line.startswith(INTERNAL_BAR_COMMAND.decode()):
+    if INTERNAL_BAR_COMMAND.decode() in line:
+        line = line.split(INTERNAL_BAR_COMMAND.decode(), 1)[1]
         for cmd in line.split(';'):
             action = max(action, handle_bar_command(output_name, cmd, segment_name))
 

@@ -16,7 +16,7 @@ def generate_controls( steps, current_value, icons ):
 
         res += [{
             'contents': icons[symb],
-            'highlight_groups': [ 'volume:controls', 'volume:gradient', 'volume_gradient' ],
+            'highlight_groups': [ 'volume:' + symb, 'volume:controls', 'volume:gradient', 'volume_gradient' ],
             'gradient_level': oldcv,
             'click_values': { 'volume': oldcv, 'muted': False,
                 'control_level': int( i * 100 / ( steps - 1 ) ) },
