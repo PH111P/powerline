@@ -20,6 +20,9 @@ Network
 .. automodule:: powerline.segments.common.net
    :members:
 
+.. automodule:: powerline.segments.common.bluetooth
+   :members:
+
 Current environment
 ===================
 

@@ -298,7 +298,8 @@ override those from each previous file. It is required that either
 
        ``click`` (optional)
            Dictionary mapping the values ``left``, ``right``, ``middle``,
-           ``scroll up``, and ``scroll down`` to a string to be executed by a shell.
+           ``scroll up``, ``scroll down``, ``hover enter``, and ``hover leave``
+           to a string to be executed by a shell.
            The string to be executed may contain format string placeholders which will
            be populated by the corresponding segment. Available placeholders are listed
            per segment under ``click values supplied``. Currently, only ``lemonbar``
@@ -433,15 +434,16 @@ ascii                       Theme without any unicode characters at all
     A dict with a ``left`` and a ``right`` lists, consisting of segment
     dictionaries. Shell themes may also contain ``above`` list of dictionaries.
     Each item in ``above`` list may have ``left`` and ``right`` keys like this
-    dictionary, but no ``above`` key.
+    dictionary, but no ``above`` key. Also, some bindings support an additional ``center`` list
+    that behaves like ``left`` and ``right``.
 
     .. _config-themes-above:
 
     ``above`` list is used for multiline shell configurations.
 
-    ``left`` and ``right`` lists are used for segments that should be put on the
-    left or right side in the output. Actual mechanizm of putting segments on
-    the left or the right depends on used renderer, but most renderers require
+    ``left``, ``right``, and ``center`` lists are used for segments that should be put on the
+    left or right side or in the center in the output. Actual mechanizm of putting segments on
+    the left, the right, or the center depends on used renderer, but most renderers require
     one to specify segment with :ref:`width <config-themes-seg-width>` ``auto``
     on either side to make generated line fill all of the available width.
 
@@ -588,11 +590,21 @@ ascii                       Theme without any unicode characters at all
     .. _config-themes-seg-exclude_function:
 
     ``exclude_function``, ``include_function``
-        Function name in a form ``{name}`` or ``{module}.{name}`` (in the first
-        form ``{module}`` defaults to ``powerline.selectors.{ext}``). Determines
-        under which condition specific segment will be included or excluded. By
+        A dict describing a function and optionally arguments passed to that function.
+        Determines under which condition specific segment will be included or excluded. By
         default segment is always included and never excluded.
         ``exclude_function`` overrides ``include_function``.
+
+        .. _config-themes-seg-exf-name:
+
+        ``name``
+            Function name in a form ``{name}`` or ``{module}.{name}`` (in the first
+            form ``{module}`` defaults to ``powerline.selectors.{ext}``).
+
+        .. _config-themes-seg-exf-args:
+
+        ``args``
+            A dict containing additional arguments passed to the selector function.
 
         .. note::
             Options :ref:`exclude_/include_modes
@@ -601,6 +613,10 @@ ascii                       Theme without any unicode characters at all
             included by either ``include_mode`` or ``include_function`` and will
             be excluded if it is excluded by either ``exclude_mode`` or
             ``exclude_function``.
+
+        .. note::
+            If a selector function does not take additional arguments, instead of via a dict,
+            it can be specified directly via a function name as in the `name` field.
 
     .. _config-themes-seg-display:
 
