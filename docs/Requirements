@@ -1,3 +1,4 @@
 i3ipc
 psutil
 xlib
+dbus-python
