@@ -48,7 +48,7 @@ fn _powerline_tmux_setenv {
 }
 
 if (test -z $POWERLINE_CONFIG_COMMAND) {
-	if (which powerline-config >/dev/null) {
+	if (command -v powerline-config >/dev/null) {
 		POWERLINE_CONFIG_COMMAND = powerline-config
 	} else {
 		echo powerline-config executable not found, unable to proceed >[2=1]

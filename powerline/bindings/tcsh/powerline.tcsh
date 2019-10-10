@@ -2,18 +2,18 @@
 # > In tcsh, $_ at the beginning of the script will contain the location if the
 # > file was sourced and $0 contains it if it was run.
 #
-# Guess this relies on `$_` being set as to last argument to previous command 
+# Guess this relies on `$_` being set as to last argument to previous command
 # which must be `.` or `source` in this case
 set POWERLINE_SOURCED=($_)
 if ! $?POWERLINE_CONFIG_COMMAND then
-	if ( { which powerline-config > /dev/null } ) then
+	if ( { command -v powerline-config > /dev/null } ) then
 		set POWERLINE_CONFIG_COMMAND="powerline-config"
 	else
 		set POWERLINE_CONFIG_COMMAND="$POWERLINE_SOURCED[2]:h:h:h:h/scripts/powerline-config"
 	endif
 else
 	if "$POWERLINE_CONFIG_COMMAND" == "" then
-		if ( { which powerline-config > /dev/null } ) then
+		if ( { command -v powerline-config > /dev/null } ) then
 			set POWERLINE_CONFIG_COMMAND="powerline-config"
 		else
 			set POWERLINE_CONFIG_COMMAND="$POWERLINE_SOURCED[2]:h:h:h:h/scripts/powerline-config"

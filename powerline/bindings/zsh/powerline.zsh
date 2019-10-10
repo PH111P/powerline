@@ -1,7 +1,7 @@
 local _POWERLINE_SOURCED="$0:A"
 
 _powerline_columns_fallback() {
-	if which stty &>/dev/null ; then
+	if command -v stty &>/dev/null ; then
 		local cols="$(stty size 2>/dev/null)"
 		if ! test -z "$cols" ; then
 			echo "${cols#* }"
@@ -106,15 +106,15 @@ _powerline_init_modes_support() {
 }
 
 _powerline_set_jobnum() {
-	# If you are wondering why I am not using the same code as I use for bash 
+	# If you are wondering why I am not using the same code as I use for bash
 	# ($(jobs|wc -l)): consider the following test:
 	#     echo abc | less
 	#     <C-z>
 	# . This way jobs will print
 	#     [1]  + done       echo abc |
 	#            suspended  less -M
-	# ([ is in first column). You see: any line counting thingie will return 
-	# wrong number of jobs. You need to filter the lines first. Or not use 
+	# ([ is in first column). You see: any line counting thingie will return
+	# wrong number of jobs. You need to filter the lines first. Or not use
 	# jobs built-in at all.
 	integer -g _POWERLINE_JOBNUM=${(%):-%j}
 }
@@ -187,7 +187,7 @@ _powerline_add_widget() {
 			save_widget="${save_widget}_$i"
 			(( i++ ))
 		done
-		# If widget was defined with `zle -N widget` (without `function` 
+		# If widget was defined with `zle -N widget` (without `function`
 		# argument) then this function will be handy.
 		eval "function $save_widget() { emulate -L zsh; $widget \$@ }"
 		eval "${old_widget_command/$widget/$save_widget}"
@@ -197,7 +197,7 @@ _powerline_add_widget() {
 }
 
 if test -z "${POWERLINE_CONFIG_COMMAND}" ; then
-	if which powerline-config >/dev/null ; then
+	if command -v powerline-config >/dev/null ; then
 		typeset -g POWERLINE_CONFIG_COMMAND=powerline-config
 	else
 		typeset -g POWERLINE_CONFIG_COMMAND="${_POWERLINE_SOURCED:h:h:h:h}/scripts/powerline-config"

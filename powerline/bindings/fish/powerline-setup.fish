@@ -1,6 +1,6 @@
 function powerline-setup
 	function _powerline_columns
-		if which stty >/dev/null
+		if command -v stty >/dev/null
 			if stty size >/dev/null
 				stty size | cut -d' ' -f2
 				return 0
@@ -11,7 +11,7 @@ function powerline-setup
 	end
 
 	if test -z "$POWERLINE_CONFIG_COMMAND"
-		if which powerline-config >/dev/null
+		if command -v powerline-config >/dev/null
 			set -g POWERLINE_CONFIG_COMMAND powerline-config
 		else
 			set -g POWERLINE_CONFIG_COMMAND (dirname (status -f))/../../../scripts/powerline-config
