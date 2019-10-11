@@ -351,6 +351,18 @@ def file_encoding(pl, segment_info):
 
 @requires_segment_info
 @add_divider_highlight_group('background:divider')
+def file_bom(pl, segment_info):
+    '''Return BOM of the current file
+
+    :return: Byte order mark or None if unknown or missing BOM
+
+    Divider highlight group used: ``background:divider``.
+    '''
+    return 'bom' if vim_getbufoption(segment_info, 'bomb') else None
+
+
+@requires_segment_info
+@add_divider_highlight_group('background:divider')
 def file_type(pl, segment_info):
     '''Return file type.
 

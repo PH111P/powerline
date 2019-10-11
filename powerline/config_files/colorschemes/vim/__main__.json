@@ -6,6 +6,7 @@
         "file_format":                      "information:unimportant",
         "file_encoding":                    "file_format",
         "file_type":                        "file_format",
+        "file_bom":                         "file_format",
         "vcsinfo":                          "information:additional",
         "file_scheme":                      "file_name",
         "file_directory":                   "information:additional",

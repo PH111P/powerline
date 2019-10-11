@@ -76,6 +76,14 @@
                 "priority":         60
             },
             {
+                "function":         "file_bom",
+                "exclude_modes":    ["nc"],
+                "draw_soft_divider": false,
+                "before":           "[",
+                "after":            "]",
+                "priority":         60
+            },
+            {
                 "function":         "file_format",
                 "draw_soft_divider": false,
                 "exclude_modes":    ["nc"],
