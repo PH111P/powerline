@@ -56,6 +56,7 @@ setup(
     version='1.9.2',
     description='The ultimate statusline/prompt utility. A fork containing more features for the i3 window manager.',
     long_description=README,
+    long_description_content_type='text/markdown',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
