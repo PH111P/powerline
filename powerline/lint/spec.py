@@ -43,7 +43,7 @@ class Spec(object):
 
     .. note::
         In ``check_`` and ``match`` methods specifications are identified by
-        their indexes for the purpose of simplyfying :py:meth:`Spec.copy`
+        their indexes for the purpose of simplifying :py:meth:`Spec.copy`
         method.
 
     Some common parameters:
@@ -261,7 +261,7 @@ class Spec(object):
         :param func msg_func:
             Callable like ``msg_func`` from :py:meth:`Spec.check_func`. Should
             accept one problematic item and is not used for :py:class:`Spec`
-            object indicies in ``item_func`` method.
+            object indices in ``item_func`` method.
 
         :return: proceed, hadproblem.
         '''
@@ -493,7 +493,7 @@ class Spec(object):
         :param function msg_func:
             Function that should accept checked value and return message that
             describes the problem with this value. Default value will emit just
-            “failed check”, which is rather indescriptive.
+            “failed check”, which is rather not descriptive.
 
         :return: self.
         '''
@@ -512,7 +512,7 @@ class Spec(object):
             optional. Each element in this list describes element with the same
             index in the checked value. Check out :py:meth:`Spec.check_tuple`
             for more details, but note that there list of specifications is
-            replaced with start and end indicies in ``self.specs``.
+            replaced with start and end indices in ``self.specs``.
 
         :return: self.
         '''
@@ -630,7 +630,7 @@ class Spec(object):
 
         Check out :py:meth:`Spec.check_either` method documentation for more
         details, but note that there a list of specs was replaced by start and
-        end indicies in ``self.specs``.
+        end indices in ``self.specs``.
 
         :return: self.
         '''

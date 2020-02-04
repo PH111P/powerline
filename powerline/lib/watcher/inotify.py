@@ -26,7 +26,7 @@ class INotifyFileWatcher(INotify):
 
     def process_event(self, wd, mask, cookie, name):
         if wd == -1 and (mask & self.Q_OVERFLOW):
-            # We missed some INOTIFY events, so we dont
+            # We missed some INOTIFY events, so we don't
             # know the state of any tracked files.
             for path in tuple(self.modified):
                 if os.path.exists(path):
@@ -184,7 +184,7 @@ class INotifyTreeWatcher(INotify):
                     raise NoSuchDir('The dir {0} does not exist'.format(base))
                 return
             if e.errno == errno.EACCES:
-                # We silently ignore entries for which we dont have permission,
+                # We silently ignore entries for which we don't have permission,
                 # unless they are the top level dir
                 if top_level:
                     raise NoSuchDir('You do not have permission to monitor {0}'.format(base))
@@ -232,7 +232,7 @@ class INotifyTreeWatcher(INotify):
 
     def process_event(self, wd, mask, cookie, name):
         if wd == -1 and (mask & self.Q_OVERFLOW):
-            # We missed some INOTIFY events, so we dont
+            # We missed some INOTIFY events, so we don't
             # know the state of any tracked dirs.
             self.watch_tree()
             self.modified = True

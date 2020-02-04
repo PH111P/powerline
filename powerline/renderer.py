@@ -183,7 +183,7 @@ class Renderer(object):
     '''Function that returns string width.
 
     Is used to calculate the place given string occupies when handling
-    ``width`` argument to ``.render()`` method. Must take east asian width
+    ``width`` argument to ``.render()`` method. Must take East Asian width
     into account.
 
     :param unicode string:

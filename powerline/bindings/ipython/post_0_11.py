@@ -112,7 +112,6 @@ def load_ipython_extension(ip):
             '  c.TerminalInteractiveShell.prompts_class = PowerlinePrompts\n'
         ))
 
-
 def unload_ipython_extension(ip):
     global old_prompt_manager
     if old_prompt_manager is not None:

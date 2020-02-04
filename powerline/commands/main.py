@@ -76,7 +76,7 @@ def int_or_sig(s):
 
 
 def get_argparser(ArgumentParser=argparse.ArgumentParser):
-    parser = ArgumentParser(description='Powerline prompt and statusline script.')
+    parser = ArgumentParser(description='Powerline prompt and status line script.')
     parser.add_argument(
         'ext', nargs=1,
         help='Extension: application for which powerline command is launched '

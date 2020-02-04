@@ -260,7 +260,7 @@ except ImportError:
         @staticmethod
         def ignore_event(path, name):
             # Ignore changes to the index.lock file, since they happen
-            # frequently and dont indicate an actual change in the working tree
+            # frequently and don't indicate an actual change in the working tree
             # status
             return path.endswith('.git') and name == 'index.lock'
 
@@ -338,3 +338,4 @@ except ImportError:
         def name(self):
             return self.getgitline(
                 'name-rev', '--name-only', '--no-undefined', '--always', 'HEAD').strip()
+

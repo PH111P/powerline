@@ -377,8 +377,8 @@ def gen_module_attr_getter(pl, import_paths, imported_modules):
 
         :return:
             Attribute value or ``None``. Note: there is no way to distinguish
-            between successfull import of attribute equal to ``None`` and
-            unsuccessfull import.
+            between successful import of attribute equal to ``None`` and
+            unsuccessful import.
         '''
         oldpath = sys.path
         sys.path = import_paths + sys.path
@@ -394,7 +394,6 @@ def gen_module_attr_getter(pl, import_paths, imported_modules):
             sys.path = oldpath
 
     return get_module_attr
-
 
 LOG_KEYS = set(('log_format', 'log_level', 'log_file', 'paths'))
 '''List of keys related to logging
@@ -435,7 +434,7 @@ class Powerline(object):
         the package imported like this: ``powerline.renderers.{render_module}``.
         If this parameter contains a dot ``powerline.renderers.`` is not
         prepended. There is also a special case for renderers defined in
-        toplevel modules: ``foo.`` (note: dot at the end) tries to get renderer
+        top-level modules: ``foo.`` (note: dot at the end) tries to get renderer
         from module ``foo`` (because ``foo`` (without dot) tries to get renderer
         from module ``powerline.renderers.foo``). When ``.foo`` (with leading
         dot) variant is used ``renderer_module`` will be
@@ -703,7 +702,7 @@ class Powerline(object):
         '''Run component-specific setup
 
         :param set components:
-            Set of the enabled componets or None.
+            Set of the enabled components or None.
 
         Should be overridden by subclasses.
         '''
