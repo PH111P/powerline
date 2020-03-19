@@ -34,6 +34,10 @@ def get_argparser(ArgumentParser=argparse.ArgumentParser):
         metavar='PIXELS', help='Bar height. Defaults to 18.'
     )
     parser.add_argument(
+        '--correction', '-c', default='1',
+        help='Correction factor for default font sizes.'
+    )
+    parser.add_argument(
         '--relative_height', '-R', action='store_true',
         help='Interpret the given height as relative height in percent.'
     )
