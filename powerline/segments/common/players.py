@@ -381,9 +381,18 @@ except ImportError:
         pl.error('Could not add {0} segment: requires dbus module', player_name)
         return
 else:
-    def _get_dbus_player_status(pl, bus_name, player_path, iface_prop,
-                                iface_player, player_name='player'):
+    def _get_dbus_player_status(pl, bus_name=None,
+            player_path='org.freedesktop.DBus.Properties',
+            iface_prop=='org.mpris.MediaPlayer2.Player',
+            iface_player='/org/mpris/MediaPlayer2', player_name='player'):
         bus = dbus.SessionBus()
+
+        if bus_name is None:
+            for service in bus.list_names():
+                if re.match('org.mpris.MediaPlayer2.', service):
+                    bus_name = service
+                    break
+
         try:
             player = bus.get_object(bus_name, player_path)
             iface = dbus.Interface(player, iface_prop)
@@ -419,7 +428,6 @@ else:
             'elapsed': elapsed,
             'total': _convert_seconds(info.get('mpris:length') / 1e6),
         }
-
 
 class DbusPlayerSegment(PlayerSegment):
     def get_channel_name(self, pl):
@@ -767,4 +775,3 @@ Requires version >= 2.3.0 and ``mocp`` executable in ``$PATH``.
 
 {0}
 ''').format(_common_args.format('mocp')))
-
