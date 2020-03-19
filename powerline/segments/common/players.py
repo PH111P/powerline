@@ -383,7 +383,7 @@ except ImportError:
 else:
     def _get_dbus_player_status(pl, bus_name=None,
             player_path='org.freedesktop.DBus.Properties',
-            iface_prop=='org.mpris.MediaPlayer2.Player',
+            iface_prop='org.mpris.MediaPlayer2.Player',
             iface_player='/org/mpris/MediaPlayer2', player_name='player'):
         bus = dbus.SessionBus()
 
