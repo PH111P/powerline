@@ -382,9 +382,9 @@ except ImportError:
         return
 else:
     def _get_dbus_player_status(pl, bus_name=None,
-            player_path='org.freedesktop.DBus.Properties',
-            iface_prop='org.mpris.MediaPlayer2.Player',
-            iface_player='/org/mpris/MediaPlayer2', player_name='player'):
+            player_path='/org/mpris/MediaPlayer2',
+            iface_prop='org.freedesktop.DBus.Properties',
+            iface_player='org.mpris.MediaPlayer2.Player', player_name='player'):
         bus = dbus.SessionBus()
 
         if bus_name is None:
@@ -420,13 +420,17 @@ else:
             title = out_u(title)
         if artist:
             artist = out_u(artist[0])
+
+        total = None
+        if info.get('mpris:length') is not None:
+            total = _convert_seconds(info.get('mpris:length') / 1e6)
         return {
             'state': state,
             'album': album,
             'artist': artist,
             'title': title,
             'elapsed': elapsed,
-            'total': _convert_seconds(info.get('mpris:length') / 1e6),
+            'total': total,
         }
 
 class DbusPlayerSegment(PlayerSegment):
