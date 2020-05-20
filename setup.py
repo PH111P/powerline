@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 import os
 import sys
-import subprocess
 import logging
 import shlex
+import subprocess
 
-from traceback import print_exc
 from setuptools import setup, find_packages
 
+from powerline.version import get_version
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 try:
@@ -53,7 +53,7 @@ else:
 
 setup(
     name='powerline-status-i3',
-    version='1.9.3',
+    version=get_version(),
     description='The ultimate statusline/prompt utility. A fork containing more features for the i3 window manager.',
     long_description=README,
     long_description_content_type='text/markdown',

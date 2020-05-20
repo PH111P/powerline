@@ -11,7 +11,7 @@ from powerline.config import DEFAULT_SYSTEM_CONFIG_DIR
 from powerline.lib.dict import mergedicts
 from powerline.lib.encoding import get_preferred_output_encoding
 from powerline.lib.path import join
-
+from powerline.version import __version__
 
 class NotInterceptedError(BaseException):
     pass
@@ -100,7 +100,6 @@ class PowerlineLogger(object):
 
     def debug(self, msg, *args, **kwargs):
         self._log('debug', msg, *args, **kwargs)
-
 
 _fallback_logger = None
 
@@ -255,7 +254,6 @@ def _set_log_handlers(common_config, logger, get_module_attr, stream=None):
     if num_handlers == 0 and log_targets:
         raise ValueError('Failed to set up any handlers')
 
-
 def create_logger(common_config, use_daemon_threads=True, ext='__unknown__',
                   import_paths=None, imported_modules=None, stream=None):
     '''Create logger according to provided configuration
@@ -344,7 +342,6 @@ def finish_common_config(encoding, common_config):
 
     return common_config
 
-
 if sys.version_info < (3,):
     # `raise exception[0], None, exception[1]` is a SyntaxError in python-3*
     # Not using ('''…''') because this syntax does not work in python-2.6
@@ -413,7 +410,6 @@ def _get_log_keys(common_config):
     return dict((
         (k, v) for k, v in common_config.items() if k in LOG_KEYS
     ))
-
 
 DEFAULT_UPDATE_INTERVAL = 2
 '''Default value for :ref:`update_interval <config-ext-update_interval>`
