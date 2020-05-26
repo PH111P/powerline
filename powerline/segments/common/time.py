@@ -131,3 +131,4 @@ def fuzzy_time(pl, format='{minute_str} {hour_str}', unicode_text=False, timezon
         result = result.translate(UNICODE_TEXT_TRANSLATION)
 
     return result
+
