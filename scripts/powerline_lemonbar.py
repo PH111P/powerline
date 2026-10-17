@@ -218,6 +218,17 @@ def restart_callback(output):
         needs_restart.extend([output])
 
 def main():
+    global args
+    global powerline
+    global bars
+    global shell
+    global lock
+    global modes
+    global pause_clickse
+    global last_render
+    global segment_info
+    global needs_restart
+
     parser = get_argparser()
     args = parser.parse_args()
 
